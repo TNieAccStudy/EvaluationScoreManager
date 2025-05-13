@@ -1,0 +1,4 @@
+set a shedule for ExtracurricularActivity.
+
+auto registry extracurricularActivity if it satisfied with user conditions
+

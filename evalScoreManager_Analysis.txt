@@ -1,0 +1,28 @@
+======================== Evaluation Score Manager =================
+Actor:
+	Student (do)
+	StudentAssistent (operate | support | execute)
+	StudentAffairs (administrate)
+
+Importance:
+	ExtracurricularActivity
+	Article (duration)?
+	ArticleRegistry
+	ArticleAttendance
+	Achievement(Enum)
+	MissingActivity ( Minh chung' ) ?
+	Statistical
+
+
+======> 2 loai Article
+Article dang ky.
+tong ket. xem xet. (NotifyArticle) (bai tong ket)
+
+========
+hoc ky` ?
+
+
+new feat ?
+
+===> tao 1 mau co san cho hs(tuong ung)
+cho sinh vien tao ra 1 file theo 1 mau custom !!! ? 
