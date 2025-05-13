@@ -1,0 +1,48 @@
+Actors
+ExtraActivity
+Bulletin (duration) [2: Activity, Summary]
+BulletinRegistry
+BulletinConfirmedAttendance
+Article
+Achievement(ENUM)
+MissingActivity (proof)
+Interaction
+Comment<Interaction>
+Like<Interaction>
+CancelRequirement
+CancelArticleRequirement
+CancelActivityRequirement
+
+
+
+================Service=================
+Firebase:
+	---- message for convention ----
+	User(id,name,role)
+	Convention(user_id,user_id)
+	Message(convention_id, user_id, content)
+
+	---- message for mail service ----
+	Message(users[id], content)
+
+	---- notify for user ----
+	NotifyMessengeMixin(id,content)
+	NotifyAsNotAttend(user_id, extraActivity_id, notifyMessengeMixin_id)
+	NotifyAsBeforeOccurActivity(extraActivity_id, notifyMessengeMixin_id)
+
+Mail:
+	SendMessenge(IReceivedMessenge) :: Func
+	SendBulkMessenege(IReceivedMessenge[]) :: Func
+
+NotifyService:
+	notify(extraActivityId: int) :: Func
+
+
+
+
+
+
+
+======================important attribute======================
+score
+

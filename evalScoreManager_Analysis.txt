@@ -1,8 +1,8 @@
 ======================== Evaluation Score Manager =================
-Actor:
-	Student (do)
-	StudentAssistent (operate | support | execute)
-	StudentAffairs (administrate)
+Actor: 
+	Student (use)
+	StudentAssistent (operate | support | execute) (chinh quy)
+	StudentAffairsOfficer (administrate) | confirm <--
 
 Importance:
 	ExtracurricularActivity

@@ -1,4 +1,7 @@
-set a shedule for ExtracurricularActivity.
+set a schedule for ExtracurricularActivity.
 
 auto registry extracurricularActivity if it satisfied with user conditions
 
+
+-------------
+custom page registry for activity
