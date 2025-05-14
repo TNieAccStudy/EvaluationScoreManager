@@ -316,18 +316,21 @@ CREATE TABLE `missing_activity` (
   `proof_content` longtext,
   `proof_picture` varchar(255) DEFAULT NULL,
   `executed_status` varchar(50) NOT NULL,
-  `activity_registry_id` bigint NOT NULL,
+  `extra_activity_id` bigint NOT NULL,
   `missing_activity_id` bigint DEFAULT NULL,
   `summary_bulletin_id` bigint NOT NULL,
+  `student_id` bigint NOT NULL,
   `student_assistant_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `missing_activity_id` (`missing_activity_id`),
-  KEY `missing_activity_activity_registry_id_71a856b1_fk_activity_` (`activity_registry_id`),
+  KEY `missing_activity_extra_activity_id_c3e34014_fk_extra_activity_id` (`extra_activity_id`),
   KEY `missing_activity_summary_bulletin_id_ddc76d4f_fk_summary_b` (`summary_bulletin_id`),
+  KEY `missing_activity_student_id_0a38a5ed_fk_student_user_ptr_id` (`student_id`),
   KEY `missing_activity_student_assistant_id_31f91247_fk_student_a` (`student_assistant_id`),
-  CONSTRAINT `missing_activity_activity_registry_id_71a856b1_fk_activity_` FOREIGN KEY (`activity_registry_id`) REFERENCES `activity_registry` (`id`),
+  CONSTRAINT `missing_activity_extra_activity_id_c3e34014_fk_extra_activity_id` FOREIGN KEY (`extra_activity_id`) REFERENCES `extra_activity` (`id`),
   CONSTRAINT `missing_activity_missing_activity_id_73dbef72_fk_activity_` FOREIGN KEY (`missing_activity_id`) REFERENCES `activity_confirmed_attendance` (`id`),
   CONSTRAINT `missing_activity_student_assistant_id_31f91247_fk_student_a` FOREIGN KEY (`student_assistant_id`) REFERENCES `student_assistant` (`user_ptr_id`),
+  CONSTRAINT `missing_activity_student_id_0a38a5ed_fk_student_user_ptr_id` FOREIGN KEY (`student_id`) REFERENCES `student` (`user_ptr_id`),
   CONSTRAINT `missing_activity_summary_bulletin_id_ddc76d4f_fk_summary_b` FOREIGN KEY (`summary_bulletin_id`) REFERENCES `summary_bulletin` (`bulletin_ptr_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -550,4 +553,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-14  0:30:36
+-- Dump completed on 2025-05-14 11:02:43
