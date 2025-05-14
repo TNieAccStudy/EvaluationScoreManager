@@ -401,7 +401,6 @@ DROP TABLE IF EXISTS `student`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `student` (
   `user_ptr_id` bigint NOT NULL,
-  `score` int NOT NULL,
   `achievement` varchar(50) NOT NULL,
   `mssv` varchar(11) NOT NULL,
   PRIMARY KEY (`user_ptr_id`),
@@ -530,6 +529,7 @@ CREATE TABLE `user_info` (
   `avatar` varchar(124) NOT NULL,
   `email` varchar(124) NOT NULL,
   `phone` varchar(11) NOT NULL,
+  `user_role` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -553,4 +553,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-14 11:02:43
+-- Dump completed on 2025-05-15  0:29:44

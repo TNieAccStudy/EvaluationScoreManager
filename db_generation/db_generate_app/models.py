@@ -19,13 +19,13 @@ class User (BaseModel):
     avatar = models.CharField(max_length=124, null=False)
     email = models.CharField(max_length=124, null=False)
     phone = models.CharField(max_length=11, null=False)
+    user_role = models.CharField(max_length=50, null=False)
 
     class Meta:
         db_table = "user_info"
 
 
 class Student(User):
-    score = models.IntegerField()
     achievement = models.CharField(max_length=50)
     mssv = models.CharField(max_length=11, null=False)
 
