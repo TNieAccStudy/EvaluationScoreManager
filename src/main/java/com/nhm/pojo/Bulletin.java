@@ -6,6 +6,9 @@ package com.nhm.pojo;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.CollectionView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -45,7 +48,8 @@ import jakarta.persistence.InheritanceType;
     @NamedQuery(name = "Bulletin.findByCreatedDate", query = "SELECT b FROM Bulletin b WHERE b.createdDate = :createdDate"),
     @NamedQuery(name = "Bulletin.findByUpdatedDate", query = "SELECT b FROM Bulletin b WHERE b.updatedDate = :updatedDate"),
     @NamedQuery(name = "Bulletin.findByTitle", query = "SELECT b FROM Bulletin b WHERE b.title = :title"),
-    @NamedQuery(name = "Bulletin.findByDuration", query = "SELECT b FROM Bulletin b WHERE b.duration = :duration")})
+    @NamedQuery(name = "Bulletin.findByDuration", query = "SELECT b FROM Bulletin b WHERE b.duration = :duration"),
+    @NamedQuery(name = "CancelRequirement.findByState", query = "SELECT c FROM CancelRequirement c WHERE c.state = :state")})
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
@@ -65,38 +69,53 @@ public class Bulletin implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView(DisplayView.Public.class)
     protected Long id;
     @Basic(optional = false)
     @NotNull
     @Column(name = "active")
+    @JsonView(DisplayView.Public.class)
     protected boolean active;
     @Basic(optional = false)
     @NotNull
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView(DisplayView.Public.class)
     protected Date createdDate;
     @Basic(optional = false)
     @NotNull
     @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView(DisplayView.Public.class)
     protected Date updatedDate;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "title")
+    @JsonView(DisplayView.Public.class)
     protected String title;
     @Lob
     @Size(max = 2147483647)
     @Column(name = "content")
+    @JsonView(DisplayView.Public.class)
     protected String content;
     @Basic(optional = false)
     @NotNull
     @Column(name = "duration")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView(DisplayView.Public.class)
     protected Date duration;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "state")
+    @JsonView(DisplayView.Public.class)
+    protected String state;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bulletinId")
+    @JsonView(CollectionView.BulletinCollection.class)
     protected Collection<CancelBulletinRequirement> cancelBulletinRequirementCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bulletinId")
+    @JsonView(CollectionView.BulletinCollection.class)
     protected Collection<Interaction> interactionCollection;
 
     public Bulletin() {
@@ -106,13 +125,14 @@ public class Bulletin implements Serializable {
         this.id = id;
     }
 
-    public Bulletin(Long id, boolean active, Date createdDate, Date updatedDate, String title, Date duration) {
+    public Bulletin(Long id, boolean active, Date createdDate, Date updatedDate, String title, Date duration, String state) {
         this.id = id;
         this.active = active;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
         this.title = title;
         this.duration = duration;
+        this.state = state;
     }
 
     public Long getId() {
@@ -169,6 +189,14 @@ public class Bulletin implements Serializable {
 
     public void setDuration(Date duration) {
         this.duration = duration;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     @XmlTransient

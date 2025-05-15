@@ -4,6 +4,8 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.CollectionView;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.NamedQueries;
@@ -29,8 +31,10 @@ import java.util.Collection;
 public class StudentAssistant extends UserInfo implements Serializable {
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentAssistantId")
+    @JsonView(CollectionView.StudentAssistantCollection.class)
     private Collection<ExtraActivity> extraActivityCollection;
     @OneToMany(mappedBy = "studentAssistantId")
+    @JsonView(CollectionView.StudentAssistantCollection.class)
     private Collection<MissingActivity> missingActivityCollection;
 
     public StudentAssistant() {

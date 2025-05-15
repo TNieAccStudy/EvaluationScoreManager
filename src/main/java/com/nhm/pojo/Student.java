@@ -4,6 +4,9 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.CollectionView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -38,17 +41,22 @@ public class Student extends UserInfo implements Serializable {
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "achievement")
+    @JsonView(DisplayView.Internal.class)
     private String achievement;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 11)
     @Column(name = "mssv")
+    @JsonView(DisplayView.Internal.class)
     private String mssv;
     @OneToMany(mappedBy = "studentId")
+    @JsonView(CollectionView.StudentCollection.class)
     private Collection<ActivityRegistry> activityRegistryCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentId")
+    @JsonView(CollectionView.StudentCollection.class)
     private Collection<Interaction> interactionCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentId")
+    @JsonView(CollectionView.StudentCollection.class)
     private Collection<MissingActivity> missingActivityCollection;
 
     public Student() {

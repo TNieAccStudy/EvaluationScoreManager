@@ -6,6 +6,8 @@ package com.nhm.pojo;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -67,62 +69,74 @@ public class UserInfo implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView(DisplayView.Public.class)
     protected Long id;
     @Basic(optional = false)
     @NotNull
     @Column(name = "active")
+    @JsonView(DisplayView.Public.class)
     protected boolean active;
     @Basic(optional = false)
     @NotNull
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView(DisplayView.Public.class)
     protected Date createdDate;
     @Basic(optional = false)
     @NotNull
     @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView(DisplayView.Public.class)
     protected Date updatedDate;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "first_name")
+    @JsonView(DisplayView.Public.class)
     protected String firstName;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "last_name")
+    @JsonView(DisplayView.Public.class)
     protected String lastName;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 60)
     @Column(name = "username")
+    @JsonView(DisplayView.Internal.class)
     protected String username;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 124)
     @Column(name = "password")
+    @JsonView(DisplayView.Internal.class)
     private String password;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 124)
     @Column(name = "avatar")
+    @JsonView(DisplayView.Public.class)
     protected String avatar;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 124)
     @Column(name = "email")
+    @JsonView(DisplayView.Internal.class)
     protected String email;
     // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 11)
     @Column(name = "phone")
+    @JsonView(DisplayView.Internal.class)
     protected String phone;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "user_role")
+    @JsonView(DisplayView.Public.class)
     private String userRole;
 
     public UserInfo() {

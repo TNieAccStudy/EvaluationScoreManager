@@ -4,6 +4,8 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.CollectionView;
 import jakarta.persistence.Entity;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
@@ -28,6 +30,7 @@ import java.util.Collection;
 public class StudentAffairsOfficer extends UserInfo implements Serializable {
 
     @OneToMany(mappedBy = "studentAffairsOfficerId")
+    @JsonView(CollectionView.StudentAffairsCollection.class)
     private Collection<CancelRequirement> cancelRequirementCollection;
 
     public StudentAffairsOfficer() {

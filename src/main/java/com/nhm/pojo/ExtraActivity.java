@@ -4,6 +4,10 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.CollectionView;
+import com.nhm.viewconfigs.DisplayView;
+import com.nhm.viewconfigs.RoleView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -50,48 +54,61 @@ public class ExtraActivity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView(DisplayView.Public.class)
     private Long id;
     @Basic(optional = false)
     @NotNull
     @Column(name = "active")
+    @JsonView(DisplayView.Public.class)
     private boolean active;
     @Basic(optional = false)
     @NotNull
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView(DisplayView.Public.class)
     private Date createdDate;
     @Basic(optional = false)
     @NotNull
     @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView(DisplayView.Public.class)
     private Date updatedDate;
     @Basic(optional = false)
     @NotNull
     @Column(name = "bonus_score")
+    @JsonView(DisplayView.Public.class)
     private int bonusScore;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "title")
+    @JsonView(DisplayView.Public.class)
     private String title;
     @Lob
     @Size(max = 2147483647)
     @Column(name = "description")
+    @JsonView(DisplayView.Public.class)
     private String description;
     @OneToMany(mappedBy = "extraActivityId")
+    @JsonView(CollectionView.ActivityColelction.class)
     private Collection<ActivityBulletin> activityBulletinCollection;
     @JoinColumn(name = "semester_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView(DisplayView.Public.class)
     private Semester semesterId;
     @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView(RoleView.AssistantRole.class)
     private StudentAssistant studentAssistantId;
     @JoinColumn(name = "term_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView(DisplayView.Public.class)
     private Term termId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "extraActivityId")
+    @JsonView(CollectionView.ActivityColelction.class)
     private Collection<CancelActivityRequirement> cancelActivityRequirementCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "extraActivityId")
+    @JsonView(CollectionView.ActivityColelction.class)
     private Collection<MissingActivity> missingActivityCollection;
 
     public ExtraActivity() {

@@ -6,6 +6,8 @@ package com.nhm.pojo;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -59,26 +61,32 @@ public class Interaction implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView(DisplayView.Public.class)
     protected Long id;
     @Basic(optional = false)
     @NotNull
     @Column(name = "active")
+    @JsonView(DisplayView.Public.class)
     protected boolean active;
     @Basic(optional = false)
     @NotNull
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView(DisplayView.Public.class)
     protected Date createdDate;
     @Basic(optional = false)
     @NotNull
     @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView(DisplayView.Public.class)
     protected Date updatedDate;
     @JoinColumn(name = "bulletin_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView(DisplayView.Public.class)
     protected Bulletin bulletinId;
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView(DisplayView.Public.class)
     protected Student studentId;
 
     public Interaction() {

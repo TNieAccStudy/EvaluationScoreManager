@@ -44,7 +44,7 @@ public class Term implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    @JsonView(DisplayView.Internal.class)
+    @JsonView(DisplayView.Public.class)
     private Long id;
     @Basic(optional = false)
     @NotNull

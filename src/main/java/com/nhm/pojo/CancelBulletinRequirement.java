@@ -4,6 +4,8 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -28,6 +30,7 @@ public class CancelBulletinRequirement extends CancelRequirement implements Seri
 
     @JoinColumn(name = "bulletin_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView(DisplayView.Public.class)
     private Bulletin bulletinId;
 
     public CancelBulletinRequirement() {

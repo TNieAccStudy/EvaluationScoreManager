@@ -4,6 +4,8 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,6 +36,7 @@ public class Comment extends Interaction implements Serializable {
     @Lob
     @Size(min = 1, max = 2147483647)
     @Column(name = "content")
+    @JsonView(DisplayView.Public.class)
     private String content;
 
     public Comment() {

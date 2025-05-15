@@ -6,6 +6,8 @@ package com.nhm.pojo;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -63,35 +65,43 @@ public class CancelRequirement implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView(DisplayView.Public.class)
     protected Long id;
     @Basic(optional = false)
     @NotNull
     @Column(name = "active")
+    @JsonView(DisplayView.Public.class)
     protected boolean active;
     @Basic(optional = false)
     @NotNull
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView(DisplayView.Public.class)
     protected Date createdDate;
     @Basic(optional = false)
     @NotNull
     @Column(name = "updated_date")
+    @JsonView(DisplayView.Public.class)
     @Temporal(TemporalType.TIMESTAMP)
     protected Date updatedDate;
     @Size(max = 255)
     @Column(name = "reason")
+    @JsonView(DisplayView.Public.class)
     protected String reason;
     @Lob
     @Size(max = 2147483647)
     @Column(name = "reason_detail")
+    @JsonView(DisplayView.Public.class)
     protected String reasonDetail;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "executed_status")
+    @JsonView(DisplayView.Public.class)
     protected String executedStatus;
     @JoinColumn(name = "student_affairs_officer_id", referencedColumnName = "id")
     @ManyToOne
+    @JsonView(DisplayView.Public.class)
     protected StudentAffairsOfficer studentAffairsOfficerId;
 
     public CancelRequirement() {
