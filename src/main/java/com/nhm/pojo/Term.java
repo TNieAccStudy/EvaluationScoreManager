@@ -5,7 +5,8 @@
 package com.nhm.pojo;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.nhm.configs.ViewConfigs;
+import com.nhm.viewconfigs.CollectionView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -43,21 +44,21 @@ public class Term implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    @JsonView(ViewConfigs.Internal.class)
+    @JsonView(DisplayView.Internal.class)
     private Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "name")
-    @JsonView(ViewConfigs.Public.class)
+    @JsonView(DisplayView.Public.class)
     private String name;
     @Basic(optional = false)
     @NotNull
     @Column(name = "max_value")
-    @JsonView(ViewConfigs.Public.class)
+    @JsonView(DisplayView.Public.class)
     private int maxValue;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "termId")
-    @JsonView(ViewConfigs.GetCollection.class)
+    @JsonView(CollectionView.TermCollection.class)
     private Collection<ExtraActivity> extraActivityCollection;
 
     public Term() {

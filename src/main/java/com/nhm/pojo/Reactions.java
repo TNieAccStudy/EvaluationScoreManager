@@ -9,6 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @NamedQueries({
     @NamedQuery(name = "Reactions.findAll", query = "SELECT r FROM Reactions r"),
     @NamedQuery(name = "Reactions.findByType", query = "SELECT r FROM Reactions r WHERE r.type = :type")})
+@PrimaryKeyJoinColumn(name = "interaction_ptr_id")
 public class Reactions extends Interaction implements Serializable {
 
     @Basic(optional = false)

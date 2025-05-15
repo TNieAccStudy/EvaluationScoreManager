@@ -4,39 +4,28 @@
  */
 package com.nhm.pojo;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
  *
- * @author MINH
+ * @author GIGABYTE
  */
 @Entity
 @Table(name = "cancel_activity_requirement")
+@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CancelActivityRequirement.findAll", query = "SELECT c FROM CancelActivityRequirement c"),
-    @NamedQuery(name = "CancelActivityRequirement.findByCancelrequirementPtrId", query = "SELECT c FROM CancelActivityRequirement c WHERE c.cancelrequirementPtrId = :cancelrequirementPtrId")})
-public class CancelActivityRequirement implements Serializable {
+    @NamedQuery(name = "CancelActivityRequirement.findAll", query = "SELECT c FROM CancelActivityRequirement c")})
+@PrimaryKeyJoinColumn(name = "cancelrequirement_ptr_id")
+public class CancelActivityRequirement extends CancelRequirement implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "cancelrequirement_ptr_id")
-    private Long cancelrequirementPtrId;
-    @JoinColumn(name = "cancelrequirement_ptr_id", referencedColumnName = "id", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private CancelRequirement cancelRequirement;
     @JoinColumn(name = "extra_activity_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private ExtraActivity extraActivityId;
@@ -44,24 +33,8 @@ public class CancelActivityRequirement implements Serializable {
     public CancelActivityRequirement() {
     }
 
-    public CancelActivityRequirement(Long cancelrequirementPtrId) {
-        this.cancelrequirementPtrId = cancelrequirementPtrId;
-    }
-
-    public Long getCancelrequirementPtrId() {
-        return cancelrequirementPtrId;
-    }
-
-    public void setCancelrequirementPtrId(Long cancelrequirementPtrId) {
-        this.cancelrequirementPtrId = cancelrequirementPtrId;
-    }
-
-    public CancelRequirement getCancelRequirement() {
-        return cancelRequirement;
-    }
-
-    public void setCancelRequirement(CancelRequirement cancelRequirement) {
-        this.cancelRequirement = cancelRequirement;
+    public CancelActivityRequirement(ExtraActivity extraActivityId) {
+        this.extraActivityId = extraActivityId;
     }
 
     public ExtraActivity getExtraActivityId() {
@@ -75,7 +48,7 @@ public class CancelActivityRequirement implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (cancelrequirementPtrId != null ? cancelrequirementPtrId.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -86,7 +59,7 @@ public class CancelActivityRequirement implements Serializable {
             return false;
         }
         CancelActivityRequirement other = (CancelActivityRequirement) object;
-        if ((this.cancelrequirementPtrId == null && other.cancelrequirementPtrId != null) || (this.cancelrequirementPtrId != null && !this.cancelrequirementPtrId.equals(other.cancelrequirementPtrId))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -94,7 +67,7 @@ public class CancelActivityRequirement implements Serializable {
 
     @Override
     public String toString() {
-        return "com.nhm.pojo.CancelActivityRequirement[ cancelrequirementPtrId=" + cancelrequirementPtrId + " ]";
+        return "com.tnieyu.pojo.CancelActivityRequirement[ id=" + id + " ]";
     }
     
 }

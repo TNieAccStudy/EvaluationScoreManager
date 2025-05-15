@@ -4,8 +4,9 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +18,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -40,6 +40,18 @@ import java.util.Date;
     @NamedQuery(name = "Interaction.findByActive", query = "SELECT i FROM Interaction i WHERE i.active = :active"),
     @NamedQuery(name = "Interaction.findByCreatedDate", query = "SELECT i FROM Interaction i WHERE i.createdDate = :createdDate"),
     @NamedQuery(name = "Interaction.findByUpdatedDate", query = "SELECT i FROM Interaction i WHERE i.updatedDate = :updatedDate")})
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "interactionType",
+        defaultImpl = UserInfo.class
+)
+@JsonSubTypes(
+        value = {
+            @JsonSubTypes.Type(value = Comment.class, name = "comment"),
+            @JsonSubTypes.Type(value = Reactions.class, name = "reactions")
+        }
+)
 public class Interaction implements Serializable {
 
     protected static final long serialVersionUID = 1L;

@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -24,6 +25,7 @@ import java.util.Collection;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "StudentAssistant.findAll", query = "SELECT s FROM StudentAssistant s")})
+@PrimaryKeyJoinColumn(name = "user_ptr_id")
 public class StudentAssistant extends UserInfo implements Serializable {
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentAssistantId")

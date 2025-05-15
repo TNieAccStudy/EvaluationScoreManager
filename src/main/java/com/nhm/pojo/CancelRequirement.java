@@ -4,8 +4,9 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +19,6 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -44,6 +44,18 @@ import java.util.Date;
     @NamedQuery(name = "CancelRequirement.findByUpdatedDate", query = "SELECT c FROM CancelRequirement c WHERE c.updatedDate = :updatedDate"),
     @NamedQuery(name = "CancelRequirement.findByReason", query = "SELECT c FROM CancelRequirement c WHERE c.reason = :reason"),
     @NamedQuery(name = "CancelRequirement.findByExecutedStatus", query = "SELECT c FROM CancelRequirement c WHERE c.executedStatus = :executedStatus")})
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "cancelRequirementType",
+        defaultImpl = UserInfo.class
+)
+@JsonSubTypes(
+        value = {
+            @JsonSubTypes.Type(value = CancelActivityRequirement.class, name = "activity"),
+            @JsonSubTypes.Type(value = CancelBulletinRequirement.class, name = "bulletin")
+        }
+)
 public class CancelRequirement implements Serializable {
 
     protected static final long serialVersionUID = 1L;

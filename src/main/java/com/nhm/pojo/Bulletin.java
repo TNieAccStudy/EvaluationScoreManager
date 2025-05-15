@@ -4,6 +4,8 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -44,6 +46,18 @@ import jakarta.persistence.InheritanceType;
     @NamedQuery(name = "Bulletin.findByUpdatedDate", query = "SELECT b FROM Bulletin b WHERE b.updatedDate = :updatedDate"),
     @NamedQuery(name = "Bulletin.findByTitle", query = "SELECT b FROM Bulletin b WHERE b.title = :title"),
     @NamedQuery(name = "Bulletin.findByDuration", query = "SELECT b FROM Bulletin b WHERE b.duration = :duration")})
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "bulletinType",
+        defaultImpl = UserInfo.class
+)
+@JsonSubTypes(
+        value = {
+            @JsonSubTypes.Type(value = ActivityBulletin.class, name = "activity"),
+            @JsonSubTypes.Type(value = SummaryBulletin.class, name = "summary")
+        }
+)
 public class Bulletin implements Serializable {
 
     protected static final long serialVersionUID = 1L;

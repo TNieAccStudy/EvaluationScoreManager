@@ -36,7 +36,8 @@ import java.util.Date;
     @NamedQuery(name = "ActivityConfirmedAttendance.findByActive", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.active = :active"),
     @NamedQuery(name = "ActivityConfirmedAttendance.findByCreatedDate", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.createdDate = :createdDate"),
     @NamedQuery(name = "ActivityConfirmedAttendance.findByUpdatedDate", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.updatedDate = :updatedDate"),
-    @NamedQuery(name = "ActivityConfirmedAttendance.findByProofPicture", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.proofPicture = :proofPicture")})
+    @NamedQuery(name = "ActivityConfirmedAttendance.findByProofPicture", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.proofPicture = :proofPicture"),
+    @NamedQuery(name = "ActivityConfirmedAttendance.findByApproved", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.approved = :approved")})
 public class ActivityConfirmedAttendance implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -64,6 +65,10 @@ public class ActivityConfirmedAttendance implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "proofPicture")
     private String proofPicture;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "approved")
+    private boolean approved;
     @JoinColumn(name = "activity_registry_id", referencedColumnName = "id")
     @OneToOne
     private ActivityRegistry activityRegistryId;
@@ -77,12 +82,13 @@ public class ActivityConfirmedAttendance implements Serializable {
         this.id = id;
     }
 
-    public ActivityConfirmedAttendance(Long id, boolean active, Date createdDate, Date updatedDate, String proofPicture) {
+    public ActivityConfirmedAttendance(Long id, boolean active, Date createdDate, Date updatedDate, String proofPicture, Boolean approved) {
         this.id = id;
         this.active = active;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
         this.proofPicture = proofPicture;
+        this.approved = approved;
     }
 
     public Long getId() {
@@ -123,6 +129,14 @@ public class ActivityConfirmedAttendance implements Serializable {
 
     public void setProofPicture(String proofPicture) {
         this.proofPicture = proofPicture;
+    }
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
     }
 
     public ActivityRegistry getActivityRegistryId() {

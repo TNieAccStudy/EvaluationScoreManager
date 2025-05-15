@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Comment.findAll", query = "SELECT c FROM Comment c")})
+@PrimaryKeyJoinColumn(name = "interaction_ptr_id")
 public class Comment extends Interaction implements Serializable {
 
     @Basic(optional = false)

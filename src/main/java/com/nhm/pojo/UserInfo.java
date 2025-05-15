@@ -4,6 +4,8 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,6 +47,19 @@ import jakarta.persistence.InheritanceType;
     @NamedQuery(name = "UserInfo.findByEmail", query = "SELECT u FROM UserInfo u WHERE u.email = :email"),
     @NamedQuery(name = "UserInfo.findByPhone", query = "SELECT u FROM UserInfo u WHERE u.phone = :phone"),
     @NamedQuery(name = "UserInfo.findByUserRole", query = "SELECT u FROM UserInfo u WHERE u.userRole = :userRole")})
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "userType",
+        defaultImpl = UserInfo.class
+)
+@JsonSubTypes(
+        value = {
+            @JsonSubTypes.Type(value = Student.class, name = "student"),
+            @JsonSubTypes.Type(value = StudentAssistant.class, name = "studentAsisstant"),
+            @JsonSubTypes.Type(value = StudentAffairsOfficer.class, name = "studentAffairsOfficer"),
+        }
+)
 public class UserInfo implements Serializable {
 
     protected static final long serialVersionUID = 1L;

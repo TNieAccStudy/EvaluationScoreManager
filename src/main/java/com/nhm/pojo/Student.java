@@ -11,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -30,6 +31,7 @@ import java.util.Collection;
     @NamedQuery(name = "Student.findAll", query = "SELECT s FROM Student s"),
     @NamedQuery(name = "Student.findByAchievement", query = "SELECT s FROM Student s WHERE s.achievement = :achievement"),
     @NamedQuery(name = "Student.findByMssv", query = "SELECT s FROM Student s WHERE s.mssv = :mssv")})
+@PrimaryKeyJoinColumn(name = "user_ptr_id")
 public class Student extends UserInfo implements Serializable {
 
     @Basic(optional = false)

@@ -11,6 +11,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -26,6 +27,7 @@ import java.util.Collection;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "SummaryBulletin.findAll", query = "SELECT s FROM SummaryBulletin s")})
+@PrimaryKeyJoinColumn(name = "bulletin_ptr_id")
 public class SummaryBulletin extends Bulletin implements Serializable {
 
     @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)

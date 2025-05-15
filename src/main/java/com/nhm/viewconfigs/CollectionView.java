@@ -2,15 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.nhm.configs;
-
+package com.nhm.viewconfigs;
 
 /**
  *
  * @author GIGABYTE
  */
-public class ViewConfigs {
-    public static class Public {}
-    public static class Internal extends Public {}
-    public static class GetCollection {}
+public class CollectionView {
+    public static class Collection {}
+    public static class BulletinCollection extends Collection {}
+    public static class TermCollection extends Collection {}
 }
