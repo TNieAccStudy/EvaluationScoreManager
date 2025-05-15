@@ -54,6 +54,7 @@ CREATE TABLE `activity_confirmed_attendance` (
   `created_date` datetime(6) NOT NULL,
   `updated_date` datetime(6) NOT NULL,
   `proofPicture` varchar(255) NOT NULL,
+  `approved` tinyint(1) NOT NULL,
   `activity_registry_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `activity_registry_id` (`activity_registry_id`),
@@ -553,4 +554,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-15  0:29:44
+-- Dump completed on 2025-05-15 17:56:23

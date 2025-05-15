@@ -101,6 +101,7 @@ class ActivityRegistry(BaseModel):
 
 class ActivityConfirmedAttendance(BaseModel):
     proofPicture = models.CharField(max_length=255, null=False)
+    approved = models.BooleanField(default=False)
     activity_registry = models.OneToOneField(ActivityRegistry, models.CASCADE, null=True)
 
     class Meta:
