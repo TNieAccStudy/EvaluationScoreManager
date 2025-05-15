@@ -75,6 +75,7 @@ class Bulletin(BaseModel):
     title = models.CharField(max_length=255, null=False)
     content = models.TextField(null=True)
     duration = models.DateTimeField(null=False)
+    state = models.CharField(max_length=50, null=False)
 
     class Meta:
         db_table = "bulletin"
@@ -101,7 +102,7 @@ class ActivityRegistry(BaseModel):
 
 class ActivityConfirmedAttendance(BaseModel):
     proofPicture = models.CharField(max_length=255, null=False)
-    approved = models.BooleanField(default=False)
+    censor_state = models.CharField(max_length=50, null=False)
     activity_registry = models.OneToOneField(ActivityRegistry, models.CASCADE, null=True)
 
     class Meta:
