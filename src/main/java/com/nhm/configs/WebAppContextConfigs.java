@@ -26,9 +26,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 @EnableTransactionManagement
 @ComponentScan(basePackages = {
-    "com.dht.controllers",
-    "com.dht.repositories",
-    "com.dht.services"
+    "com.nhm.controllers",
+    "com.nhm.repositories",
+    "com.nhm.services"
 })
 public class WebAppContextConfigs implements WebMvcConfigurer {
 

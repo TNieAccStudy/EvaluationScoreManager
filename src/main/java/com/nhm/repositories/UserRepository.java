@@ -1,12 +1,12 @@
 package com.nhm.repositories;
-import com.nhm.pojo.User;
+import com.nhm.pojo.UserInfo;
 
 /**
  *
  * @author admin
  */
 public interface UserRepository {
-    User getUserByUsername(String username);
-    User addUser(User u);
+    UserInfo getUserByUsername(String username);
+    UserInfo addUser(UserInfo u);
     boolean authenticate(String username, String password);
 }

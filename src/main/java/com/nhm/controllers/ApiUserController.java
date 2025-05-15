@@ -4,9 +4,9 @@
  */
 package com.nhm.controllers;
 
-import com.dht.pojo.User;
-import com.dht.services.UserService;
-import com.dht.utils.JwtUtils;
+import com.nhm.pojo.UserInfo;
+import com.nhm.services.UserService;
+import com.nhm.utils.JwtUtils;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Map;
@@ -38,12 +38,12 @@ public class ApiUserController {
     @PostMapping(path = "/users", 
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, 
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> create(@RequestParam Map<String, String> params, @RequestParam(value = "avatar") MultipartFile avatar) {
+    public ResponseEntity<UserInfo> create(@RequestParam Map<String, String> params, @RequestParam(value = "avatar") MultipartFile avatar) {
         return new ResponseEntity<>(this.userDetailsService.addUser(params, avatar), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User u) {
+    public ResponseEntity<?> login(@RequestBody UserInfo u) {
 
         if (this.userDetailsService.authenticate(u.getUsername(), u.getPassword())) {
             try {
@@ -59,7 +59,7 @@ public class ApiUserController {
     @RequestMapping("/secure/profile")
     @ResponseBody
     @CrossOrigin
-    public ResponseEntity<User> getProfile(Principal principal) {
+    public ResponseEntity<UserInfo> getProfile(Principal principal) {
         return new ResponseEntity<>(this.userDetailsService.getUserByUsername(principal.getName()), HttpStatus.OK);
     }
 }

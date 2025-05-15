@@ -4,8 +4,8 @@
  */
 package com.nhm.repositories.impl;
 
-import com.dht.pojo.User;
-import com.dht.repositories.UserRepository;
+import com.nhm.pojo.UserInfo;
+import com.nhm.repositories.UserRepository;
 import jakarta.persistence.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +31,17 @@ public class UserRepositoryImpl implements UserRepository {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public User getUserByUsername(String username) {
+    public UserInfo getUserByUsername(String username) {
         Session s = this.factory.getObject().getCurrentSession();
-        Query q = s.createNamedQuery("User.findByUsername", User.class);
+        Query q = s.createNamedQuery("User.findByUsername", UserInfo.class);
         q.setParameter("username", username);
 
-        return (User) q.getSingleResult();
+        return (UserInfo) q.getSingleResult();
 
     }
 
     @Override
-    public User addUser(User u) {
+    public UserInfo addUser(UserInfo u) {
         Session s = this.factory.getObject().getCurrentSession();
         s.persist(u);
         
@@ -50,7 +50,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean authenticate(String username, String password) {
-        User u = this.getUserByUsername(username);
+        UserInfo u = this.getUserByUsername(username);
 
         return this.passwordEncoder.matches(password, u.getPassword());
     }
