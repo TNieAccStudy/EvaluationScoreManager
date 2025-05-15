@@ -6,7 +6,7 @@ package com.nhm.services.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.nhm.pojo.User;
+import com.nhm.pojo.UserInfo;
 import com.nhm.repositories.UserRepository;
 import com.nhm.services.UserService;
 import java.io.IOException;
@@ -40,13 +40,13 @@ public class UserServiceImpl implements UserService {
     private Cloudinary cloudinary;
 
     @Override
-    public User getUserByUsername(String username) {
+    public UserInfo getUserByUsername(String username) {
         return this.userRepo.getUserByUsername(username);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User u = this.getUserByUsername(username);
+        UserInfo u = this.getUserByUsername(username);
         if (u == null) {
             throw new UsernameNotFoundException("Invalid username!");
         }
@@ -59,8 +59,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addUser(Map<String, String> params, MultipartFile avatar) {
-        User u = new User();
+    public UserInfo addUser(Map<String, String> params, MultipartFile avatar) {
+        UserInfo u = new UserInfo();
         u.setFirstName(params.get("firstName"));
         u.setLastName(params.get("lastName"));
         u.setEmail(params.get("email"));
@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
                 Map res = cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 u.setAvatar(res.get("secure_url").toString());
             } catch (IOException ex) {
-//                Logger.getLogger(ProductServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         

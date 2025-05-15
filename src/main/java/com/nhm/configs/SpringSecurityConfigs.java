@@ -33,9 +33,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableWebSecurity
 @EnableTransactionManagement
 @ComponentScan(basePackages = {
-    "com.dht.controllers",
-    "com.dht.repositories",
-    "com.dht.services"
+    "com.nhm.controllers",
+    "com.nhm.repositories",
+    "com.nhm.services"
 })
 public class SpringSecurityConfigs {
 
@@ -54,9 +54,9 @@ public class SpringSecurityConfigs {
                 .csrf(c -> c.disable()).authorizeHttpRequests(requests
                 -> requests.requestMatchers("/", "/home").authenticated()
                         .requestMatchers("/api/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/products").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,
-                                "/products/**").hasAnyRole("USER", "ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/products").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.GET,
+//                                "/products/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(form -> form.loginPage("/login")
                 .loginProcessingUrl("/login")
