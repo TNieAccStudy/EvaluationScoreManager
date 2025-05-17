@@ -22,11 +22,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -37,7 +33,6 @@ import java.util.Date;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name = "cancel_requirement")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "CancelRequirement.findAll", query = "SELECT c FROM CancelRequirement c"),
     @NamedQuery(name = "CancelRequirement.findById", query = "SELECT c FROM CancelRequirement c WHERE c.id = :id"),
@@ -58,7 +53,7 @@ import java.util.Date;
             @JsonSubTypes.Type(value = CancelBulletinRequirement.class, name = "bulletin")
         }
 )
-public class CancelRequirement implements Serializable {
+public class CancelRequirement extends BaseModel implements Serializable {
 
     protected static final long serialVersionUID = 1L;
     @Id
@@ -67,23 +62,6 @@ public class CancelRequirement implements Serializable {
     @Column(name = "id")
     @JsonView(DisplayView.Public.class)
     protected Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "active")
-    @JsonView(DisplayView.Public.class)
-    protected boolean active;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(DisplayView.Public.class)
-    protected Date createdDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_date")
-    @JsonView(DisplayView.Public.class)
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date updatedDate;
     @Size(max = 255)
     @Column(name = "reason")
     @JsonView(DisplayView.Public.class)
@@ -94,11 +72,10 @@ public class CancelRequirement implements Serializable {
     @JsonView(DisplayView.Public.class)
     protected String reasonDetail;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "executed_status")
     @JsonView(DisplayView.Public.class)
-    protected String executedStatus;
+    protected String executedStatus = ExecuteStatus.PENDING.name();
     @JoinColumn(name = "student_affairs_officer_id", referencedColumnName = "id")
     @ManyToOne
     @JsonView(DisplayView.Public.class)

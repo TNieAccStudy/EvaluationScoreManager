@@ -18,10 +18,11 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  *
@@ -29,7 +30,6 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "student")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Student.findAll", query = "SELECT s FROM Student s"),
     @NamedQuery(name = "Student.findByAchievement", query = "SELECT s FROM Student s WHERE s.achievement = :achievement"),
@@ -38,11 +38,10 @@ import java.util.Collection;
 public class Student extends UserInfo implements Serializable {
 
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "achievement")
     @JsonView(DisplayView.Internal.class)
-    private String achievement;
+    private String achievement = Achievement.Good.name();
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 11)
@@ -83,7 +82,6 @@ public class Student extends UserInfo implements Serializable {
         this.mssv = mssv;
     }
 
-    @XmlTransient
     public Collection<ActivityRegistry> getActivityRegistryCollection() {
         return activityRegistryCollection;
     }
@@ -92,7 +90,6 @@ public class Student extends UserInfo implements Serializable {
         this.activityRegistryCollection = activityRegistryCollection;
     }
 
-    @XmlTransient
     public Collection<Interaction> getInteractionCollection() {
         return interactionCollection;
     }
@@ -101,7 +98,6 @@ public class Student extends UserInfo implements Serializable {
         this.interactionCollection = interactionCollection;
     }
 
-    @XmlTransient
     public Collection<MissingActivity> getMissingActivityCollection() {
         return missingActivityCollection;
     }
@@ -133,6 +129,35 @@ public class Student extends UserInfo implements Serializable {
     @Override
     public String toString() {
         return "com.nhm.pojo.Student[ id=" + id + " ]";
+    }
+    
+    public static enum Achievement{
+        Excellent,
+        Good,
+        Fair,
+        Average,
+        Poor,
+        Failing;
+        
+        private static Map<Predicate<Integer>, Achievement> convertionTable = new HashMap<>();
+        
+        static {
+            convertionTable.put((s)-> (s<=100 && s >=90), Excellent);
+            convertionTable.put((s)-> (s<90 && s>=80), Good);
+            convertionTable.put((s)-> (s<80 && s>=65), Fair);
+            convertionTable.put((s)-> (s<65 && s>=50), Average);
+            convertionTable.put((s)-> (s<50 && s>=35), Poor);
+            convertionTable.put((s)-> (s<35 && s>=0), Failing);
+        }
+        
+        public static Achievement getAchievementByScore(int score) {
+            return convertionTable.entrySet().stream()
+                    .filter(e -> e.getKey().test(score))
+                    .map(Map.Entry::getValue)
+                    .findFirst()
+                    .orElse(null);
+        }
+        
     }
     
 }

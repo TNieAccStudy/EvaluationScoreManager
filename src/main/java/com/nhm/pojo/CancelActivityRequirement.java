@@ -13,7 +13,6 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
@@ -22,7 +21,6 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "cancel_activity_requirement")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "CancelActivityRequirement.findAll", query = "SELECT c FROM CancelActivityRequirement c")})
 @PrimaryKeyJoinColumn(name = "cancelrequirement_ptr_id")

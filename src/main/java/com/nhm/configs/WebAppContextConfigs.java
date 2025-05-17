@@ -34,7 +34,6 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-//        registry.addFormatter(new CategoryFormatter());
     }
 
     @Override

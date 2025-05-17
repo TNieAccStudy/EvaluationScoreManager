@@ -5,7 +5,6 @@
 package com.nhm.services;
 
 import com.nhm.pojo.UserInfo;
-import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface UserService extends UserDetailsService {
     UserInfo getUserByUsername(String username);
-    UserInfo addUser(Map<String, String> params, MultipartFile avatar);
+    UserInfo addUser(UserInfo user, MultipartFile avatar);
     boolean authenticate(String username, String password);
+    UserInfo getUserById(int id);
 }

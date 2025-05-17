@@ -10,9 +10,6 @@ import jakarta.persistence.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +30,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public UserInfo getUserByUsername(String username) {
         Session s = this.factory.getObject().getCurrentSession();
-        Query q = s.createNamedQuery("User.findByUsername", UserInfo.class);
+        Query q = s.createNamedQuery("UserInfo.findByUsername", UserInfo.class);
         q.setParameter("username", username);
 
         return (UserInfo) q.getSingleResult();
@@ -53,5 +50,11 @@ public class UserRepositoryImpl implements UserRepository {
         UserInfo u = this.getUserByUsername(username);
 
         return this.passwordEncoder.matches(password, u.getPassword());
+    }
+
+    @Override
+    public UserInfo getUserById(int id) {
+        Session s = factory.getObject().getCurrentSession();
+        return s.get(UserInfo.class, id);
     }
 }

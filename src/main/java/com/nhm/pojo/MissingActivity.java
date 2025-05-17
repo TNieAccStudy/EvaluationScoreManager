@@ -19,11 +19,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -33,7 +29,6 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "missing_activity")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "MissingActivity.findAll", query = "SELECT m FROM MissingActivity m"),
     @NamedQuery(name = "MissingActivity.findById", query = "SELECT m FROM MissingActivity m WHERE m.id = :id"),
@@ -42,7 +37,7 @@ import java.util.Date;
     @NamedQuery(name = "MissingActivity.findByUpdatedDate", query = "SELECT m FROM MissingActivity m WHERE m.updatedDate = :updatedDate"),
     @NamedQuery(name = "MissingActivity.findByProofPicture", query = "SELECT m FROM MissingActivity m WHERE m.proofPicture = :proofPicture"),
     @NamedQuery(name = "MissingActivity.findByExecutedStatus", query = "SELECT m FROM MissingActivity m WHERE m.executedStatus = :executedStatus")})
-public class MissingActivity implements Serializable {
+public class MissingActivity extends BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -51,23 +46,6 @@ public class MissingActivity implements Serializable {
     @Column(name = "id")
     @JsonView(DisplayView.Public.class)
     private Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "active")
-    @JsonView(DisplayView.Public.class)
-    private boolean active;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(DisplayView.Public.class)
-    private Date createdDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(DisplayView.Public.class)
-    private Date updatedDate;
     @Lob
     @Size(max = 2147483647)
     @Column(name = "proof_content")
@@ -78,11 +56,10 @@ public class MissingActivity implements Serializable {
     @JsonView(DisplayView.Public.class)
     private String proofPicture;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "executed_status")
     @JsonView(DisplayView.Public.class)
-    private String executedStatus;
+    private String executedStatus = ExecuteStatus.PENDING.name();
     @JoinColumn(name = "missing_activity_id", referencedColumnName = "id")
     @OneToOne
     @JsonView(DisplayView.Attach.class)
@@ -125,30 +102,6 @@ public class MissingActivity implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
     }
 
     public String getProofContent() {

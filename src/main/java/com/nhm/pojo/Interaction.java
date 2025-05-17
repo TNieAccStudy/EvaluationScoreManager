@@ -21,10 +21,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -35,7 +31,6 @@ import java.util.Date;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name = "interaction")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Interaction.findAll", query = "SELECT i FROM Interaction i"),
     @NamedQuery(name = "Interaction.findById", query = "SELECT i FROM Interaction i WHERE i.id = :id"),
@@ -54,7 +49,7 @@ import java.util.Date;
             @JsonSubTypes.Type(value = Reactions.class, name = "reactions")
         }
 )
-public class Interaction implements Serializable {
+public class Interaction extends BaseModel implements Serializable {
 
     protected static final long serialVersionUID = 1L;
     @Id
@@ -63,23 +58,6 @@ public class Interaction implements Serializable {
     @Column(name = "id")
     @JsonView(DisplayView.Public.class)
     protected Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "active")
-    @JsonView(DisplayView.Public.class)
-    protected boolean active;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(DisplayView.Public.class)
-    protected Date createdDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(DisplayView.Public.class)
-    protected Date updatedDate;
     @JoinColumn(name = "bulletin_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     @JsonView(DisplayView.Public.class)
@@ -109,30 +87,6 @@ public class Interaction implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
     }
 
     public Bulletin getBulletinId() {

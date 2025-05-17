@@ -20,8 +20,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -31,7 +29,6 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "term")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Term.findAll", query = "SELECT t FROM Term t"),
     @NamedQuery(name = "Term.findById", query = "SELECT t FROM Term t WHERE t.id = :id"),
@@ -98,7 +95,6 @@ public class Term implements Serializable {
         this.maxValue = maxValue;
     }
 
-    @XmlTransient
     public Collection<ExtraActivity> getExtraActivityCollection() {
         return extraActivityCollection;
     }

@@ -18,11 +18,8 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 import jakarta.persistence.InheritanceType;
@@ -34,7 +31,6 @@ import jakarta.persistence.InheritanceType;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name = "user_info")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UserInfo.findAll", query = "SELECT u FROM UserInfo u"),
     @NamedQuery(name = "UserInfo.findById", query = "SELECT u FROM UserInfo u WHERE u.id = :id"),
@@ -62,7 +58,7 @@ import jakarta.persistence.InheritanceType;
             @JsonSubTypes.Type(value = StudentAffairsOfficer.class, name = "studentAffairsOfficer"),
         }
 )
-public class UserInfo implements Serializable {
+public class UserInfo extends BaseModel implements Serializable {
 
     protected static final long serialVersionUID = 1L;
     @Id
@@ -71,23 +67,6 @@ public class UserInfo implements Serializable {
     @Column(name = "id")
     @JsonView(DisplayView.Public.class)
     protected Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "active")
-    @JsonView(DisplayView.Public.class)
-    protected boolean active;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(DisplayView.Public.class)
-    protected Date createdDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(DisplayView.Public.class)
-    protected Date updatedDate;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -113,7 +92,6 @@ public class UserInfo implements Serializable {
     @JsonView(DisplayView.Internal.class)
     private String password;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 124)
     @Column(name = "avatar")
     @JsonView(DisplayView.Public.class)
@@ -133,7 +111,6 @@ public class UserInfo implements Serializable {
     @JsonView(DisplayView.Internal.class)
     protected String phone;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "user_role")
     @JsonView(DisplayView.Public.class)
@@ -166,30 +143,6 @@ public class UserInfo implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
     }
 
     public String getFirstName() {
@@ -279,6 +232,12 @@ public class UserInfo implements Serializable {
     @Override
     public String toString() {
         return "com.nhm.pojo.UserInfo[ id=" + id + " ]";
+    }
+    
+    public static enum UserRole{
+        ROLE_STUDENT,
+        ROLE_ASSISTANT,
+        ROLE_AFFAIRS
     }
     
 }

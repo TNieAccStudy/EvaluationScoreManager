@@ -20,8 +20,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -31,7 +29,6 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "semester")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Semester.findAll", query = "SELECT s FROM Semester s"),
     @NamedQuery(name = "Semester.findById", query = "SELECT s FROM Semester s WHERE s.id = :id"),
@@ -98,7 +95,6 @@ public class Semester implements Serializable {
         this.year = year;
     }
 
-    @XmlTransient
     public Collection<ExtraActivity> getExtraActivityCollection() {
         return extraActivityCollection;
     }

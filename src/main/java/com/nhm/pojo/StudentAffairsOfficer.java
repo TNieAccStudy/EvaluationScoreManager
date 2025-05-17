@@ -12,8 +12,6 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -23,7 +21,6 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "student_affairs_officer")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "StudentAffairsOfficer.findAll", query = "SELECT s FROM StudentAffairsOfficer s")})
 @PrimaryKeyJoinColumn(name = "user_ptr_id")
@@ -36,7 +33,6 @@ public class StudentAffairsOfficer extends UserInfo implements Serializable {
     public StudentAffairsOfficer() {
     }
     
-    @XmlTransient
     public Collection<CancelRequirement> getCancelRequirementCollection() {
         return cancelRequirementCollection;
     }

@@ -4,6 +4,7 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -26,8 +27,6 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -40,7 +39,6 @@ import jakarta.persistence.InheritanceType;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name = "bulletin")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Bulletin.findAll", query = "SELECT b FROM Bulletin b"),
     @NamedQuery(name = "Bulletin.findById", query = "SELECT b FROM Bulletin b WHERE b.id = :id"),
@@ -49,7 +47,7 @@ import jakarta.persistence.InheritanceType;
     @NamedQuery(name = "Bulletin.findByUpdatedDate", query = "SELECT b FROM Bulletin b WHERE b.updatedDate = :updatedDate"),
     @NamedQuery(name = "Bulletin.findByTitle", query = "SELECT b FROM Bulletin b WHERE b.title = :title"),
     @NamedQuery(name = "Bulletin.findByDuration", query = "SELECT b FROM Bulletin b WHERE b.duration = :duration"),
-    @NamedQuery(name = "CancelRequirement.findByState", query = "SELECT c FROM CancelRequirement c WHERE c.state = :state")})
+    @NamedQuery(name = "Bulletin.findByState", query = "SELECT c FROM Bulletin c WHERE c.state = :state")})
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
@@ -62,7 +60,7 @@ import jakarta.persistence.InheritanceType;
             @JsonSubTypes.Type(value = SummaryBulletin.class, name = "summary")
         }
 )
-public class Bulletin implements Serializable {
+public class Bulletin extends BaseModel implements Serializable {
 
     protected static final long serialVersionUID = 1L;
     @Id
@@ -71,23 +69,6 @@ public class Bulletin implements Serializable {
     @Column(name = "id")
     @JsonView(DisplayView.Public.class)
     protected Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "active")
-    @JsonView(DisplayView.Public.class)
-    protected boolean active;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(DisplayView.Public.class)
-    protected Date createdDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonView(DisplayView.Public.class)
-    protected Date updatedDate;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -103,6 +84,7 @@ public class Bulletin implements Serializable {
     @NotNull
     @Column(name = "duration")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     @JsonView(DisplayView.Public.class)
     protected Date duration;
     @Basic(optional = false)
@@ -143,30 +125,6 @@ public class Bulletin implements Serializable {
         this.id = id;
     }
 
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -199,7 +157,6 @@ public class Bulletin implements Serializable {
         this.state = state;
     }
 
-    @XmlTransient
     public Collection<CancelBulletinRequirement> getCancelBulletinRequirementCollection() {
         return cancelBulletinRequirementCollection;
     }
@@ -208,7 +165,6 @@ public class Bulletin implements Serializable {
         this.cancelBulletinRequirementCollection = cancelBulletinRequirementCollection;
     }
 
-    @XmlTransient
     public Collection<Interaction> getInteractionCollection() {
         return interactionCollection;
     }
@@ -240,6 +196,11 @@ public class Bulletin implements Serializable {
     @Override
     public String toString() {
         return "com.nhm.pojo.Bulletin[ id=" + id + " ]";
+    }
+    
+    public static enum BulletinState {
+        OPENING,
+        CLOSED
     }
     
 }

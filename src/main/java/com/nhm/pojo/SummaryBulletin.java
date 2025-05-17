@@ -13,8 +13,6 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -24,7 +22,6 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "summary_bulletin")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "SummaryBulletin.findAll", query = "SELECT s FROM SummaryBulletin s")})
 @PrimaryKeyJoinColumn(name = "bulletin_ptr_id")
@@ -37,7 +34,6 @@ public class SummaryBulletin extends Bulletin implements Serializable {
     public SummaryBulletin() {
     }
 
-    @XmlTransient
     public Collection<MissingActivity> getMissingActivityCollection() {
         return missingActivityCollection;
     }
