@@ -4,6 +4,10 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,11 +18,8 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 import jakarta.persistence.InheritanceType;
@@ -30,7 +31,6 @@ import jakarta.persistence.InheritanceType;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name = "user_info")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UserInfo.findAll", query = "SELECT u FROM UserInfo u"),
     @NamedQuery(name = "UserInfo.findById", query = "SELECT u FROM UserInfo u WHERE u.id = :id"),
@@ -45,69 +45,90 @@ import jakarta.persistence.InheritanceType;
     @NamedQuery(name = "UserInfo.findByEmail", query = "SELECT u FROM UserInfo u WHERE u.email = :email"),
     @NamedQuery(name = "UserInfo.findByPhone", query = "SELECT u FROM UserInfo u WHERE u.phone = :phone"),
     @NamedQuery(name = "UserInfo.findByUserRole", query = "SELECT u FROM UserInfo u WHERE u.userRole = :userRole")})
-public class UserInfo implements Serializable {
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "userType",
+        defaultImpl = UserInfo.class
+)
+@JsonSubTypes(
+        value = {
+            @JsonSubTypes.Type(value = Student.class, name = "student"),
+            @JsonSubTypes.Type(value = StudentAssistant.class, name = "studentAsisstant"),
+            @JsonSubTypes.Type(value = StudentAffairsOfficer.class, name = "studentAffairsOfficer"),
+        }
+)
+public class UserInfo extends BaseModel implements Serializable {
 
     protected static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "active")
-    protected boolean active;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date createdDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date updatedDate;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "first_name")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected String firstName;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "last_name")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected String lastName;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 60)
     @Column(name = "username")
+    @JsonView(DisplayView.Internal.class)
     protected String username;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 124)
     @Column(name = "password")
+    @JsonView(DisplayView.Internal.class)
     private String password;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 124)
     @Column(name = "avatar")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected String avatar;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 124)
     @Column(name = "email")
+    @JsonView(DisplayView.Internal.class)
     protected String email;
     // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 11)
     @Column(name = "phone")
+    @JsonView(DisplayView.Internal.class)
     protected String phone;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "user_role")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private String userRole;
 
     public UserInfo() {
@@ -137,30 +158,6 @@ public class UserInfo implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
     }
 
     public String getFirstName() {
@@ -250,6 +247,12 @@ public class UserInfo implements Serializable {
     @Override
     public String toString() {
         return "com.nhm.pojo.UserInfo[ id=" + id + " ]";
+    }
+    
+    public static enum UserRole{
+        ROLE_STUDENT,
+        ROLE_ASSISTANT,
+        ROLE_AFFAIRS
     }
     
 }

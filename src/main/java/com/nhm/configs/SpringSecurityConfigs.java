@@ -4,15 +4,11 @@
  */
 package com.nhm.configs;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,7 +18,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 /**
@@ -47,45 +42,36 @@ public class SpringSecurityConfigs {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
-            Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(c -> c.disable()).authorizeHttpRequests(requests
-                -> requests.requestMatchers("/", "/home").authenticated()
-                        .requestMatchers("/api/**").permitAll()
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
+//            Exception {
+//        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//                .csrf(c -> c.disable()).authorizeHttpRequests(requests ->
+//                 requests.requestMatchers("/", "/home").authenticated()
+//                        .requestMatchers("/api/**").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/products").hasRole("ADMIN")
 //                        .requestMatchers(HttpMethod.GET,
 //                                "/products/**").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().authenticated())
-                .formLogin(form -> form.loginPage("/login")
-                .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error=true").permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
+//                        .anyRequest().authenticated())
+//                .formLogin(form -> form.loginPage("/login")
+//                .loginProcessingUrl("/login")
+//                .defaultSuccessUrl("/", true)
+//                .failureUrl("/login?error=true").permitAll())
+//                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
+//        return http.build();
+//    }
+    
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(srf -> srf.disable());
+        
         return http.build();
     }
 
     @Bean
     public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
         return new HandlerMappingIntrospector();
-    }
-
-    @Bean
-    public Cloudinary cloudinary() {
-        Cloudinary cloudinary
-                = new Cloudinary(ObjectUtils.asMap(
-                        "cloud_name", "dxxwcby8l",
-                        "api_key", "448651448423589",
-                        "api_secret", "ftGud0r1TTqp0CGp5tjwNmkAm-A",
-                        "secure", true));
-        return cloudinary;
-    }
-
-    @Bean
-    @Order(0)
-    public StandardServletMultipartResolver multipartResolver() {
-        return new StandardServletMultipartResolver();
     }
 
     @Bean

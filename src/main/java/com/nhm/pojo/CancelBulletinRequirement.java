@@ -4,18 +4,15 @@
  */
 package com.nhm.pojo;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
@@ -24,13 +21,17 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "cancel_bulletin_requirement")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "CancelBulletinRequirement.findAll", query = "SELECT c FROM CancelBulletinRequirement c")})
+@PrimaryKeyJoinColumn(name = "cancelrequirement_ptr_id")
 public class CancelBulletinRequirement extends CancelRequirement implements Serializable {
 
     @JoinColumn(name = "bulletin_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Bulletin bulletinId;
 
     public CancelBulletinRequirement() {

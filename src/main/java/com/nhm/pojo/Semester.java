@@ -4,6 +4,9 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.CollectionView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,8 +20,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -28,7 +29,6 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "semester")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Semester.findAll", query = "SELECT s FROM Semester s"),
     @NamedQuery(name = "Semester.findById", query = "SELECT s FROM Semester s WHERE s.id = :id"),
@@ -41,18 +41,34 @@ public class Semester implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "name")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private String name;
     @Basic(optional = false)
     @NotNull
     @Column(name = "year")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private int year;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "semesterId")
+    @JsonView(CollectionView.SemesterColelction.class)
     private Collection<ExtraActivity> extraActivityCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "semesterId")
+    @JsonView(CollectionView.SemesterColelction.class)
+    private Collection<Bulletin> bulletinCollection;
 
     public Semester() {
     }
@@ -91,13 +107,20 @@ public class Semester implements Serializable {
         this.year = year;
     }
 
-    @XmlTransient
     public Collection<ExtraActivity> getExtraActivityCollection() {
         return extraActivityCollection;
     }
 
     public void setExtraActivityCollection(Collection<ExtraActivity> extraActivityCollection) {
         this.extraActivityCollection = extraActivityCollection;
+    }
+
+    public Collection<Bulletin> getBulletinCollection() {
+        return bulletinCollection;
+    }
+
+    public void setBulletinCollection(Collection<Bulletin> bulletinCollection) {
+        this.bulletinCollection = bulletinCollection;
     }
 
     @Override

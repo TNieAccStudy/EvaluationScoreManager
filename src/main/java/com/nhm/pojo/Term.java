@@ -5,7 +5,8 @@
 package com.nhm.pojo;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.nhm.configs.ViewConfigs;
+import com.nhm.viewconfigs.CollectionView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -19,8 +20,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -30,7 +29,6 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "term")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Term.findAll", query = "SELECT t FROM Term t"),
     @NamedQuery(name = "Term.findById", query = "SELECT t FROM Term t WHERE t.id = :id"),
@@ -43,21 +41,30 @@ public class Term implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    @JsonView(ViewConfigs.Internal.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "name")
-    @JsonView(ViewConfigs.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private String name;
     @Basic(optional = false)
     @NotNull
     @Column(name = "max_value")
-    @JsonView(ViewConfigs.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private int maxValue;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "termId")
-    @JsonView(ViewConfigs.GetCollection.class)
+    @JsonView(CollectionView.TermCollection.class)
     private Collection<ExtraActivity> extraActivityCollection;
 
     public Term() {
@@ -97,7 +104,6 @@ public class Term implements Serializable {
         this.maxValue = maxValue;
     }
 
-    @XmlTransient
     public Collection<ExtraActivity> getExtraActivityCollection() {
         return extraActivityCollection;
     }

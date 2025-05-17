@@ -4,6 +4,8 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,10 +18,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,39 +28,42 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "activity_registry")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "ActivityRegistry.findAll", query = "SELECT a FROM ActivityRegistry a"),
     @NamedQuery(name = "ActivityRegistry.findById", query = "SELECT a FROM ActivityRegistry a WHERE a.id = :id"),
     @NamedQuery(name = "ActivityRegistry.findByActive", query = "SELECT a FROM ActivityRegistry a WHERE a.active = :active"),
     @NamedQuery(name = "ActivityRegistry.findByCreatedDate", query = "SELECT a FROM ActivityRegistry a WHERE a.createdDate = :createdDate"),
     @NamedQuery(name = "ActivityRegistry.findByUpdatedDate", query = "SELECT a FROM ActivityRegistry a WHERE a.updatedDate = :updatedDate")})
-public class ActivityRegistry implements Serializable {
+public class ActivityRegistry extends BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Long id;
-    @Basic(optional = false)
+    @JoinColumn(name = "student_id", referencedColumnName = "id", nullable = false)
     @NotNull
-    @Column(name = "active")
-    private boolean active;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
-    @JoinColumn(name = "student_id", referencedColumnName = "id")
     @ManyToOne
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Student studentId;
+    @JoinColumn(name = "extra_activity_id", referencedColumnName = "id", nullable = false)
+    @NotNull
+    @ManyToOne
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
+    private ExtraActivity extraActivityId;
     @OneToOne(mappedBy = "activityRegistryId")
+    @JsonView(DisplayView.Attach.class)
     private ActivityConfirmedAttendance activityConfirmedAttendance;
 
     public ActivityRegistry() {
@@ -86,36 +88,20 @@ public class ActivityRegistry implements Serializable {
         this.id = id;
     }
 
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-
     public Student getStudentId() {
         return studentId;
     }
 
     public void setStudentId(Student studentId) {
         this.studentId = studentId;
+    }
+
+    public ExtraActivity getExtraActivityId() {
+        return extraActivityId;
+    }
+
+    public void setExtraActivityId(ExtraActivity extraActivityId) {
+        this.extraActivityId = extraActivityId;
     }
 
     public ActivityConfirmedAttendance getActivityConfirmedAttendance() {

@@ -4,6 +4,10 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.CollectionView;
+import com.nhm.viewconfigs.DisplayView;
+import com.nhm.viewconfigs.RoleView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -18,12 +22,8 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -34,7 +34,6 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "extra_activity")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "ExtraActivity.findAll", query = "SELECT e FROM ExtraActivity e"),
     @NamedQuery(name = "ExtraActivity.findById", query = "SELECT e FROM ExtraActivity e WHERE e.id = :id"),
@@ -43,56 +42,67 @@ import java.util.Date;
     @NamedQuery(name = "ExtraActivity.findByUpdatedDate", query = "SELECT e FROM ExtraActivity e WHERE e.updatedDate = :updatedDate"),
     @NamedQuery(name = "ExtraActivity.findByBonusScore", query = "SELECT e FROM ExtraActivity e WHERE e.bonusScore = :bonusScore"),
     @NamedQuery(name = "ExtraActivity.findByTitle", query = "SELECT e FROM ExtraActivity e WHERE e.title = :title")})
-public class ExtraActivity implements Serializable {
+public class ExtraActivity extends BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Long id;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "active")
-    private boolean active;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "bonus_score")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private int bonusScore;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "title")
+    @JsonView(DisplayView.Public.class)
     private String title;
     @Lob
     @Size(max = 2147483647)
     @Column(name = "description")
+    @JsonView(DisplayView.Public.class)
     private String description;
     @OneToMany(mappedBy = "extraActivityId")
+    @JsonView(CollectionView.ActivityColelction.class)
     private Collection<ActivityBulletin> activityBulletinCollection;
     @JoinColumn(name = "semester_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Semester semesterId;
     @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView(RoleView.AssistantRole.class)
     private StudentAssistant studentAssistantId;
     @JoinColumn(name = "term_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Term termId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "extraActivityId")
+    @JsonView(CollectionView.ActivityColelction.class)
     private Collection<CancelActivityRequirement> cancelActivityRequirementCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "extraActivityId")
+    @JsonView(CollectionView.ActivityColelction.class)
     private Collection<MissingActivity> missingActivityCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "extraActivityId")
+    @JsonView(CollectionView.ActivityColelction.class)
+    private Collection<ActivityRegistry> activityRegistryCollection;
 
     public ExtraActivity() {
     }
@@ -117,31 +127,6 @@ public class ExtraActivity implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-
     public int getBonusScore() {
         return bonusScore;
     }
@@ -166,7 +151,6 @@ public class ExtraActivity implements Serializable {
         this.description = description;
     }
 
-    @XmlTransient
     public Collection<ActivityBulletin> getActivityBulletinCollection() {
         return activityBulletinCollection;
     }
@@ -199,7 +183,6 @@ public class ExtraActivity implements Serializable {
         this.termId = termId;
     }
 
-    @XmlTransient
     public Collection<CancelActivityRequirement> getCancelActivityRequirementCollection() {
         return cancelActivityRequirementCollection;
     }
@@ -208,13 +191,20 @@ public class ExtraActivity implements Serializable {
         this.cancelActivityRequirementCollection = cancelActivityRequirementCollection;
     }
 
-    @XmlTransient
     public Collection<MissingActivity> getMissingActivityCollection() {
         return missingActivityCollection;
     }
 
     public void setMissingActivityCollection(Collection<MissingActivity> missingActivityCollection) {
         this.missingActivityCollection = missingActivityCollection;
+    }
+
+    public Collection<ActivityRegistry> getActivityRegistryCollection() {
+        return activityRegistryCollection;
+    }
+
+    public void setActivityRegistryCollection(Collection<ActivityRegistry> activityRegistryCollection) {
+        this.activityRegistryCollection = activityRegistryCollection;
     }
 
     @Override

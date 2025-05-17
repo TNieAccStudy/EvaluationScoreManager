@@ -21,7 +21,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,31 +58,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfo addUser(Map<String, String> params, MultipartFile avatar) {
-        UserInfo u = new UserInfo();
-        u.setFirstName(params.get("firstName"));
-        u.setLastName(params.get("lastName"));
-        u.setEmail(params.get("email"));
-        u.setPhone(params.get("phone"));
-        u.setUsername(params.get("username"));
-        u.setPassword(this.passwordEncoder.encode(params.get("password")));
-        u.setUserRole("ROLE_USER");
+    public UserInfo addUser(UserInfo user, MultipartFile avatar) {
+        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+        if (user.getUserRole() == null || user.getUserRole().equals(""))
+            user.setUserRole("ROLE_USER");
         
-        if (!avatar.isEmpty()) {
+        if (avatar != null && !avatar.isEmpty()) {
             try {
                 Map res = cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-                u.setAvatar(res.get("secure_url").toString());
+                user.setAvatar(res.get("secure_url").toString());
             } catch (IOException ex) {
                 Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
-        return this.userRepo.addUser(u);
+        return this.userRepo.addUser(user);
     }
 
     @Override
     public boolean authenticate(String username, String password) {
         return this.userRepo.authenticate(username, password);
+    }
+
+    @Override
+    public UserInfo getUserById(int id) {
+        return userRepo.getUserById(id);
     }
 
 }

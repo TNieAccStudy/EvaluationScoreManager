@@ -4,6 +4,8 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,11 +17,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,45 +27,48 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "activity_confirmed_attendance")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "ActivityConfirmedAttendance.findAll", query = "SELECT a FROM ActivityConfirmedAttendance a"),
     @NamedQuery(name = "ActivityConfirmedAttendance.findById", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.id = :id"),
     @NamedQuery(name = "ActivityConfirmedAttendance.findByActive", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.active = :active"),
     @NamedQuery(name = "ActivityConfirmedAttendance.findByCreatedDate", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.createdDate = :createdDate"),
     @NamedQuery(name = "ActivityConfirmedAttendance.findByUpdatedDate", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.updatedDate = :updatedDate"),
-    @NamedQuery(name = "ActivityConfirmedAttendance.findByProofPicture", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.proofPicture = :proofPicture")})
-public class ActivityConfirmedAttendance implements Serializable {
+    @NamedQuery(name = "ActivityConfirmedAttendance.findByProofPicture", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.proofPicture = :proofPicture"),
+    @NamedQuery(name = "ActivityConfirmedAttendance.findByCensorState", query = "SELECT a FROM ActivityConfirmedAttendance a WHERE a.censorState = :censorState")})
+public class ActivityConfirmedAttendance extends BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Long id;
     @Basic(optional = false)
-    @NotNull
-    @Column(name = "active")
-    private boolean active;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
-    @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "proofPicture")
+    @JsonView(DisplayView.Public.class)
     private String proofPicture;
+    @Basic(optional = false)
+    @Size(min = 1, max = 50)
+    @Column(name = "censor_state")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
+    protected String censorState = CensorState.PENDING.name();
     @JoinColumn(name = "activity_registry_id", referencedColumnName = "id")
     @OneToOne
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private ActivityRegistry activityRegistryId;
-    @OneToOne(mappedBy = "missingActivityId")
+    @OneToOne(mappedBy = "activityConfirmedAttendanceId")
+    @JsonView(DisplayView.Attach.class)
     private MissingActivity missingActivity;
 
     public ActivityConfirmedAttendance() {
@@ -77,12 +78,13 @@ public class ActivityConfirmedAttendance implements Serializable {
         this.id = id;
     }
 
-    public ActivityConfirmedAttendance(Long id, boolean active, Date createdDate, Date updatedDate, String proofPicture) {
+    public ActivityConfirmedAttendance(Long id, boolean active, Date createdDate, Date updatedDate, String proofPicture, String censorState) {
         this.id = id;
         this.active = active;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
         this.proofPicture = proofPicture;
+        this.censorState = censorState;
     }
 
     public Long getId() {
@@ -93,36 +95,20 @@ public class ActivityConfirmedAttendance implements Serializable {
         this.id = id;
     }
 
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-
     public String getProofPicture() {
         return proofPicture;
     }
 
     public void setProofPicture(String proofPicture) {
         this.proofPicture = proofPicture;
+    }
+
+    public String getCensorState() {
+        return censorState;
+    }
+
+    public void setCensorState(String censorState) {
+        this.censorState = censorState;
     }
 
     public ActivityRegistry getActivityRegistryId() {
@@ -164,6 +150,12 @@ public class ActivityConfirmedAttendance implements Serializable {
     @Override
     public String toString() {
         return "com.nhm.pojo.ActivityConfirmedAttendance[ id=" + id + " ]";
+    }
+    
+    public static enum CensorState {
+        PENDING,
+        CONFIRMED,
+        CANCEl
     }
     
 }

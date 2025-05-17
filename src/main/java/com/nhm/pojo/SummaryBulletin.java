@@ -4,16 +4,15 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.CollectionView;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -23,29 +22,18 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "summary_bulletin")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "SummaryBulletin.findAll", query = "SELECT s FROM SummaryBulletin s")})
+@PrimaryKeyJoinColumn(name = "bulletin_ptr_id")
 public class SummaryBulletin extends Bulletin implements Serializable {
-
-    @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
-    @OneToOne(optional = false)
-    private Bulletin bulletin;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "summaryBulletinId")
+    @JsonView(CollectionView.SummaryBulletinCollection.class)
     private Collection<MissingActivity> missingActivityCollection;
 
     public SummaryBulletin() {
     }
-    
-    public Bulletin getBulletin() {
-        return bulletin;
-    }
 
-    public void setBulletin(Bulletin bulletin) {
-        this.bulletin = bulletin;
-    }
-
-    @XmlTransient
     public Collection<MissingActivity> getMissingActivityCollection() {
         return missingActivityCollection;
     }

@@ -4,6 +4,8 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,11 +19,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -31,7 +29,6 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "missing_activity")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "MissingActivity.findAll", query = "SELECT m FROM MissingActivity m"),
     @NamedQuery(name = "MissingActivity.findById", query = "SELECT m FROM MissingActivity m WHERE m.id = :id"),
@@ -40,54 +37,63 @@ import java.util.Date;
     @NamedQuery(name = "MissingActivity.findByUpdatedDate", query = "SELECT m FROM MissingActivity m WHERE m.updatedDate = :updatedDate"),
     @NamedQuery(name = "MissingActivity.findByProofPicture", query = "SELECT m FROM MissingActivity m WHERE m.proofPicture = :proofPicture"),
     @NamedQuery(name = "MissingActivity.findByExecutedStatus", query = "SELECT m FROM MissingActivity m WHERE m.executedStatus = :executedStatus")})
-public class MissingActivity implements Serializable {
+public class MissingActivity extends BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "active")
-    private boolean active;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
     @Lob
     @Size(max = 2147483647)
     @Column(name = "proof_content")
+    @JsonView(DisplayView.Public.class)
     private String proofContent;
     @Size(max = 255)
     @Column(name = "proof_picture")
+    @JsonView(DisplayView.Public.class)
     private String proofPicture;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "executed_status")
-    private String executedStatus;
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
+    private String executedStatus = ExecuteStatus.PENDING.name();
     @JoinColumn(name = "missing_activity_id", referencedColumnName = "id")
     @OneToOne
-    private ActivityConfirmedAttendance missingActivityId;
+    @JsonView(DisplayView.Attach.class)
+    private ActivityConfirmedAttendance activityConfirmedAttendanceId;
     @JoinColumn(name = "extra_activity_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private ExtraActivity extraActivityId;
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Student studentId;
     @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
     @ManyToOne
+    @JsonView(DisplayView.Internal.class)
     private StudentAssistant studentAssistantId;
     @JoinColumn(name = "summary_bulletin_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private SummaryBulletin summaryBulletinId;
 
     public MissingActivity() {
@@ -111,30 +117,6 @@ public class MissingActivity implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
     }
 
     public String getProofContent() {
@@ -161,12 +143,12 @@ public class MissingActivity implements Serializable {
         this.executedStatus = executedStatus;
     }
 
-    public ActivityConfirmedAttendance getMissingActivityId() {
-        return missingActivityId;
+    public ActivityConfirmedAttendance getActivityConfirmedAttendanceId() {
+        return activityConfirmedAttendanceId;
     }
 
-    public void setMissingActivityId(ActivityConfirmedAttendance missingActivityId) {
-        this.missingActivityId = missingActivityId;
+    public void setActivityConfirmedAttendanceId(ActivityConfirmedAttendance activityConfirmedAttendanceId) {
+        this.activityConfirmedAttendanceId = activityConfirmedAttendanceId;
     }
 
     public ExtraActivity getExtraActivityId() {

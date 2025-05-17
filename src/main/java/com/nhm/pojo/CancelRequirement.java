@@ -4,8 +4,11 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,13 +21,9 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -35,7 +34,6 @@ import java.util.Date;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name = "cancel_requirement")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "CancelRequirement.findAll", query = "SELECT c FROM CancelRequirement c"),
     @NamedQuery(name = "CancelRequirement.findById", query = "SELECT c FROM CancelRequirement c WHERE c.id = :id"),
@@ -44,42 +42,58 @@ import java.util.Date;
     @NamedQuery(name = "CancelRequirement.findByUpdatedDate", query = "SELECT c FROM CancelRequirement c WHERE c.updatedDate = :updatedDate"),
     @NamedQuery(name = "CancelRequirement.findByReason", query = "SELECT c FROM CancelRequirement c WHERE c.reason = :reason"),
     @NamedQuery(name = "CancelRequirement.findByExecutedStatus", query = "SELECT c FROM CancelRequirement c WHERE c.executedStatus = :executedStatus")})
-public class CancelRequirement implements Serializable {
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "cancelRequirementType",
+        defaultImpl = UserInfo.class
+)
+@JsonSubTypes(
+        value = {
+            @JsonSubTypes.Type(value = CancelActivityRequirement.class, name = "activity"),
+            @JsonSubTypes.Type(value = CancelBulletinRequirement.class, name = "bulletin")
+        }
+)
+public class CancelRequirement extends BaseModel implements Serializable {
 
     protected static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "active")
-    protected boolean active;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date createdDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date updatedDate;
     @Size(max = 255)
     @Column(name = "reason")
+    @JsonView(DisplayView.Public.class)
     protected String reason;
     @Lob
     @Size(max = 2147483647)
     @Column(name = "reason_detail")
+    @JsonView(DisplayView.Public.class)
     protected String reasonDetail;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "executed_status")
-    protected String executedStatus;
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
+    protected String executedStatus = ExecuteStatus.PENDING.name();
+    @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
+    @NotNull
+    @ManyToOne
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
+    protected StudentAssistant studentAssistantId;
     @JoinColumn(name = "student_affairs_officer_id", referencedColumnName = "id")
     @ManyToOne
+    @JsonView(DisplayView.Public.class)
     protected StudentAffairsOfficer studentAffairsOfficerId;
 
     public CancelRequirement() {
@@ -104,31 +118,6 @@ public class CancelRequirement implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-
     public String getReason() {
         return reason;
     }
@@ -151,6 +140,14 @@ public class CancelRequirement implements Serializable {
 
     public void setExecutedStatus(String executedStatus) {
         this.executedStatus = executedStatus;
+    }
+
+    public StudentAssistant getStudentAssistantId() {
+        return studentAssistantId;
+    }
+
+    public void setStudentAssistantId(StudentAssistant studentAssistantId) {
+        this.studentAssistantId = studentAssistantId;
     }
 
     public StudentAffairsOfficer getStudentAffairsOfficerId() {

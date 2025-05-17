@@ -4,21 +4,25 @@
  */
 package com.nhm.controllers;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nhm.pojo.UserInfo;
 import com.nhm.services.UserService;
 import com.nhm.utils.JwtUtils;
+import com.nhm.viewconfigs.DisplayView;
 import java.security.Principal;
 import java.util.Collections;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,8 +42,13 @@ public class ApiUserController {
     @PostMapping(path = "/users", 
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, 
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserInfo> create(@RequestParam Map<String, String> params, @RequestParam(value = "avatar") MultipartFile avatar) {
-        return new ResponseEntity<>(this.userDetailsService.addUser(params, avatar), HttpStatus.CREATED);
+    @JsonView({
+        DisplayView.Internal.class
+    })
+    public ResponseEntity<UserInfo> create(@RequestPart("data") UserInfo userData, @RequestPart(value = "avatar", required = false) MultipartFile avatar) throws JsonProcessingException {
+        System.out.println("user data : " + userData);
+        
+        return new ResponseEntity<>(this.userDetailsService.addUser(userData, avatar), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
@@ -62,4 +71,13 @@ public class ApiUserController {
     public ResponseEntity<UserInfo> getProfile(Principal principal) {
         return new ResponseEntity<>(this.userDetailsService.getUserByUsername(principal.getName()), HttpStatus.OK);
     }
+    
+    @GetMapping("/users/{userId}")
+    @JsonView({
+        DisplayView.Internal.class
+    })
+    public ResponseEntity<UserInfo> getUserDetail(@PathVariable("userId") int userId) {
+        return new ResponseEntity<>(this.userDetailsService.getUserById(userId), HttpStatus.OK);
+    }
+    
 }

@@ -4,15 +4,14 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.CollectionView;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -22,18 +21,18 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "student_affairs_officer")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "StudentAffairsOfficer.findAll", query = "SELECT s FROM StudentAffairsOfficer s")})
+@PrimaryKeyJoinColumn(name = "user_ptr_id")
 public class StudentAffairsOfficer extends UserInfo implements Serializable {
 
     @OneToMany(mappedBy = "studentAffairsOfficerId")
+    @JsonView(CollectionView.StudentAffairsCollection.class)
     private Collection<CancelRequirement> cancelRequirementCollection;
 
     public StudentAffairsOfficer() {
     }
     
-    @XmlTransient
     public Collection<CancelRequirement> getCancelRequirementCollection() {
         return cancelRequirementCollection;
     }

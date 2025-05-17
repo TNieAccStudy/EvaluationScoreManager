@@ -4,6 +4,12 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.CollectionView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -21,12 +27,12 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 /**
  *
@@ -35,7 +41,6 @@ import jakarta.persistence.InheritanceType;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name = "bulletin")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Bulletin.findAll", query = "SELECT b FROM Bulletin b"),
     @NamedQuery(name = "Bulletin.findById", query = "SELECT b FROM Bulletin b WHERE b.id = :id"),
@@ -43,46 +48,80 @@ import jakarta.persistence.InheritanceType;
     @NamedQuery(name = "Bulletin.findByCreatedDate", query = "SELECT b FROM Bulletin b WHERE b.createdDate = :createdDate"),
     @NamedQuery(name = "Bulletin.findByUpdatedDate", query = "SELECT b FROM Bulletin b WHERE b.updatedDate = :updatedDate"),
     @NamedQuery(name = "Bulletin.findByTitle", query = "SELECT b FROM Bulletin b WHERE b.title = :title"),
-    @NamedQuery(name = "Bulletin.findByDuration", query = "SELECT b FROM Bulletin b WHERE b.duration = :duration")})
-public class Bulletin implements Serializable {
+    @NamedQuery(name = "Bulletin.findByDuration", query = "SELECT b FROM Bulletin b WHERE b.duration = :duration"),
+    @NamedQuery(name = "Bulletin.findByState", query = "SELECT c FROM Bulletin c WHERE c.state = :state")})
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "bulletinType",
+        defaultImpl = UserInfo.class
+)
+@JsonSubTypes(
+        value = {
+            @JsonSubTypes.Type(value = ActivityBulletin.class, name = "activity"),
+            @JsonSubTypes.Type(value = SummaryBulletin.class, name = "summary")
+        }
+)
+public class Bulletin extends BaseModel implements Serializable {
 
     protected static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "active")
-    protected boolean active;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "created_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date createdDate;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date updatedDate;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "title")
+    @JsonView(DisplayView.Public.class)
     protected String title;
     @Lob
     @Size(max = 2147483647)
     @Column(name = "content")
+    @JsonView(DisplayView.Public.class)
     protected String content;
     @Basic(optional = false)
     @NotNull
     @Column(name = "duration")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
+    @JsonView(DisplayView.Public.class)
     protected Date duration;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "state")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
+    protected String state;
+    @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
+    @NotNull
+    @ManyToOne(optional = false)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
+    protected StudentAssistant studentAssistantId;
+    @JoinColumn(name = "semester_id", referencedColumnName = "id")
+    @NotNull
+    @ManyToOne(optional = false)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
+    protected Semester semesterId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bulletinId")
+    @JsonView(CollectionView.BulletinCollection.class)
     protected Collection<CancelBulletinRequirement> cancelBulletinRequirementCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bulletinId")
+    @JsonView(CollectionView.BulletinCollection.class)
     protected Collection<Interaction> interactionCollection;
 
     public Bulletin() {
@@ -92,13 +131,14 @@ public class Bulletin implements Serializable {
         this.id = id;
     }
 
-    public Bulletin(Long id, boolean active, Date createdDate, Date updatedDate, String title, Date duration) {
+    public Bulletin(Long id, boolean active, Date createdDate, Date updatedDate, String title, Date duration, String state) {
         this.id = id;
         this.active = active;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
         this.title = title;
         this.duration = duration;
+        this.state = state;
     }
 
     public Long getId() {
@@ -107,30 +147,6 @@ public class Bulletin implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
     }
 
     public String getTitle() {
@@ -157,7 +173,30 @@ public class Bulletin implements Serializable {
         this.duration = duration;
     }
 
-    @XmlTransient
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public StudentAssistant getStudentAssistantId() {
+        return studentAssistantId;
+    }
+
+    public void setStudentAssistantId(StudentAssistant studentAssistantId) {
+        this.studentAssistantId = studentAssistantId;
+    }
+
+    public Semester getSemesterId() {
+        return semesterId;
+    }
+
+    public void setSemesterId(Semester semesterId) {
+        this.semesterId = semesterId;
+    }
+
     public Collection<CancelBulletinRequirement> getCancelBulletinRequirementCollection() {
         return cancelBulletinRequirementCollection;
     }
@@ -166,7 +205,6 @@ public class Bulletin implements Serializable {
         this.cancelBulletinRequirementCollection = cancelBulletinRequirementCollection;
     }
 
-    @XmlTransient
     public Collection<Interaction> getInteractionCollection() {
         return interactionCollection;
     }
@@ -198,6 +236,15 @@ public class Bulletin implements Serializable {
     @Override
     public String toString() {
         return "com.nhm.pojo.Bulletin[ id=" + id + " ]";
+    }
+    
+    public ExtraActivity getExtraActivity() {
+        return null;
+    }
+    
+    public static enum BulletinState {
+        OPENING,
+        CLOSED
     }
     
 }

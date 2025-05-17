@@ -4,14 +4,15 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.CollectionView;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -21,20 +22,27 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "student_assistant")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "StudentAssistant.findAll", query = "SELECT s FROM StudentAssistant s")})
+@PrimaryKeyJoinColumn(name = "user_ptr_id")
 public class StudentAssistant extends UserInfo implements Serializable {
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentAssistantId")
+    @JsonView(CollectionView.StudentAssistantCollection.class)
     private Collection<ExtraActivity> extraActivityCollection;
     @OneToMany(mappedBy = "studentAssistantId")
+    @JsonView(CollectionView.StudentAssistantCollection.class)
     private Collection<MissingActivity> missingActivityCollection;
+    @OneToMany(mappedBy = "studentAssistantId")
+    @JsonView(CollectionView.StudentAssistantCollection.class)
+    private Collection<Bulletin> bulletinCollection;
+    @OneToMany(mappedBy = "studentAssistantId")
+    @JsonView(CollectionView.StudentAssistantCollection.class)
+    private Collection<CancelRequirement> cancelRequirementCollection;
 
     public StudentAssistant() {
     }
 
-    @XmlTransient
     public Collection<ExtraActivity> getExtraActivityCollection() {
         return extraActivityCollection;
     }
@@ -43,13 +51,28 @@ public class StudentAssistant extends UserInfo implements Serializable {
         this.extraActivityCollection = extraActivityCollection;
     }
 
-    @XmlTransient
     public Collection<MissingActivity> getMissingActivityCollection() {
         return missingActivityCollection;
     }
 
     public void setMissingActivityCollection(Collection<MissingActivity> missingActivityCollection) {
         this.missingActivityCollection = missingActivityCollection;
+    }
+
+    public Collection<Bulletin> getBulletinCollection() {
+        return bulletinCollection;
+    }
+
+    public void setBulletinCollection(Collection<Bulletin> bulletinCollection) {
+        this.bulletinCollection = bulletinCollection;
+    }
+
+    public Collection<CancelRequirement> getCancelRequirementCollection() {
+        return cancelRequirementCollection;
+    }
+
+    public void setCancelRequirementCollection(Collection<CancelRequirement> cancelRequirementCollection) {
+        this.cancelRequirementCollection = cancelRequirementCollection;
     }
 
     @Override

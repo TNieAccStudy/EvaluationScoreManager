@@ -4,16 +4,18 @@
  */
 package com.nhm.pojo;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Lob;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
@@ -22,9 +24,9 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "comment")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Comment.findAll", query = "SELECT c FROM Comment c")})
+@PrimaryKeyJoinColumn(name = "interaction_ptr_id")
 public class Comment extends Interaction implements Serializable {
 
     @Basic(optional = false)
@@ -32,6 +34,10 @@ public class Comment extends Interaction implements Serializable {
     @Lob
     @Size(min = 1, max = 2147483647)
     @Column(name = "content")
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private String content;
 
     public Comment() {

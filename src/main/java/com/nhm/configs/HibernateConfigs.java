@@ -6,9 +6,11 @@ package com.nhm.configs;
 
 import java.util.Properties;
 import javax.sql.DataSource;
+import org.hibernate.SessionFactory;
 import static org.hibernate.cfg.JdbcSettings.DIALECT;
 import static org.hibernate.cfg.JdbcSettings.SHOW_SQL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -29,7 +31,7 @@ public class HibernateConfigs {
     private Environment env;
 
     @Bean
-    public LocalSessionFactoryBean getSessionFactory() {
+    public LocalSessionFactoryBean hibernateSessionFactory() {
         LocalSessionFactoryBean sessionFactory
                 = new LocalSessionFactoryBean();
         sessionFactory.setPackagesToScan(new String[]{
@@ -62,11 +64,10 @@ public class HibernateConfigs {
     }
 
     @Bean
-    public HibernateTransactionManager transactionManager() {
+    public HibernateTransactionManager hibernateTransactionManager(@Qualifier("hibernateSessionFactory") SessionFactory sessionFactory) {
         HibernateTransactionManager transactionManager
                 = new HibernateTransactionManager();
-        transactionManager.setSessionFactory(
-                getSessionFactory().getObject());
+        transactionManager.setSessionFactory(sessionFactory);
         return transactionManager;
     }
 }
