@@ -76,6 +76,8 @@ class Bulletin(BaseModel):
     content = models.TextField(null=True)
     duration = models.DateTimeField(null=False)
     state = models.CharField(max_length=50, null=False)
+    student_assistant = models.ForeignKey(StudentAssistant, models.DO_NOTHING, null=False)
+    semester = models.ForeignKey(Semester, models.DO_NOTHING, null=False)
 
     class Meta:
         db_table = "bulletin"
@@ -95,6 +97,7 @@ class SummaryBulletin(Bulletin):
 
 class ActivityRegistry(BaseModel):
     student = models.ForeignKey(Student, models.DO_NOTHING, null=True)
+    extra_activity = models.ForeignKey(ExtraActivity, models.DO_NOTHING, null=False);
 
     class Meta:
         db_table = "activity_registry"
@@ -127,6 +130,7 @@ class CancelRequirement(BaseModel):
     reason = models.CharField(max_length=255, null=True)
     reason_detail = models.TextField(null=True)
     executed_status = models.CharField(max_length=50, null=False)
+    student_assistant = models.ForeignKey(StudentAssistant, models.DO_NOTHING, null=False)
     student_affairs_officer = models.ForeignKey(StudentAffairsOfficer, models.DO_NOTHING, null=True)
 
     class Meta:
