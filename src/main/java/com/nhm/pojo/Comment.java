@@ -34,7 +34,10 @@ public class Comment extends Interaction implements Serializable {
     @Lob
     @Size(min = 1, max = 2147483647)
     @Column(name = "content")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private String content;
 
     public Comment() {

@@ -7,18 +7,12 @@ package com.nhm.repositories.impl;
 import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ActivityRegistry;
 import com.nhm.pojo.ExtraActivity;
+import com.nhm.pojo.MissingActivity;
 import com.nhm.repositories.ExtraActivityRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Root;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 
 /**
  *
@@ -41,7 +35,7 @@ public class ExtraActivityRepositoryImpl extends BaseRepositoryImpl implements E
     }
 
     @Override
-    public Collection<ExtraActivity> getActivitys() {
+    public Collection<ExtraActivity> getActivities() {
         return super.getItems(ExtraActivity.class);
     }
 
@@ -52,34 +46,28 @@ public class ExtraActivityRepositoryImpl extends BaseRepositoryImpl implements E
 
     @Override
     public Collection<ActivityConfirmedAttendance> getAttendancesByActivityId(int activityId) {
-        Session s = this.sessionFactory.getObject().getCurrentSession();
-        
-        CriteriaBuilder cb = s.getCriteriaBuilder();
-        CriteriaQuery<ActivityConfirmedAttendance> q = cb.createQuery(ActivityConfirmedAttendance.class);
-        
-        Root<ActivityConfirmedAttendance> activityConfirmData = q.from(ActivityConfirmedAttendance.class);
-        
-        Join<ActivityConfirmedAttendance, ActivityRegistry> registryJoin = activityConfirmData.join("activityRegistryId", JoinType.INNER);
-        q.select(activityConfirmData)
-            .where(cb.equal(registryJoin.get("extraActivityId"), activityId));
-        
-        Query<ActivityConfirmedAttendance> query = s.createQuery(q);
-        return query.getResultList();
+        return super.getItemsByObjId(activityId, ActivityConfirmedAttendance.class, (cb, data) -> {
+            return cb.equal(data.get("extraActivityId").get("id"), Long.valueOf(activityId));
+        });
     }
 
     @Override
     public Collection<ActivityRegistry> getResigtriesByActivityId(int activityId) {
-        Session s = this.sessionFactory.getObject().getCurrentSession();
-        
-        CriteriaBuilder cb = s.getCriteriaBuilder();
-        CriteriaQuery<ActivityRegistry> q = cb.createQuery(ActivityRegistry.class);
-        
-        Root<ActivityRegistry> registryData = q.from(ActivityRegistry.class);
-        q.select(registryData)
-            .where(cb.equal(registryData.get("activityRegistryId"), activityId));
-        
-        Query<ActivityRegistry> query = s.createQuery(q);
-        return query.getResultList();
+        return super.getItemsByObjId(activityId, ActivityRegistry.class, (cb, data) -> {
+            return cb.equal(data.get("extraActivityId").get("id"), Long.valueOf(activityId));
+        });
+    }
+
+    @Override
+    public void deleteActivityById(int id) {
+        super.removeItemById(id, ExtraActivity.class);
+    }
+
+    @Override
+    public Collection<MissingActivity> getMissingsByActivityId(int activityId) {
+        return super.getItemsByObjId(activityId, MissingActivity.class, (cb, data) -> {
+            return cb.equal(data.get("extraActivityId").get("id"), Long.valueOf(activityId));
+        });
     }
     
 }

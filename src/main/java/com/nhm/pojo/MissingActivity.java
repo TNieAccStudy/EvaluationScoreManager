@@ -44,7 +44,10 @@ public class MissingActivity extends BaseModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Long id;
     @Lob
     @Size(max = 2147483647)
@@ -58,7 +61,10 @@ public class MissingActivity extends BaseModel implements Serializable {
     @Basic(optional = false)
     @Size(min = 1, max = 50)
     @Column(name = "executed_status")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private String executedStatus = ExecuteStatus.PENDING.name();
     @JoinColumn(name = "missing_activity_id", referencedColumnName = "id")
     @OneToOne
@@ -66,11 +72,17 @@ public class MissingActivity extends BaseModel implements Serializable {
     private ActivityConfirmedAttendance activityConfirmedAttendanceId;
     @JoinColumn(name = "extra_activity_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private ExtraActivity extraActivityId;
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Student studentId;
     @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
     @ManyToOne
@@ -78,7 +90,10 @@ public class MissingActivity extends BaseModel implements Serializable {
     private StudentAssistant studentAssistantId;
     @JoinColumn(name = "summary_bulletin_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private SummaryBulletin summaryBulletinId;
 
     public MissingActivity() {

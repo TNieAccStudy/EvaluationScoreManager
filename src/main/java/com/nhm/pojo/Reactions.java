@@ -33,7 +33,10 @@ public class Reactions extends Interaction implements Serializable {
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "type")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private String type;
 
     public Reactions() {

@@ -4,17 +4,16 @@
  */
 package com.nhm.repositories;
 
-import com.nhm.pojo.ExtraActivity;
-import com.nhm.pojo.Term;
+import com.nhm.pojo.CancelRequirement;
 import java.util.Collection;
 
 /**
  *
  * @author GIGABYTE
  */
-public interface TermRepository {
-    Term addOrUpdate(Term term);
-    Collection<Term> getTerms();
-    Collection<ExtraActivity> getActivitesByTermId(int termId);
-    Term getTermById(int id);
+public interface CancelRequirementRepository {
+    CancelRequirement addOrUpdate(CancelRequirement cancel);
+    Collection<CancelRequirement> getCancels();
+    void deleteCancelById(int id);
+    CancelRequirement getCancelById(int id);
 }

@@ -33,6 +33,12 @@ public class StudentAssistant extends UserInfo implements Serializable {
     @OneToMany(mappedBy = "studentAssistantId")
     @JsonView(CollectionView.StudentAssistantCollection.class)
     private Collection<MissingActivity> missingActivityCollection;
+    @OneToMany(mappedBy = "studentAssistantId")
+    @JsonView(CollectionView.StudentAssistantCollection.class)
+    private Collection<Bulletin> bulletinCollection;
+    @OneToMany(mappedBy = "studentAssistantId")
+    @JsonView(CollectionView.StudentAssistantCollection.class)
+    private Collection<CancelRequirement> cancelRequirementCollection;
 
     public StudentAssistant() {
     }
@@ -51,6 +57,22 @@ public class StudentAssistant extends UserInfo implements Serializable {
 
     public void setMissingActivityCollection(Collection<MissingActivity> missingActivityCollection) {
         this.missingActivityCollection = missingActivityCollection;
+    }
+
+    public Collection<Bulletin> getBulletinCollection() {
+        return bulletinCollection;
+    }
+
+    public void setBulletinCollection(Collection<Bulletin> bulletinCollection) {
+        this.bulletinCollection = bulletinCollection;
+    }
+
+    public Collection<CancelRequirement> getCancelRequirementCollection() {
+        return cancelRequirementCollection;
+    }
+
+    public void setCancelRequirementCollection(Collection<CancelRequirement> cancelRequirementCollection) {
+        this.cancelRequirementCollection = cancelRequirementCollection;
     }
 
     @Override

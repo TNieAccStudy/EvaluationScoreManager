@@ -49,9 +49,9 @@ public class SpringSecurityConfigs {
 //                .csrf(c -> c.disable()).authorizeHttpRequests(requests ->
 //                 requests.requestMatchers("/", "/home").authenticated()
 //                        .requestMatchers("/api/**").permitAll()
-////                        .requestMatchers(HttpMethod.GET, "/products").hasRole("ADMIN")
-////                        .requestMatchers(HttpMethod.GET,
-////                                "/products/**").hasAnyRole("USER", "ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/products").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.GET,
+//                                "/products/**").hasAnyRole("USER", "ADMIN")
 //                        .anyRequest().authenticated())
 //                .formLogin(form -> form.loginPage("/login")
 //                .loginProcessingUrl("/login")

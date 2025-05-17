@@ -28,7 +28,10 @@ public class ActivityBulletin extends Bulletin implements Serializable {
 
     @JoinColumn(name = "extra_activity_id", referencedColumnName = "id")
     @ManyToOne
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private ExtraActivity extraActivityId;
 
     public ActivityBulletin() {
@@ -69,6 +72,11 @@ public class ActivityBulletin extends Bulletin implements Serializable {
     @Override
     public String toString() {
         return "com.nhm.pojo.ActivityBulletin[ id=" + id + " ]";
+    }
+    
+    @Override
+    public ExtraActivity getExtraActivity() {
+        return this.getExtraActivityId();
     }
     
 }

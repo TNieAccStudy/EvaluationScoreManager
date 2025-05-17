@@ -4,13 +4,14 @@
  */
 package com.nhm.repositories;
 
-import com.nhm.pojo.ActivityConfirmedAttendance;
+import com.nhm.pojo.Interaction;
 
 /**
  *
  * @author GIGABYTE
  */
-public interface ActivityConfirmedAttendanceRepository {
-    ActivityConfirmedAttendance addOrUpdate(ActivityConfirmedAttendance confirmedAttendance);
-    ActivityConfirmedAttendance getAttendanceById(int id);
+public interface InteractionRepository {
+    Interaction addOrUpdate(Interaction interaction);
+    void deleteInteractionById(int id);
+    Interaction getInteractionById(int id);
 }

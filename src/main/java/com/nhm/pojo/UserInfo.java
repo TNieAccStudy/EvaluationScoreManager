@@ -65,19 +65,28 @@ public class UserInfo extends BaseModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "first_name")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected String firstName;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "last_name")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected String lastName;
     @Basic(optional = false)
     @NotNull
@@ -94,7 +103,10 @@ public class UserInfo extends BaseModel implements Serializable {
     @Basic(optional = false)
     @Size(min = 1, max = 124)
     @Column(name = "avatar")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected String avatar;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
@@ -113,7 +125,10 @@ public class UserInfo extends BaseModel implements Serializable {
     @Basic(optional = false)
     @Size(min = 1, max = 50)
     @Column(name = "user_role")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private String userRole;
 
     public UserInfo() {

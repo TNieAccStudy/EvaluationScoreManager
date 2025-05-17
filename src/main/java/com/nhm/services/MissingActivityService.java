@@ -2,15 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package com.nhm.repositories;
+package com.nhm.services;
 
-import com.nhm.pojo.ActivityRegistry;
+import com.nhm.pojo.MissingActivity;
 
 /**
  *
  * @author GIGABYTE
  */
-public interface ActivityRegistryRepository {
-    ActivityRegistry addOrUpdate(ActivityRegistry registry);
-    ActivityRegistry getRegistryById(int id);
+public interface MissingActivityService {
+    MissingActivity addOrUpdate(MissingActivity missing);
+    MissingActivity getMissingById(int id);
 }

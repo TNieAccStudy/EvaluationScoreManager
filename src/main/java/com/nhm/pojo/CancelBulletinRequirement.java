@@ -28,7 +28,10 @@ public class CancelBulletinRequirement extends CancelRequirement implements Seri
 
     @JoinColumn(name = "bulletin_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Bulletin bulletinId;
 
     public CancelBulletinRequirement() {

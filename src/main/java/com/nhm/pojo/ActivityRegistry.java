@@ -41,17 +41,26 @@ public class ActivityRegistry extends BaseModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Long id;
     @JoinColumn(name = "student_id", referencedColumnName = "id", nullable = false)
     @NotNull
     @ManyToOne
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Student studentId;
     @JoinColumn(name = "extra_activity_id", referencedColumnName = "id", nullable = false)
     @NotNull
     @ManyToOne
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private ExtraActivity extraActivityId;
     @OneToOne(mappedBy = "activityRegistryId")
     @JsonView(DisplayView.Attach.class)

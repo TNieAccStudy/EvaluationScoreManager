@@ -28,7 +28,10 @@ public class CancelActivityRequirement extends CancelRequirement implements Seri
 
     @JoinColumn(name = "extra_activity_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private ExtraActivity extraActivityId;
 
     public CancelActivityRequirement() {

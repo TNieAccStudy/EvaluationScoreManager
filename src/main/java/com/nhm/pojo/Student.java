@@ -40,13 +40,19 @@ public class Student extends UserInfo implements Serializable {
     @Basic(optional = false)
     @Size(min = 1, max = 50)
     @Column(name = "achievement")
-    @JsonView(DisplayView.Internal.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private String achievement = Achievement.Good.name();
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 11)
     @Column(name = "mssv")
-    @JsonView(DisplayView.Internal.class)
+    @JsonView({
+        DisplayView.Internal.class,
+        DisplayView.Simplify.class
+    })
     private String mssv;
     @OneToMany(mappedBy = "studentId")
     @JsonView(CollectionView.StudentCollection.class)

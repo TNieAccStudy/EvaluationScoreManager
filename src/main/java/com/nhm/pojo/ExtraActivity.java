@@ -49,12 +49,18 @@ public class ExtraActivity extends BaseModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Long id;
     @Basic(optional = false)
     @NotNull
     @Column(name = "bonus_score")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private int bonusScore;
     @Basic(optional = false)
     @NotNull
@@ -72,7 +78,10 @@ public class ExtraActivity extends BaseModel implements Serializable {
     private Collection<ActivityBulletin> activityBulletinCollection;
     @JoinColumn(name = "semester_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Semester semesterId;
     @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
@@ -80,7 +89,10 @@ public class ExtraActivity extends BaseModel implements Serializable {
     private StudentAssistant studentAssistantId;
     @JoinColumn(name = "term_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Term termId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "extraActivityId")
     @JsonView(CollectionView.ActivityColelction.class)
@@ -88,6 +100,9 @@ public class ExtraActivity extends BaseModel implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "extraActivityId")
     @JsonView(CollectionView.ActivityColelction.class)
     private Collection<MissingActivity> missingActivityCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "extraActivityId")
+    @JsonView(CollectionView.ActivityColelction.class)
+    private Collection<ActivityRegistry> activityRegistryCollection;
 
     public ExtraActivity() {
     }
@@ -182,6 +197,14 @@ public class ExtraActivity extends BaseModel implements Serializable {
 
     public void setMissingActivityCollection(Collection<MissingActivity> missingActivityCollection) {
         this.missingActivityCollection = missingActivityCollection;
+    }
+
+    public Collection<ActivityRegistry> getActivityRegistryCollection() {
+        return activityRegistryCollection;
+    }
+
+    public void setActivityRegistryCollection(Collection<ActivityRegistry> activityRegistryCollection) {
+        this.activityRegistryCollection = activityRegistryCollection;
     }
 
     @Override

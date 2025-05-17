@@ -31,6 +31,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 /**
  *
@@ -67,7 +69,10 @@ public class Bulletin extends BaseModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected Long id;
     @Basic(optional = false)
     @NotNull
@@ -91,8 +96,27 @@ public class Bulletin extends BaseModel implements Serializable {
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "state")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected String state;
+    @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
+    @NotNull
+    @ManyToOne(optional = false)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
+    protected StudentAssistant studentAssistantId;
+    @JoinColumn(name = "semester_id", referencedColumnName = "id")
+    @NotNull
+    @ManyToOne(optional = false)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
+    protected Semester semesterId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bulletinId")
     @JsonView(CollectionView.BulletinCollection.class)
     protected Collection<CancelBulletinRequirement> cancelBulletinRequirementCollection;
@@ -157,6 +181,22 @@ public class Bulletin extends BaseModel implements Serializable {
         this.state = state;
     }
 
+    public StudentAssistant getStudentAssistantId() {
+        return studentAssistantId;
+    }
+
+    public void setStudentAssistantId(StudentAssistant studentAssistantId) {
+        this.studentAssistantId = studentAssistantId;
+    }
+
+    public Semester getSemesterId() {
+        return semesterId;
+    }
+
+    public void setSemesterId(Semester semesterId) {
+        this.semesterId = semesterId;
+    }
+
     public Collection<CancelBulletinRequirement> getCancelBulletinRequirementCollection() {
         return cancelBulletinRequirementCollection;
     }
@@ -196,6 +236,10 @@ public class Bulletin extends BaseModel implements Serializable {
     @Override
     public String toString() {
         return "com.nhm.pojo.Bulletin[ id=" + id + " ]";
+    }
+    
+    public ExtraActivity getExtraActivity() {
+        return null;
     }
     
     public static enum BulletinState {

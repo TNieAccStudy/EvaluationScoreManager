@@ -23,21 +23,30 @@ import org.hibernate.annotations.CreationTimestamp;
 public abstract class BaseModel {
     @Basic(optional = false)
     @Column(name = "active")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected boolean active = true;
     @Basic(optional = false)
     @Column(name = "created_date", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected Date createdDate;
     @Basic(optional = false)
     @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected Date updatedDate;
     
     public boolean getActive() {

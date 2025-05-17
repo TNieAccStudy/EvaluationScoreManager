@@ -41,22 +41,34 @@ public class Semester implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "name")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private String name;
     @Basic(optional = false)
     @NotNull
     @Column(name = "year")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private int year;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "semesterId")
     @JsonView(CollectionView.SemesterColelction.class)
     private Collection<ExtraActivity> extraActivityCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "semesterId")
+    @JsonView(CollectionView.SemesterColelction.class)
+    private Collection<Bulletin> bulletinCollection;
 
     public Semester() {
     }
@@ -101,6 +113,14 @@ public class Semester implements Serializable {
 
     public void setExtraActivityCollection(Collection<ExtraActivity> extraActivityCollection) {
         this.extraActivityCollection = extraActivityCollection;
+    }
+
+    public Collection<Bulletin> getBulletinCollection() {
+        return bulletinCollection;
+    }
+
+    public void setBulletinCollection(Collection<Bulletin> bulletinCollection) {
+        this.bulletinCollection = bulletinCollection;
     }
 
     @Override

@@ -4,13 +4,14 @@
  */
 package com.nhm.repositories.impl;
 
-import com.nhm.pojo.Term;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.function.BiFunction;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,5 +64,43 @@ public abstract class BaseRepositoryImpl {
     protected <T> T getItemById(int id, Class<T> classType) {
         Session s = sessionFactory.getObject().getCurrentSession();
         return s.get(classType, id);
+    }
+    
+    protected <T> void removeItemById(int id, Class<T> classType) {
+        Session s = sessionFactory.getObject().getCurrentSession();
+        
+        T obj = s.get(classType, id);
+        s.remove(obj);
+    }
+    
+    protected <T> Collection<T> getItemsByObjId(int objId, Class<T> resultType, 
+            BiFunction<CriteriaBuilder, Root<T>, Expression<Boolean>>... whereConditions) {
+        Session s = this.sessionFactory.getObject().getCurrentSession();
+        
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<T> q = cb.createQuery(resultType);
+        
+        Root<T> data = q.from(resultType);
+        q.select(data);
+        
+        for (var w : whereConditions) {
+            q.where(w.apply(cb, data));
+        }
+        
+        Query<T> query = s.createQuery(q);
+        return query.getResultList();
+    }
+    
+    protected <T> Collection<T> getItemsByObjIdWithCustomQuery(int objId, Class<T> resultType, 
+            BiFunction<CriteriaBuilder, CriteriaQuery<T>, CriteriaQuery<T>> execQuery) {
+        Session s = this.sessionFactory.getObject().getCurrentSession();
+        
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<T> q = cb.createQuery(resultType);
+        
+        q = execQuery.apply(cb, q);
+        
+        Query<T> query = s.createQuery(q);
+        return query.getResultList();
     }
 }

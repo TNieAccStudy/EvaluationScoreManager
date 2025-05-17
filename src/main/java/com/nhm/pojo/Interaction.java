@@ -56,15 +56,24 @@ public class Interaction extends BaseModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected Long id;
     @JoinColumn(name = "bulletin_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected Bulletin bulletinId;
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected Student studentId;
 
     public Interaction() {

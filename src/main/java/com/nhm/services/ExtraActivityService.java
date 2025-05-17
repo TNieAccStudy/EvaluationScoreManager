@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package com.nhm.repositories;
+package com.nhm.services;
 
 import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ActivityRegistry;
@@ -14,7 +14,7 @@ import java.util.Collection;
  *
  * @author GIGABYTE
  */
-public interface ExtraActivityRepository {
+public interface ExtraActivityService {
     ExtraActivity addOrUpdate(ExtraActivity activity);
     Collection<ExtraActivity> getActivities();
     ExtraActivity getActivityById(int activityId);

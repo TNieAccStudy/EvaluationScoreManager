@@ -42,7 +42,10 @@ public class ActivityConfirmedAttendance extends BaseModel implements Serializab
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private Long id;
     @Basic(optional = false)
     @Size(min = 1, max = 255)
@@ -52,11 +55,17 @@ public class ActivityConfirmedAttendance extends BaseModel implements Serializab
     @Basic(optional = false)
     @Size(min = 1, max = 50)
     @Column(name = "censor_state")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected String censorState = CensorState.PENDING.name();
     @JoinColumn(name = "activity_registry_id", referencedColumnName = "id")
     @OneToOne
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private ActivityRegistry activityRegistryId;
     @OneToOne(mappedBy = "activityConfirmedAttendanceId")
     @JsonView(DisplayView.Attach.class)

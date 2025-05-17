@@ -4,6 +4,7 @@
  */
 package com.nhm.repositories.impl;
 
+import com.nhm.pojo.ExtraActivity;
 import com.nhm.pojo.Term;
 import com.nhm.repositories.TermRepository;
 import java.lang.reflect.InvocationTargetException;
@@ -38,6 +39,18 @@ public class TermRepositoryImpl extends BaseRepositoryImpl implements TermReposi
     @Override
     public Collection<Term> getTerms() {
         return super.getItems(Term.class);
+    }
+
+    @Override
+    public Collection<ExtraActivity> getActivitesByTermId(int termId) {
+        return super.getItemsByObjId(termId, ExtraActivity.class, (cb, data) -> {
+            return cb.equal(data.get("termId").get("id"), Long.valueOf(termId));
+        });
+    }
+
+    @Override
+    public Term getTermById(int id) {
+        return getItemById(id, Term.class);
     }
     
 }

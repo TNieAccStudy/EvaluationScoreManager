@@ -22,6 +22,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -60,7 +61,10 @@ public class CancelRequirement extends BaseModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected Long id;
     @Size(max = 255)
     @Column(name = "reason")
@@ -74,8 +78,19 @@ public class CancelRequirement extends BaseModel implements Serializable {
     @Basic(optional = false)
     @Size(min = 1, max = 50)
     @Column(name = "executed_status")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected String executedStatus = ExecuteStatus.PENDING.name();
+    @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
+    @NotNull
+    @ManyToOne
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
+    protected StudentAssistant studentAssistantId;
     @JoinColumn(name = "student_affairs_officer_id", referencedColumnName = "id")
     @ManyToOne
     @JsonView(DisplayView.Public.class)
@@ -103,31 +118,6 @@ public class CancelRequirement extends BaseModel implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-
     public String getReason() {
         return reason;
     }
@@ -150,6 +140,14 @@ public class CancelRequirement extends BaseModel implements Serializable {
 
     public void setExecutedStatus(String executedStatus) {
         this.executedStatus = executedStatus;
+    }
+
+    public StudentAssistant getStudentAssistantId() {
+        return studentAssistantId;
+    }
+
+    public void setStudentAssistantId(StudentAssistant studentAssistantId) {
+        this.studentAssistantId = studentAssistantId;
     }
 
     public StudentAffairsOfficer getStudentAffairsOfficerId() {

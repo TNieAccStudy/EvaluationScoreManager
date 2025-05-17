@@ -4,13 +4,13 @@
  */
 package com.nhm.repositories;
 
-import com.nhm.pojo.ActivityConfirmedAttendance;
+import com.nhm.pojo.MissingActivity;
 
 /**
  *
  * @author GIGABYTE
  */
-public interface ActivityConfirmedAttendanceRepository {
-    ActivityConfirmedAttendance addOrUpdate(ActivityConfirmedAttendance confirmedAttendance);
-    ActivityConfirmedAttendance getAttendanceById(int id);
+public interface MissingActivityRepository {
+    MissingActivity addOrUpdate(MissingActivity missing);
+    MissingActivity getMissingById(int id);
 }
