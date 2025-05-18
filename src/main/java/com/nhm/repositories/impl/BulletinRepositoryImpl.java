@@ -19,11 +19,15 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author GIGABYTE
  */
+@Repository
+@Transactional
 public class BulletinRepositoryImpl extends BaseRepositoryImpl implements BulletinRepository {
 
     @Override

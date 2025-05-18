@@ -52,6 +52,9 @@ public class ApiUserController {
     }
 
     @PostMapping("/login")
+    @JsonView({
+        DisplayView.Internal.class
+    })
     public ResponseEntity<?> login(@RequestBody UserInfo u) {
 
         if (this.userDetailsService.authenticate(u.getUsername(), u.getPassword())) {
@@ -66,6 +69,9 @@ public class ApiUserController {
     }
 
     @RequestMapping("/secure/profile")
+    @JsonView({
+        DisplayView.Internal.class
+    })
     @ResponseBody
     @CrossOrigin
     public ResponseEntity<UserInfo> getProfile(Principal principal) {

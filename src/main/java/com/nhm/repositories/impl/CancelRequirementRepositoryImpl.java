@@ -10,11 +10,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author GIGABYTE
  */
+@Repository
+@Transactional
 public class CancelRequirementRepositoryImpl extends BaseRepositoryImpl implements CancelRequirementRepository {
 
     @Override
