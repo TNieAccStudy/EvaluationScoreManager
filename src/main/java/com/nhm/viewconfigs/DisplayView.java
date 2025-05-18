@@ -11,6 +11,6 @@ package com.nhm.viewconfigs;
 public class DisplayView {
     public static class Public {}
     public static class Internal extends Public {}
-    public static class Attach {}
+    public static class Attach extends Internal {}
     public static class Simplify {}
 }

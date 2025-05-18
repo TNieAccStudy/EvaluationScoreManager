@@ -9,11 +9,15 @@ import com.nhm.repositories.ActivityConfirmedAttendanceRepository;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author GIGABYTE
  */
+@Repository
+@Transactional
 public class ActivityConfirmedAttendanceRepositoryImpl extends BaseRepositoryImpl implements ActivityConfirmedAttendanceRepository {
 
     @Override

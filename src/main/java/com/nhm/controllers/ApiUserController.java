@@ -73,9 +73,7 @@ public class ApiUserController {
     }
     
     @GetMapping("/users/{userId}")
-    @JsonView({
-        DisplayView.Internal.class
-    })
+    @JsonView(DisplayView.Internal.class)
     public ResponseEntity<UserInfo> getUserDetail(@PathVariable("userId") int userId) {
         return new ResponseEntity<>(this.userDetailsService.getUserById(userId), HttpStatus.OK);
     }
