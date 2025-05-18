@@ -11,6 +11,21 @@ class BaseModel(models.Model):
         abstract = True
 
 
+class Department(models.Model):
+    name = models.CharField(max_length=255, null=False)
+
+    class Meta:
+        db_table = "department"
+
+
+class Class(models.Model):
+    name = models.CharField(max_length=255, null=False)
+    department = models.ForeignKey(Department, on_delete=models.DO_NOTHING, null=False)
+
+    class Meta:
+        db_table = "class"
+
+
 class User (BaseModel):
     first_name = models.CharField(max_length=255,null=False);
     last_name = models.CharField(max_length=255,null=False)
@@ -28,6 +43,7 @@ class User (BaseModel):
 class Student(User):
     achievement = models.CharField(max_length=50)
     mssv = models.CharField(max_length=11, null=False)
+    classe = models.ForeignKey(Class, models.DO_NOTHING, null=False)
 
     class Meta:
         db_table = "student"
@@ -170,4 +186,9 @@ class Reactions(Interaction):
     
     class Meta:
         db_table = "reactions"
+
+
+
+
+
 

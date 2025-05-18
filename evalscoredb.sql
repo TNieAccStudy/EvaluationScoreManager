@@ -54,7 +54,7 @@ CREATE TABLE `activity_confirmed_attendance` (
   `created_date` datetime(6) NOT NULL,
   `updated_date` datetime(6) NOT NULL,
   `proofPicture` varchar(255) NOT NULL,
-  `approved` tinyint(1) NOT NULL,
+  `censor_state` varchar(50) NOT NULL,
   `activity_registry_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `activity_registry_id` (`activity_registry_id`),
@@ -83,9 +83,12 @@ CREATE TABLE `activity_registry` (
   `active` tinyint(1) NOT NULL,
   `created_date` datetime(6) NOT NULL,
   `updated_date` datetime(6) NOT NULL,
+  `extra_activity_id` bigint NOT NULL,
   `student_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
+  KEY `activity_registry_extra_activity_id_44c872cf_fk_extra_act` (`extra_activity_id`),
   KEY `activity_registry_student_id_ad346a4a_fk_student_user_ptr_id` (`student_id`),
+  CONSTRAINT `activity_registry_extra_activity_id_44c872cf_fk_extra_act` FOREIGN KEY (`extra_activity_id`) REFERENCES `extra_activity` (`id`),
   CONSTRAINT `activity_registry_student_id_ad346a4a_fk_student_user_ptr_id` FOREIGN KEY (`student_id`) REFERENCES `student` (`user_ptr_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -114,7 +117,14 @@ CREATE TABLE `bulletin` (
   `title` varchar(255) NOT NULL,
   `content` longtext,
   `duration` datetime(6) NOT NULL,
-  PRIMARY KEY (`id`)
+  `state` varchar(50) NOT NULL,
+  `semester_id` bigint NOT NULL,
+  `student_assistant_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `bulletin_semester_id_f89d2ff8_fk_semester_id` (`semester_id`),
+  KEY `bulletin_student_assistant_id_2bd07802_fk_student_a` (`student_assistant_id`),
+  CONSTRAINT `bulletin_semester_id_f89d2ff8_fk_semester_id` FOREIGN KEY (`semester_id`) REFERENCES `semester` (`id`),
+  CONSTRAINT `bulletin_student_assistant_id_2bd07802_fk_student_a` FOREIGN KEY (`student_assistant_id`) REFERENCES `student_assistant` (`user_ptr_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -195,9 +205,12 @@ CREATE TABLE `cancel_requirement` (
   `reason_detail` longtext,
   `executed_status` varchar(50) NOT NULL,
   `student_affairs_officer_id` bigint DEFAULT NULL,
+  `student_assistant_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
   KEY `cancel_requirement_student_affairs_offi_9ea4bf5d_fk_student_a` (`student_affairs_officer_id`),
-  CONSTRAINT `cancel_requirement_student_affairs_offi_9ea4bf5d_fk_student_a` FOREIGN KEY (`student_affairs_officer_id`) REFERENCES `student_affairs_officer` (`user_ptr_id`)
+  KEY `cancel_requirement_student_assistant_id_cae830f7_fk_student_a` (`student_assistant_id`),
+  CONSTRAINT `cancel_requirement_student_affairs_offi_9ea4bf5d_fk_student_a` FOREIGN KEY (`student_affairs_officer_id`) REFERENCES `student_affairs_officer` (`user_ptr_id`),
+  CONSTRAINT `cancel_requirement_student_assistant_id_cae830f7_fk_student_a` FOREIGN KEY (`student_assistant_id`) REFERENCES `student_assistant` (`user_ptr_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -208,6 +221,32 @@ CREATE TABLE `cancel_requirement` (
 LOCK TABLES `cancel_requirement` WRITE;
 /*!40000 ALTER TABLE `cancel_requirement` DISABLE KEYS */;
 /*!40000 ALTER TABLE `cancel_requirement` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `class`
+--
+
+DROP TABLE IF EXISTS `class`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `class` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `department_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `class_department_id_2ef6d3fe_fk_department_id` (`department_id`),
+  CONSTRAINT `class_department_id_2ef6d3fe_fk_department_id` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `class`
+--
+
+LOCK TABLES `class` WRITE;
+/*!40000 ALTER TABLE `class` DISABLE KEYS */;
+/*!40000 ALTER TABLE `class` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -232,6 +271,29 @@ CREATE TABLE `comment` (
 LOCK TABLES `comment` WRITE;
 /*!40000 ALTER TABLE `comment` DISABLE KEYS */;
 /*!40000 ALTER TABLE `comment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `department`
+--
+
+DROP TABLE IF EXISTS `department`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `department` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `department`
+--
+
+LOCK TABLES `department` WRITE;
+/*!40000 ALTER TABLE `department` DISABLE KEYS */;
+/*!40000 ALTER TABLE `department` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -404,7 +466,10 @@ CREATE TABLE `student` (
   `user_ptr_id` bigint NOT NULL,
   `achievement` varchar(50) NOT NULL,
   `mssv` varchar(11) NOT NULL,
+  `class_id` bigint NOT NULL,
   PRIMARY KEY (`user_ptr_id`),
+  KEY `student_classe_id_8d7c4369_fk_class_id` (`class_id`),
+  CONSTRAINT `student_classe_id_8d7c4369_fk_class_id` FOREIGN KEY (`class_id`) REFERENCES `class` (`id`),
   CONSTRAINT `student_user_ptr_id_44865c21_fk_user_info_id` FOREIGN KEY (`user_ptr_id`) REFERENCES `user_info` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -554,4 +619,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-15 17:56:23
+-- Dump completed on 2025-05-18 23:34:38
