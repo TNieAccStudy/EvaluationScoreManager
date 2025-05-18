@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ExtraActivityServiceImpl implements ExtraActivityService {
-    
+
     @Autowired
     ExtraActivityRepository activityRepo;
 
@@ -58,5 +58,5 @@ public class ExtraActivityServiceImpl implements ExtraActivityService {
     public void deleteActivityById(int id) {
         this.activityRepo.deleteActivityById(id);
     }
-    
+
 }

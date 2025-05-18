@@ -4,6 +4,7 @@
  */
 package com.nhm.services.impl;
 
+import com.nhm.pojo.ExtraActivity;
 import com.nhm.pojo.Term;
 import com.nhm.repositories.TermRepository;
 import com.nhm.services.TermService;
@@ -29,6 +30,16 @@ public class TermServiceImpl implements TermService {
     @Override
     public Collection<Term> getTerms() {
         return termRepository.getTerms();
+    }
+
+    @Override
+    public Collection<ExtraActivity> getActivitesByTermId(int termId) {
+        return this.termRepository.getActivitesByTermId(termId);
+    }
+
+    @Override
+    public Term getTermById(int id) {
+        return this.termRepository.getTermById(id);
     }
     
 }

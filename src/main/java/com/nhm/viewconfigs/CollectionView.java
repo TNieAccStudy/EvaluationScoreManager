@@ -9,7 +9,7 @@ package com.nhm.viewconfigs;
  * @author GIGABYTE
  */
 public class CollectionView {
-    public static class Collection {}
+    public static class Collection extends DisplayView.Internal {}
     public static class TermCollection extends Collection {}
     public static class SemesterColelction extends Collection {}
     public static class ActivityColelction extends Collection {}

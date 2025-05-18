@@ -1,0 +1,31 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.nhm.formatters;
+
+import com.nhm.pojo.ExtraActivity;
+import java.text.ParseException;
+import java.util.Locale;
+import org.springframework.format.Formatter;
+
+/**
+ *
+ * @author GIGABYTE
+ */
+public class ExtraActivityFormatter implements Formatter<ExtraActivity> {
+
+    @Override
+    public String print(ExtraActivity object, Locale locale) {
+        return String.valueOf(object.getId());
+    }
+
+    @Override
+    public ExtraActivity parse(String text, Locale locale) throws ParseException {
+        ExtraActivity activity = new ExtraActivity();
+        activity.setId(Long.valueOf(text));
+        
+        return activity;
+    }
+    
+}
