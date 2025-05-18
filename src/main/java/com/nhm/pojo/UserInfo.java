@@ -54,7 +54,7 @@ import jakarta.persistence.InheritanceType;
 @JsonSubTypes(
         value = {
             @JsonSubTypes.Type(value = Student.class, name = "student"),
-            @JsonSubTypes.Type(value = StudentAssistant.class, name = "studentAsisstant"),
+            @JsonSubTypes.Type(value = StudentAssistant.class, name = "studentAssistant"),
             @JsonSubTypes.Type(value = StudentAffairsOfficer.class, name = "studentAffairsOfficer"),
         }
 )

@@ -4,9 +4,17 @@
  */
 package com.nhm.configs;
 
+import com.nhm.formatters.SemesterFormatter;
+import com.nhm.formatters.AsisstantFormatter;
+import com.nhm.formatters.TermFormatter;
+import com.nhm.formatters.UserFormatter;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -34,6 +42,19 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
+//        registry.addFormatter(new ExtraActivityFormatter());
+//        registry.addFormatter(new SemesterFormatter());
+//        registry.addFormatter(new TermFormatter());
+//        registry.addFormatter(new UserFormatter());
+//        registry.addFormatter(new AsisstantFormatter());
+    }
+    
+    @Autowired
+    private MappingJackson2HttpMessageConverter customConverter;
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(customConverter);
     }
 
     @Override
@@ -41,4 +62,5 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
         registry.addResourceHandler("/js/**").addResourceLocations("classpath:/static/js/");
                 
     }
+    
 }

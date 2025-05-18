@@ -4,6 +4,7 @@
  */
 package com.nhm.services;
 
+import com.nhm.pojo.ExtraActivity;
 import com.nhm.pojo.Term;
 import java.util.Collection;
 
@@ -14,4 +15,6 @@ import java.util.Collection;
 public interface TermService {
     Term addOrUpdate(Term term);
     Collection<Term> getTerms();
+    Collection<ExtraActivity> getActivitesByTermId(int termId);
+    Term getTermById(int id);
 }

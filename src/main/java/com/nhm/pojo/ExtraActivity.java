@@ -7,7 +7,6 @@ package com.nhm.pojo;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.nhm.viewconfigs.CollectionView;
 import com.nhm.viewconfigs.DisplayView;
-import com.nhm.viewconfigs.RoleView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -82,10 +81,12 @@ public class ExtraActivity extends BaseModel implements Serializable {
         DisplayView.Public.class,
         DisplayView.Simplify.class
     })
+//    @JsonDeserialize(using = TermDeserializer.class)
     private Semester semesterId;
     @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    @JsonView(RoleView.AssistantRole.class)
+    @JsonView(DisplayView.Internal.class)
+//    @JsonDeserialize(using = StudentAssistantDeserializer.class)
     private StudentAssistant studentAssistantId;
     @JoinColumn(name = "term_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
@@ -93,6 +94,7 @@ public class ExtraActivity extends BaseModel implements Serializable {
         DisplayView.Public.class,
         DisplayView.Simplify.class
     })
+//    @JsonDeserialize(using = TermDeserializer.class)
     private Term termId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "extraActivityId")
     @JsonView(CollectionView.ActivityColelction.class)

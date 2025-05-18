@@ -44,7 +44,7 @@ public class Student extends UserInfo implements Serializable {
         DisplayView.Public.class,
         DisplayView.Simplify.class
     })
-    private String achievement = Achievement.Good.name();
+    private String achievement = Achievement.None.name();
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 11)
@@ -143,7 +143,8 @@ public class Student extends UserInfo implements Serializable {
         Fair,
         Average,
         Poor,
-        Failing;
+        Failing,
+        None;
         
         private static Map<Predicate<Integer>, Achievement> convertionTable = new HashMap<>();
         

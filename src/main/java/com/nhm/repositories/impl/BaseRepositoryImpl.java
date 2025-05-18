@@ -36,6 +36,8 @@ public abstract class BaseRepositoryImpl {
             } else
                 s.merge(obj);
             
+            s.refresh(obj);
+            
             return obj;
         } else 
             return null;
