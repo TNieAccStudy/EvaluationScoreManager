@@ -7,6 +7,9 @@ package com.nhm.deserializers;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.nhm.viewconfigs.DisplayView;
 import java.io.IOException;
 
 /**
@@ -21,25 +24,31 @@ public interface InheritanceJsonDeserializeMixin<T, TService> extends JsonDeseri
     public default T deserialize(JsonParser jp, DeserializationContext dc) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
 
-        // Lấy id
-        JsonNode idNode = node.get("id");
-        if (idNode == null || !idNode.isNumber()) {
-            throw new IOException("Missing or invalid id for Object inheritance");
-        }
-        Long id = idNode.asLong();
-
-        // Lấy userType để kiểm tra (nếu cần)
-        JsonNode objTypeNode = node.get(this.getTypeObjectName());
-        if (objTypeNode == null) {
-            throw new IOException("Invalid " + this.getTypeObjectName() + " for Object inheritance");
+        // Không phải object → throw
+        if (!node.isObject()) {
+            throw new IOException("Expected JSON object for deserialization");
         }
 
-        // Gọi service lấy entity từ DB
-        T object = this.getObjById(getService(), id);
-        if (object == null) {
-            throw new IOException("UserInfo with id " + id + " not found");
+        // Kiểm tra nếu object chỉ có 2 field: "id" và getTypeObjectName()
+        boolean hasId = node.has("id") && node.get("id").isIntegralNumber();
+        boolean hasType = node.has(getTypeObjectName());
+        boolean isPureReference = node.size() == 2 && hasId && hasType;
+
+        if (isPureReference) {
+            // Deserialize theo ID từ DB
+            Long id = node.get("id").asLong();
+            T object = this.getObjById(getService(), id);
+            if (object == null) {
+                throw new IOException(getDeserializedClass().getSimpleName() + " with id " + id + " not found");
+            }
+            return object;
         }
-        return object;
+
+        // Nếu là object đầy đủ (dữ liệu dạng embedded), deserialize bình thường
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectReader reader = mapper.readerWithView(DisplayView.Internal.class)
+                .forType(getDeserializedClass());
+        return reader.readValue(node);
     }
 
     String getTypeObjectName();

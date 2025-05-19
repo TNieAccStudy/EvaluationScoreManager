@@ -30,7 +30,7 @@ public class BulletinRepositoryImpl extends BaseRepositoryImpl implements Bullet
     @Override
     public Bulletin addOrUpdate(Bulletin bulletin) {
         try {
-            super.addOrUpdate(bulletin, Bulletin.class);
+            return super.addOrUpdate(bulletin, Bulletin.class);
         } catch (NoSuchMethodException ex) {
             Logger.getLogger(BulletinRepositoryImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {

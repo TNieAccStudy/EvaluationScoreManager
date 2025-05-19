@@ -42,7 +42,7 @@ public class ApiCancelController {
     
     @PatchMapping("/cancels/{cancelId}")
     @JsonView(DisplayView.Public.class)
-    public ResponseEntity<CancelRequirement> create(@PathVariable("cancelId") int cancelId , @RequestBody CancelRequirement cancel) {
+    public ResponseEntity<CancelRequirement> updatePatial(@PathVariable("cancelId") int cancelId , @RequestBody CancelRequirement cancel) {
         return new ResponseEntity<>(this.cancelService.addOrUpdate(cancel), HttpStatus.OK);
     }
     

@@ -42,12 +42,14 @@ public class ApiBulletinController {
     @PostMapping("/bulletins")
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<Bulletin> create(@RequestBody Bulletin bulletin) {
-        return new ResponseEntity<>(this.bulletinService.addOrUpdate(bulletin), HttpStatus.CREATED);
+        Bulletin saved = this.bulletinService.addOrUpdate(bulletin);
+        System.out.println("Saved Bulletin: " + saved);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
     
     @PatchMapping("/bulletins/{bulletinId}")
     @JsonView(DisplayView.Public.class)
-    public ResponseEntity<Bulletin> create(@PathVariable("bulletinId") int bulletinId,@RequestBody Bulletin bulletin) {
+    public ResponseEntity<Bulletin> patialUpdate(@PathVariable("bulletinId") int bulletinId,@RequestBody Bulletin bulletin) {
         return new ResponseEntity<>(this.bulletinService.addOrUpdate(bulletin), HttpStatus.OK);
     }
     

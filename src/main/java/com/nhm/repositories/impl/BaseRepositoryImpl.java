@@ -22,27 +22,40 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
  * @author GIGABYTE
  */
 public abstract class BaseRepositoryImpl {
-    
+
     @Autowired
     protected LocalSessionFactoryBean sessionFactory;
-    
+
     protected <T> T addOrUpdate(T obj, Class<T> classType) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Session s = sessionFactory.getObject().getCurrentSession();
-        if (obj!=null) {
-            Method getMethod = classType.getMethod("getId");
-            
-            if (getMethod.invoke(obj) == null) {
-                s.persist(obj);
-            } else
-                s.merge(obj);
-            
-            s.refresh(obj);
-            
-            return obj;
-        } else 
+        if (obj == null) {
+            System.out.println("Object to save is null");
             return null;
+        }
+        
+        Session s = this.sessionFactory.getObject().getCurrentSession();
+        try {
+            Method getIdMethod = obj.getClass().getMethod("getId");
+            Object idValue = getIdMethod.invoke(obj);
+
+            if (idValue == null) {
+                System.out.println("Persisting new object");
+                s.persist(obj);
+            } else {
+                System.out.println("Merging existing object with id = " + idValue);
+                obj = (T) s.merge(obj);
+            }
+
+            s.refresh(obj);
+
+            System.out.println("After flush, obj = " + obj);
+            return obj;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
-    
+
 //    protected <T> Collection<T> getItems(Class classType) {
 //        Session s = sessionFactory.getObject().getCurrentSession();
 //        CriteriaBuilder cb = s.getCriteriaBuilder();
@@ -55,53 +68,52 @@ public abstract class BaseRepositoryImpl {
 //        
 //        return query.getResultList();
 //    }
-    
     protected <T> Collection<T> getItems(Class<T> classType) {
         Session s = sessionFactory.getObject().getCurrentSession();
-        
-        Query<T> query = s.createNamedQuery(String.format("%s.findAll",classType.getSimpleName()), classType);
+
+        Query<T> query = s.createNamedQuery(String.format("%s.findAll", classType.getSimpleName()), classType);
         return query.getResultList();
     }
-    
+
     protected <T> T getItemById(int id, Class<T> classType) {
         Session s = sessionFactory.getObject().getCurrentSession();
         return s.get(classType, id);
     }
-    
+
     protected <T> void removeItemById(int id, Class<T> classType) {
         Session s = sessionFactory.getObject().getCurrentSession();
-        
+
         T obj = s.get(classType, id);
         s.remove(obj);
     }
-    
-    protected <T> Collection<T> getItemsByObjId(int objId, Class<T> resultType, 
+
+    protected <T> Collection<T> getItemsByObjId(int objId, Class<T> resultType,
             BiFunction<CriteriaBuilder, Root<T>, Expression<Boolean>>... whereConditions) {
         Session s = this.sessionFactory.getObject().getCurrentSession();
-        
+
         CriteriaBuilder cb = s.getCriteriaBuilder();
         CriteriaQuery<T> q = cb.createQuery(resultType);
-        
+
         Root<T> data = q.from(resultType);
         q.select(data);
-        
+
         for (var w : whereConditions) {
             q.where(w.apply(cb, data));
         }
-        
+
         Query<T> query = s.createQuery(q);
         return query.getResultList();
     }
-    
-    protected <T> Collection<T> getItemsByObjIdWithCustomQuery(int objId, Class<T> resultType, 
+
+    protected <T> Collection<T> getItemsByObjIdWithCustomQuery(int objId, Class<T> resultType,
             BiFunction<CriteriaBuilder, CriteriaQuery<T>, CriteriaQuery<T>> execQuery) {
         Session s = this.sessionFactory.getObject().getCurrentSession();
-        
+
         CriteriaBuilder cb = s.getCriteriaBuilder();
         CriteriaQuery<T> q = cb.createQuery(resultType);
-        
+
         q = execQuery.apply(cb, q);
-        
+
         Query<T> query = s.createQuery(q);
         return query.getResultList();
     }

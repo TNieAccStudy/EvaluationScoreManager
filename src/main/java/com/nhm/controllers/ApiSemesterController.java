@@ -44,7 +44,7 @@ public class ApiSemesterController {
     
     @PatchMapping("/semesters/{semesterId}")
     @JsonView(DisplayView.Public.class)
-    public ResponseEntity<Semester> updatePatial(@PathVariable("semesterId") int semesterId, @RequestBody Semester semester) {
+    public ResponseEntity<Semester> patialUpdate(@PathVariable("semesterId") int semesterId, @RequestBody Semester semester) {
         return new ResponseEntity<>(this.semesterService.addOrUpdate(semester), HttpStatus.OK);
     }
     

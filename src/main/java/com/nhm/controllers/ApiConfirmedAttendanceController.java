@@ -40,7 +40,7 @@ public class ApiConfirmedAttendanceController {
     
     @PatchMapping("/attendances/{attendanceId}")
     @JsonView(DisplayView.Public.class)
-    public ResponseEntity<ActivityConfirmedAttendance> updatePatial(@PathVariable("attendanceId") int attendanceId, @RequestBody ActivityConfirmedAttendance attendance) {
+    public ResponseEntity<ActivityConfirmedAttendance> patialUpdate(@PathVariable("attendanceId") int attendanceId, @RequestBody ActivityConfirmedAttendance attendance) {
         return new ResponseEntity<>(this.attendanceService.addOrUpdate(attendance), HttpStatus.OK);
     }
     

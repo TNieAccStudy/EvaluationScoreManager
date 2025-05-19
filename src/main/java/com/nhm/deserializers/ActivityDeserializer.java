@@ -32,5 +32,10 @@ public class ActivityDeserializer extends BaseDeserializer<ExtraActivity, ExtraA
     public ExtraActivity getObjById(ExtraActivityService service, Long id) {
         return service.getActivityById(id.intValue());
     }
+
+    @Override
+    public Class<ExtraActivity> getDeserializedClass() {
+        return ExtraActivity.class;
+    }
     
 }

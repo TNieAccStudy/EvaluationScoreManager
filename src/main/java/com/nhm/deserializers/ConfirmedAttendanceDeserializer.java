@@ -32,5 +32,10 @@ public class ConfirmedAttendanceDeserializer extends BaseDeserializer<ActivityCo
     public ActivityConfirmedAttendance getObjById(ActivityConfirmedAttendanceService service, Long id) {
         return service.getAttendanceById(id.intValue());
     }
+
+    @Override
+    public Class<ActivityConfirmedAttendance> getDeserializedClass() {
+        return ActivityConfirmedAttendance.class;
+    }
     
 }

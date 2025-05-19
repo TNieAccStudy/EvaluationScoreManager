@@ -43,7 +43,7 @@ public class ApiInteractionController {
     
     @PatchMapping("/interactions/{interactionId}")
     @JsonView(DisplayView.Public.class)
-    public ResponseEntity<Interaction> create(@PathVariable("interactionId") int interactionId,@RequestBody Interaction interaction) {
+    public ResponseEntity<Interaction> patialUpdate(@PathVariable("interactionId") int interactionId,@RequestBody Interaction interaction) {
         return new ResponseEntity<>(interactionService.addOrUpdate(interaction), HttpStatus.OK);
     }
     

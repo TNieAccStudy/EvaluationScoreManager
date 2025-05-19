@@ -32,5 +32,10 @@ public class RegistryDeserializer extends BaseDeserializer<ActivityRegistry, Act
     public ActivityRegistry getObjById(ActivityRegistryService service, Long id) {
         return service.getRegistryById(id.intValue());
     }
+
+    @Override
+    public Class<ActivityRegistry> getDeserializedClass() {
+        return ActivityRegistry.class;
+    }
     
 }

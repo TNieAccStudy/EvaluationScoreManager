@@ -54,7 +54,7 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(customConverter);
+        converters.add(0, customConverter);
     }
 
     @Override
