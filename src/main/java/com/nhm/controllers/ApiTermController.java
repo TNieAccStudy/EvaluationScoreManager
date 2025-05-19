@@ -43,7 +43,7 @@ public class ApiTermController {
     
     @PatchMapping("/terms/{termId}")
     @JsonView(DisplayView.Public.class)
-    public ResponseEntity<Term> updatePatial(@PathVariable("termId") int termId, @RequestBody Term term) {
+    public ResponseEntity<Term> patialUpdate(@PathVariable("termId") int termId, @RequestBody Term term) {
         return new ResponseEntity<>(this.termService.addOrUpdate(term), HttpStatus.OK);
     }
     

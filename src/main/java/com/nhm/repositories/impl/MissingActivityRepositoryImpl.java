@@ -23,7 +23,7 @@ public class MissingActivityRepositoryImpl extends BaseRepositoryImpl implements
     @Override
     public MissingActivity addOrUpdate(MissingActivity missing) {
         try {
-            super.addOrUpdate(missing, MissingActivity.class);
+            return super.addOrUpdate(missing, MissingActivity.class);
         } catch (NoSuchMethodException ex) {
             Logger.getLogger(MissingActivityRepositoryImpl.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {

@@ -18,4 +18,6 @@ public class CollectionView {
     public static class StudentAffairsCollection extends Collection {}
     public static class BulletinCollection extends Collection {}
     public static class SummaryBulletinCollection extends Collection {}
+    public static class ClassCollection extends Collection {}
+    public static class DepartmentCollection extends Collection {}
 }

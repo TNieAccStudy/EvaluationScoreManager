@@ -37,5 +37,10 @@ public class InteractionDeserializer extends BaseDeserializer<Interaction, Inter
     public Interaction getObjById(InteractionService service, Long id) {
         return service.getInteractionById(id.intValue());
     }
+
+    @Override
+    public Class<Interaction> getDeserializedClass() {
+        return Interaction.class;
+    }
     
 }

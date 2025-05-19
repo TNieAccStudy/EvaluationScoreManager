@@ -6,8 +6,8 @@ package com.nhm.deserializers;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.nhm.pojo.Term;
-import com.nhm.services.TermService;
+import com.nhm.pojo.Department;
+import com.nhm.services.DepartmentService;
 import java.io.IOException;
 import org.springframework.stereotype.Component;
 
@@ -16,26 +16,26 @@ import org.springframework.stereotype.Component;
  * @author GIGABYTE
  */
 @Component
-public class TermDeserializer extends BaseDeserializer<Term, TermService> implements JsonDeserializeMixin<Term, TermService> {
+public class DepartmentDeserializer extends BaseDeserializer<Department, DepartmentService> implements JsonDeserializeMixin<Department, DepartmentService> {
 
     @Override
-    public Term deserialize(JsonParser jp, DeserializationContext dc) throws IOException {
+    public Department deserialize(JsonParser jp, DeserializationContext dc) throws IOException {
         return JsonDeserializeMixin.super.deserialize(jp, dc);
     }
 
     @Override
-    public TermService getService() {
+    public DepartmentService getService() {
         return this.service;
     }
 
     @Override
-    public Term getObjById(TermService service, Long id) {
-        return service.getTermById(id.intValue());
+    public Class<Department> getDeserializedClass() {
+        return Department.class;
     }
 
     @Override
-    public Class<Term> getDeserializedClass() {
-        return Term.class;
+    public Department getObjById(DepartmentService service, Long id) {
+        return service.getDepartmentById(id.intValue());
     }
-
+    
 }

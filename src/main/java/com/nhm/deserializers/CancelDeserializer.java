@@ -37,5 +37,10 @@ public class CancelDeserializer extends BaseDeserializer<CancelRequirement, Canc
     public CancelRequirement getObjById(CancelRequirementService service, Long id) {
         return service.getCancelById(id.intValue());
     }
+
+    @Override
+    public Class<CancelRequirement> getDeserializedClass() {
+        return CancelRequirement.class;
+    }
     
 }

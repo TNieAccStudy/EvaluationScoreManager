@@ -32,5 +32,10 @@ public class MissingDeserializer extends BaseDeserializer<MissingActivity, Missi
     public MissingActivity getObjById(MissingActivityService service, Long id) {
         return service.getMissingById(id.intValue());
     }
+
+    @Override
+    public Class<MissingActivity> getDeserializedClass() {
+        return MissingActivity.class;
+    }
     
 }

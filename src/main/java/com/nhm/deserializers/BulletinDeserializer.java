@@ -37,5 +37,10 @@ public class BulletinDeserializer extends BaseDeserializer<Bulletin, BulletinSer
     public Bulletin getObjById(BulletinService service, Long id) {
         return service.getBulletinById(id.intValue());
     }
+
+    @Override
+    public Class<Bulletin> getDeserializedClass() {
+        return Bulletin.class;
+    }
     
 }
