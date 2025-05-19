@@ -21,5 +21,7 @@
     <class>com.nhm.pojo.Term</class>
     <class>com.nhm.pojo.Student</class>
     <class>com.nhm.pojo.MissingActivity</class>
+    <class>com.nhm.pojo.Department</class>
+    <class>com.nhm.pojo.Classe</class>
   </persistence-unit>
 </persistence>

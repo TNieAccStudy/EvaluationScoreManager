@@ -32,5 +32,10 @@ public class SemesterDeserializer extends BaseDeserializer<Semester, SemesterSer
     public Semester getObjById(SemesterService service, Long id) {
         return service.getSemesterById(id.intValue());
     }
+
+    @Override
+    public Class<Semester> getDeserializedClass() {
+        return Semester.class;
+    }
     
 }

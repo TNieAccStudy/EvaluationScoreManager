@@ -10,8 +10,11 @@
     <!-- Bật log DEBUG cho Spring Framework -->
     <logger name="org.springframework" level="DEBUG" />
 
-    <!-- Bật log DEBUG cho Jackson -->
+    <!-- Bật log DEBUG cho toàn bộ Jackson -->
     <logger name="com.fasterxml.jackson" level="DEBUG" />
+
+    <!-- Bật log DEBUG riêng cho deserialization -->
+    <logger name="com.fasterxml.jackson.databind.deser" level="DEBUG" />
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />

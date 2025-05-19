@@ -93,14 +93,13 @@ public class Bulletin extends BaseModel implements Serializable {
     @JsonView(DisplayView.Public.class)
     protected Date duration;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "state")
     @JsonView({
         DisplayView.Public.class,
         DisplayView.Simplify.class
     })
-    protected String state;
+    protected String state = BulletinState.OPENING.name();
     @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
     @NotNull
     @ManyToOne(optional = false)

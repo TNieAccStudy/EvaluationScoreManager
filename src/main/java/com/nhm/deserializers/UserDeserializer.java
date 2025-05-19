@@ -38,5 +38,10 @@ public class UserDeserializer extends BaseDeserializer<UserInfo, UserService> im
     public UserInfo getObjById(UserService service, Long id) {
         return service.getUserById(id.intValue());
     }
+
+    @Override
+    public Class<UserInfo> getDeserializedClass() {
+        return UserInfo.class;
+    }
     
 }

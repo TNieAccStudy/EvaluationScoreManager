@@ -40,7 +40,7 @@ public class ApiRegistryController {
     
     @PatchMapping("/registries/{registryId}")
     @JsonView(DisplayView.Public.class)
-    public ResponseEntity<ActivityRegistry> updatePatial(@PathVariable("registryId") int registryId, @RequestBody ActivityRegistry registry) {
+    public ResponseEntity<ActivityRegistry> patialUpdate(@PathVariable("registryId") int registryId, @RequestBody ActivityRegistry registry) {
         return new ResponseEntity<>(this.registryService.addOrUpdate(registry), HttpStatus.OK);
     }
     
