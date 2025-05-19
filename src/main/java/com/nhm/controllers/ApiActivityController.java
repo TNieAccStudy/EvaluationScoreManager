@@ -78,6 +78,7 @@ public class ApiActivityController {
         List<ActivityRegistry> registries = this.activityService.getResigtriesByActivityId(activityId).stream().collect(Collectors.toList());
         return new ResponseEntity<>(registries, HttpStatus.OK);
     }
+
     
     @GetMapping("/activities/{activityId}/missings")
     @JsonView(DisplayView.Simplify.class)
