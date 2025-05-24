@@ -6,9 +6,13 @@ package com.nhm.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.nhm.pojo.Interaction;
-import com.nhm.pojo.MissingActivity;
+import com.nhm.pojo.Student;
+import com.nhm.pojo.UserInfo;
 import com.nhm.services.InteractionService;
+import com.nhm.services.UserService;
 import com.nhm.viewconfigs.DisplayView;
+import java.security.Principal;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,34 +32,43 @@ import org.springframework.web.bind.annotation.RestController;
  * @author GIGABYTE
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/interactions")
 @CrossOrigin
 public class ApiInteractionController {
     
     @Autowired
     private InteractionService interactionService;
     
-    @PostMapping("/interactions")
+    @Autowired
+    private UserService userService;
+    
+    @PostMapping
     @JsonView(DisplayView.Public.class)
-    public ResponseEntity<Interaction> create(@RequestBody Interaction interaction) {
+    public ResponseEntity<?> create(@RequestBody Interaction interaction, Principal principal) {
+        try {
+            UserInfo u = UserInfo.getUserByUsernameWithInstance(principal.getName(), userService, Student.class);
+            interaction.setStudentId((Student)u);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.entry("error", "your account doesn't enough permission."));
+        }
         return new ResponseEntity<>(interactionService.addOrUpdate(interaction), HttpStatus.CREATED);
     }
     
-    @PatchMapping("/interactions/{interactionId}")
+    @PatchMapping("/{interactionId}")
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<Interaction> patialUpdate(@PathVariable("interactionId") int interactionId,@RequestBody Interaction interaction) {
         return new ResponseEntity<>(interactionService.addOrUpdate(interaction), HttpStatus.OK);
     }
     
-    @DeleteMapping("/interactions/{interactionId}")
+    @DeleteMapping("/{interactionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable("interactionId") int interactionId) {
         this.interactionService.deleteInteractionById(interactionId);
     }
     
-    @GetMapping("/interactions/{interactionId}")
+    @GetMapping("/{interactionId}")
     @JsonView(DisplayView.Internal.class)
-    public ResponseEntity<Interaction> retrive(@PathVariable("interactionId") int interactionId,@RequestBody Interaction interaction) {
+    public ResponseEntity<Interaction> retrieve(@PathVariable("interactionId") int interactionId,@RequestBody Interaction interaction) {
         return new ResponseEntity<>(interactionService.getInteractionById(interactionId), HttpStatus.OK);
     }
     

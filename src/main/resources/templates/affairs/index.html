@@ -1,0 +1,50 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{affairs/base :: base(~{::title}, ~{::div.content}, ~{::#custom-links})}">
+    <header>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Index template</title>
+
+        <th:block id="custom-links">
+            <link rel="stylesheet" th:href="@{/affairs/css/index.css}" />
+        </th:block>
+
+    </header>
+    <body>
+        <div class="content">
+            <div class="welcome-message">
+                <h1>Welcome to Shards Dashboard</h1>
+                <p>Your central hub to manage posts, users, and more with ease.</p>
+            </div>
+            <!-- thong ke co ban. -->
+            <div class="stats-cards">
+                <div class="card">
+                    <h3>Bulletin in this semester</h3>
+                    <p>2,390</p>
+                </div>
+                <div class="card">
+                    <h3>Activities in this semester</h3>
+                    <p>182</p>
+                </div>
+                <div class="card">
+                    <h3>Cancels for Bulletin</h3>
+                    <p>8,147</p>
+                </div>
+                <div class="card">
+                    <h3>Students account</h3>
+                    <p>17,281</p>
+                </div>
+            </div>
+
+            <!-- quickaction -->
+            <div class="quick-actions">
+                <h2>Quick Actions</h2>
+                <button class="btn">Add New Post</button>
+                <button class="btn">Manage Users</button>
+                <button class="btn">View Reports</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

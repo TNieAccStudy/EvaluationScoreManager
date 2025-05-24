@@ -43,7 +43,7 @@ public class TermRepositoryImpl extends BaseRepositoryImpl implements TermReposi
 
     @Override
     public Collection<ExtraActivity> getActivitesByTermId(int termId) {
-        return super.getItemsByObjId(termId, ExtraActivity.class, (cb, data) -> {
+        return super.getItems(ExtraActivity.class, (cb, data) -> {
             return cb.equal(data.get("termId").get("id"), Long.valueOf(termId));
         });
     }

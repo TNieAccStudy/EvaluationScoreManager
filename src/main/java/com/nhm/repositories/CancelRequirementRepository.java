@@ -13,7 +13,7 @@ import java.util.Collection;
  */
 public interface CancelRequirementRepository {
     CancelRequirement addOrUpdate(CancelRequirement cancel);
-    Collection<CancelRequirement> getCancels();
+    <T extends CancelRequirement> Collection<T> getCancels(Class<T> type);
     void deleteCancelById(int id);
     CancelRequirement getCancelById(int id);
 }

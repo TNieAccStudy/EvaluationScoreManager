@@ -9,6 +9,7 @@ import com.nhm.pojo.ActivityRegistry;
 import com.nhm.pojo.ExtraActivity;
 import com.nhm.pojo.MissingActivity;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  *
@@ -16,7 +17,7 @@ import java.util.Collection;
  */
 public interface ExtraActivityService {
     ExtraActivity addOrUpdate(ExtraActivity activity);
-    Collection<ExtraActivity> getActivities();
+    Collection<ExtraActivity> getActivities(Map<String, String> params);
     ExtraActivity getActivityById(int activityId);
     Collection<ActivityConfirmedAttendance> getAttendancesByActivityId(int activityId);
     Collection<ActivityRegistry> getResigtriesByActivityId(int activityId);

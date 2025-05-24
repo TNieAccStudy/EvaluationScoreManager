@@ -17,6 +17,6 @@ public interface SemesterService {
     Semester addOrUpdate(Semester semester);
     Collection<Semester> getSemesters();
     Collection<ExtraActivity> getActivitesByTermId(int semesterId);
-    Collection<Bulletin> getBulletinsByTermId(int semesterId);
+    <T extends Bulletin>Collection<T> getBulletinsByTermId(int semesterId, Class<T> type);
     Semester getSemesterById(int id);
 }

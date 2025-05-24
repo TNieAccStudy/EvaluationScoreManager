@@ -52,9 +52,8 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
         registration.setMultipartConfig(new MultipartConfigElement(location, maxFileSize, maxRequestSize, fileSizeThreshold));
     }
     
-    @Override
-    protected Filter[] getServletFilters() {
-        
-        return new Filter[] { new JwtFilter() }; 
-    }
+//    @Override
+//    protected Filter[] getServletFilters() {
+//        return new Filter[] { new JwtFilter() }; 
+//    }
 }

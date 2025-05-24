@@ -44,14 +44,14 @@ public class SemesterRepositoryImpl extends BaseRepositoryImpl implements Semest
 
     @Override
     public Collection<ExtraActivity> getActivitesByTermId(int semesterId) {
-        return super.getItemsByObjId(semesterId, ExtraActivity.class, (cb, data) -> {
+        return super.getItems(ExtraActivity.class, (cb, data) -> {
             return cb.equal(data.get("semesterId").get("id"), Long.valueOf(semesterId));
         });
     }
 
     @Override
-    public Collection<Bulletin> getBulletinsByTermId(int semesterId) {
-        return super.getItemsByObjId(semesterId, Bulletin.class, (cb, data) -> {
+    public <T extends Bulletin> Collection<T> getBulletinsByTermId(Class<T> type, int semesterId) {
+        return super.getItems(type, (cb, data) -> {
             return cb.equal(data.get("semesterId").get("id"), Long.valueOf(semesterId));
         });
     }

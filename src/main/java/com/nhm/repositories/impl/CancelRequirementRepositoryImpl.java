@@ -41,8 +41,8 @@ public class CancelRequirementRepositoryImpl extends BaseRepositoryImpl implemen
     }
 
     @Override
-    public Collection<CancelRequirement> getCancels() {
-        return super.getItems(CancelRequirement.class);
+    public <T extends CancelRequirement> Collection<T> getCancels(Class<T> type) {
+        return super.getItems(type);
     }
 
     @Override

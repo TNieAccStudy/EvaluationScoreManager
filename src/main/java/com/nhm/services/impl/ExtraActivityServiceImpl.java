@@ -10,7 +10,17 @@ import com.nhm.pojo.ExtraActivity;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.repositories.ExtraActivityRepository;
 import com.nhm.services.ExtraActivityService;
+import com.nhm.utils.PaginatorUtils;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +40,37 @@ public class ExtraActivityServiceImpl implements ExtraActivityService {
     }
 
     @Override
-    public Collection<ExtraActivity> getActivities() {
-        return this.activityRepo.getActivities();
+    public Collection<ExtraActivity> getActivities(Map<String, String> params) {
+        List<BiFunction<CriteriaBuilder, Root<ExtraActivity>, Predicate>> whereParams = new ArrayList<>();
+        
+        if (params.containsKey("term")) {
+            whereParams.add((cb, root) -> cb.equal(root.get("termId").get("id"), Long.valueOf(params.get("term"))));
+        }
+        
+        if (params.containsKey("semester")) {
+            whereParams.add((cb, root) -> cb.equal(root.get("semesterId").get("id"), Long.valueOf(params.get("semester"))));
+        }
+        
+        if (params.containsKey("assistant")) {
+            whereParams.add((cb, root) -> cb.equal(root.get("studentAssistantId").get("id"), Long.valueOf(params.get("assistant"))));
+        }
+        
+        if (params.containsKey("kw")) {
+            whereParams.add((cb, root) -> cb.like(root.get("title"), params.get("kw")));
+        }
+        
+        Function<Query<ExtraActivity>, Query<ExtraActivity>> supportedQuery = null;
+        if (params.containsKey("page")) {
+            int pageSize = PaginatorUtils.pageSize;
+            int startIndex = Integer.parseInt(params.get("page")) * pageSize;
+            supportedQuery = (q) -> {
+                q.setFirstResult(startIndex);
+                q.setMaxResults(pageSize);
+                return q;
+            };
+        }
+        
+        return this.activityRepo.getActivities(whereParams, supportedQuery);
     }
 
     @Override

@@ -27,38 +27,38 @@ import org.springframework.web.bind.annotation.RestController;
  * @author GIGABYTE
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/classes")
 @CrossOrigin
 public class ApiClassController {
     
     @Autowired
     private ClassService classService;
     
-    @PostMapping("/classes")
+    @PostMapping
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<Classe> create(@RequestBody Classe classe) {
         return new ResponseEntity<>(this.classService.addOrUpdate(classe), HttpStatus.CREATED);
     }
     
-    @PatchMapping("/classes/{classId}")
+    @PatchMapping("/{classId}")
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<Classe> updatePatial(@PathVariable("classId") int classId , @RequestBody Classe classe) {
         return new ResponseEntity<>(this.classService.addOrUpdate(classe), HttpStatus.OK);
     }
     
-    @GetMapping("/classes/{classId}")
+    @GetMapping("/{classId}")
     @JsonView(DisplayView.Internal.class)
-    public ResponseEntity<Classe> retrive(@PathVariable("classId") int classId) {
+    public ResponseEntity<Classe> retrieve(@PathVariable("classId") int classId) {
         return new ResponseEntity<>(this.classService.getClassById(classId), HttpStatus.OK);
     }
     
-    @GetMapping("/classes")
+    @GetMapping
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<Collection<Classe>> list() {
         return new ResponseEntity<>(this.classService.getClasses(), HttpStatus.OK);
     }
     
-    @GetMapping("/classes/{classId}/students")
+    @GetMapping("/{classId}/students")
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<Collection<Student>> getStudentsByClassId(@PathVariable("classId") int classeId) {
         return new ResponseEntity<>(this.classService.getStudentsByClassId(classeId), HttpStatus.OK);
