@@ -48,13 +48,13 @@ public class ApiUserController {
     @Autowired
     private UserService userDetailsService;
 
-    @PostMapping(path = "/users", 
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE, 
+    @PostMapping(path = "/users",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @JsonView(DisplayView.Internal.class)
     public ResponseEntity<UserInfo> create(@RequestPart("data") UserInfo userData, @RequestPart(value = "avatar", required = false) MultipartFile avatar) throws JsonProcessingException, Exception {
         System.out.println("user data : " + userData);
-        
+
         return new ResponseEntity<>(this.userDetailsService.addUser(userData, avatar), HttpStatus.CREATED);
     }
 
@@ -81,66 +81,54 @@ public class ApiUserController {
     public ResponseEntity<UserInfo> getProfile(Principal principal) {
         return new ResponseEntity<>(this.userDetailsService.getUserByUsername(principal.getName()), HttpStatus.OK);
     }
-    
+
     @GetMapping("/assistants")
     @JsonView(DisplayView.Simplify.class)
     @CrossOrigin
     public ResponseEntity<List<StudentAssistant>> getAssistants() {
         List<StudentAssistant> assistants = this.userDetailsService.getUsers(StudentAssistant.class).stream().collect(Collectors.toList());
-        return new ResponseEntity<>(assistants,HttpStatus.OK);
+        return new ResponseEntity<>(assistants, HttpStatus.OK);
     }
-    
+
     @GetMapping("/students")
     @JsonView(DisplayView.Simplify.class)
     @CrossOrigin
     public ResponseEntity<List<Student>> getStudents() {
         List<Student> assistants = this.userDetailsService.getUsers(Student.class).stream().collect(Collectors.toList());
-        return new ResponseEntity<>(assistants,HttpStatus.OK);
+        return new ResponseEntity<>(assistants, HttpStatus.OK);
     }
-    
+
     @GetMapping("/students/{username}")
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<UserInfo> getStudentDetail(@PathVariable("username") String username) {
         return new ResponseEntity<>(this.userDetailsService.getUserByUsername(username), HttpStatus.OK);
     }
-    
+
     @GetMapping("/students/current-student/registries")
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<?> getRegistriesForCurrentStudent(Principal principal) {
-        try {
-            Student u = (Student) UserInfo.getUserByUsernameWithInstance(principal.getName(), userDetailsService, Student.class);
-            List<ActivityRegistry> registries = userDetailsService.getRegistriesByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
-            
-            return new ResponseEntity<>(registries, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.entry("error", "your account doesn't enough permission."));
-        }
+        UserInfo u = userDetailsService.getUserByUsername(principal.getName());
+        List<ActivityRegistry> registries = userDetailsService.getRegistriesByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
+
+        return new ResponseEntity<>(registries, HttpStatus.OK);
     }
-    
+
     @GetMapping("/students/current-student/attendances")
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<?> getAttendancesForCurrentStudent(Principal principal) {
-        try {
-            Student u = (Student) UserInfo.getUserByUsernameWithInstance(principal.getName(), userDetailsService, Student.class);
-            List<ActivityConfirmedAttendance> attendances = userDetailsService.getAttendsByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
-            
-            return new ResponseEntity<>(attendances, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.entry("error", "your account doesn't enough permission."));
-        }
+        UserInfo u = userDetailsService.getUserByUsername(principal.getName());
+        List<ActivityRegistry> registries = userDetailsService.getRegistriesByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
+
+        return new ResponseEntity<>(registries, HttpStatus.OK);
     }
-    
+
     @GetMapping("/students/current-student/missings")
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<?> getMissingsForCurrentStudent(Principal principal) {
-        try {
-            Student u = (Student) UserInfo.getUserByUsernameWithInstance(principal.getName(), userDetailsService, Student.class);
-            List<MissingActivity> missings = userDetailsService.getMissingsByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
-            
-            return new ResponseEntity<>(missings, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.entry("error", "your account doesn't enough permission."));
-        }
+        UserInfo u = userDetailsService.getUserByUsername(principal.getName());
+        List<ActivityRegistry> registries = userDetailsService.getRegistriesByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
+
+        return new ResponseEntity<>(registries, HttpStatus.OK);
     }
-    
+
 }
