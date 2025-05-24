@@ -48,7 +48,7 @@ public class DepartmentRepositoryImpl extends BaseRepositoryImpl implements Depa
 
     @Override
     public Collection<Classe> getClassesByDepartmentId(int id) {
-        return super.getItemsByObjId(id, Classe.class, (cb, data) -> {
+        return super.getItems(Classe.class, (cb, data) -> {
             return cb.equal(data.get("departmentId").get("id"), Long.valueOf(id));
         });
     }

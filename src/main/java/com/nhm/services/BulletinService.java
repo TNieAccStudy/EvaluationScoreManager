@@ -9,6 +9,7 @@ import com.nhm.pojo.ExtraActivity;
 import com.nhm.pojo.Interaction;
 import com.nhm.pojo.MissingActivity;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  *
@@ -16,9 +17,9 @@ import java.util.Collection;
  */
 public interface BulletinService {
     Bulletin addOrUpdate(Bulletin bulletin);
-    Collection<Bulletin> getBulletins();
+    <T extends Bulletin> Collection<T> getBulletins(Map<String, String> params, Class<T> type);
     void deleteBulletinById(int id);
-    Collection<Interaction> getInteractionsByBulletinId(int id);
+    <T extends Interaction>Collection<T> getInteractionsByBulletinId(int id, Class<T> type);
     ExtraActivity getActivityByBulletinId(int id);
     Collection<MissingActivity> getMissingActivityBySummaryBulletinId(int id);
     Bulletin getBulletinById(int id);

@@ -8,7 +8,14 @@ import com.nhm.pojo.Bulletin;
 import com.nhm.pojo.ExtraActivity;
 import com.nhm.pojo.Interaction;
 import com.nhm.pojo.MissingActivity;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -16,9 +23,9 @@ import java.util.Collection;
  */
 public interface BulletinRepository {
     Bulletin addOrUpdate(Bulletin bulletin);
-    Collection<Bulletin> getBulletins();
+    <T extends Bulletin> Collection<T> getBulletinsWithParams(Class<T> type, List<BiFunction<CriteriaBuilder, Root<T>, Predicate>> whereParams, Function<Query<T>, Query<T>> supportedQuery);
     void deleteBulletinById(int id);
-    Collection<Interaction> getInteractionsByBulletinId(int id);
+    <T extends Interaction>Collection<T> getInteractionsByBulletinId(Class<T> type, int id);
     ExtraActivity getActivityByBulletinId(int id);
     Collection<MissingActivity> getMissingActivityBySummaryBulletinId(int id);
     Bulletin getBulletinById(int id);

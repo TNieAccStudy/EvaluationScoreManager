@@ -22,7 +22,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -84,7 +83,6 @@ public class CancelRequirement extends BaseModel implements Serializable {
     })
     protected String executedStatus = ExecuteStatus.PENDING.name();
     @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
-    @NotNull
     @ManyToOne
     @JsonView({
         DisplayView.Public.class,
@@ -181,6 +179,18 @@ public class CancelRequirement extends BaseModel implements Serializable {
     @Override
     public String toString() {
         return "com.nhm.pojo.CancelRequirement[ id=" + id + " ]";
+    }
+    
+    public static Class<? extends CancelRequirement> getSubClassByString(String cancelType) {
+        if (cancelType == null)
+            return CancelRequirement.class;
+        
+        JsonSubTypes jsonSubTypeAnnotation = CancelRequirement.class.getAnnotation(JsonSubTypes.class);
+        for(var t : jsonSubTypeAnnotation.value()) {
+            if (t.name().equals(cancelType))
+                return (Class<? extends CancelRequirement>) t.value();
+        }
+        return CancelRequirement.class;
     }
     
 }

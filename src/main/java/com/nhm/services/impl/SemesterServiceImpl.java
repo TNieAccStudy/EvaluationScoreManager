@@ -39,8 +39,8 @@ public class SemesterServiceImpl implements SemesterService {
     }
 
     @Override
-    public Collection<Bulletin> getBulletinsByTermId(int semesterId) {
-        return this.semesterRepo.getBulletinsByTermId(semesterId);
+    public <T extends Bulletin>Collection<T> getBulletinsByTermId(int semesterId, Class<T> type) {
+        return this.semesterRepo.getBulletinsByTermId(type, semesterId);
     }
 
     @Override

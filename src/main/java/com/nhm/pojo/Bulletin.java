@@ -101,7 +101,6 @@ public class Bulletin extends BaseModel implements Serializable {
     })
     protected String state = BulletinState.OPENING.name();
     @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
-    @NotNull
     @ManyToOne(optional = false)
     @JsonView({
         DisplayView.Public.class,
@@ -244,6 +243,18 @@ public class Bulletin extends BaseModel implements Serializable {
     public static enum BulletinState {
         OPENING,
         CLOSED
+    }
+    
+    public static Class<? extends Bulletin> getSubClassByString(String bulletinType) {
+        if (bulletinType == null)
+            return Bulletin.class;
+        
+        JsonSubTypes jsonSubTypeAnnotation = Bulletin.class.getAnnotation(JsonSubTypes.class);
+        for(var t : jsonSubTypeAnnotation.value()) {
+            if (t.name().equals(bulletinType))
+                return (Class<? extends Bulletin>) t.value();
+        }
+        return Bulletin.class;
     }
     
 }

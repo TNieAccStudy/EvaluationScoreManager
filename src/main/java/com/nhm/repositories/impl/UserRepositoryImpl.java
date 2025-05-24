@@ -107,4 +107,14 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
     public Collection<MissingActivity> getMissingsByUserId(int userId) {
         return this.getItemsOfUserByUserId(userId, MissingActivity.class, t -> t.getMissingActivityCollection());
     }
+
+    @Override
+    public Collection<UserInfo> getUsers() {
+        return super.getItems(UserInfo.class);
+    }
+
+    @Override
+    public <T extends UserInfo> Collection<T> getUsers(Class<T> type) {
+        return super.getItems(type);
+    }
 }

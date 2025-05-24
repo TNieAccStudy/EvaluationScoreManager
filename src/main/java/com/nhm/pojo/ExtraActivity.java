@@ -65,7 +65,10 @@ public class ExtraActivity extends BaseModel implements Serializable {
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "title")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private String title;
     @Lob
     @Size(max = 2147483647)

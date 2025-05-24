@@ -7,6 +7,7 @@ package com.nhm.pojo;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.nhm.services.UserService;
 import com.nhm.viewconfigs.DisplayView;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -23,6 +24,7 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import jakarta.persistence.InheritanceType;
+import java.util.Arrays;
 
 /**
  *
@@ -253,6 +255,26 @@ public class UserInfo extends BaseModel implements Serializable {
         ROLE_STUDENT,
         ROLE_ASSISTANT,
         ROLE_AFFAIRS
+    }
+    
+    public static UserInfo getUserByUsernameWithInstance(String username, UserService userService, Class instanceType) throws Exception {
+        UserInfo u = userService.getUserByUsername(username);
+        
+        if(instanceType.isInstance(u))
+            return u;
+        throw new Exception("your instance not have style with " + instanceType.getSimpleName());
+    }
+    
+    public static Class<? extends UserInfo> getSubClassByString(String userType) {
+        if (userType == null)
+            return UserInfo.class;
+        
+        JsonSubTypes jsonSubTypeAnnotation = UserInfo.class.getAnnotation(JsonSubTypes.class);
+        for(var t : jsonSubTypeAnnotation.value()) {
+            if (t.name().equals(userType))
+                return (Class<? extends UserInfo>) t.value();
+        }
+        return UserInfo.class;
     }
     
 }

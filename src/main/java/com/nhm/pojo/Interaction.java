@@ -139,4 +139,16 @@ public class Interaction extends BaseModel implements Serializable {
         return "com.nhm.pojo.Interaction[ id=" + id + " ]";
     }
     
+    public static Class<? extends Interaction> getSubClassByString(String interactionType) {
+        if (interactionType == null)
+            return Interaction.class;
+        
+        JsonSubTypes jsonSubTypeAnnotation = Interaction.class.getAnnotation(JsonSubTypes.class);
+        for(var t : jsonSubTypeAnnotation.value()) {
+            if (t.name().equals(interactionType))
+                return (Class<? extends Interaction>) t.value();
+        }
+        return Interaction.class;
+    }
+    
 }

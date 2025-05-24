@@ -6,10 +6,14 @@ package com.nhm.services.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.nhm.pojo.ActivityConfirmedAttendance;
+import com.nhm.pojo.ActivityRegistry;
+import com.nhm.pojo.MissingActivity;
 import com.nhm.pojo.UserInfo;
 import com.nhm.repositories.UserRepository;
 import com.nhm.services.UserService;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -52,27 +56,35 @@ public class UserServiceImpl implements UserService {
 
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(u.getUserRole()));
-        
+
         return new org.springframework.security.core.userdetails.User(
                 u.getUsername(), u.getPassword(), authorities);
     }
 
     @Override
-    public UserInfo addUser(UserInfo user, MultipartFile avatar) {
+    public UserInfo addUser(UserInfo user, MultipartFile avatar) throws IOException, Exception {
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
-        if (user.getUserRole() == null || user.getUserRole().equals(""))
+        if (user.getUserRole() == null || user.getUserRole().equals("")) {
             user.setUserRole("ROLE_USER");
-        
-        if (avatar != null && !avatar.isEmpty()) {
-            try {
-                Map res = cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-                user.setAvatar(res.get("secure_url").toString());
-            } catch (IOException ex) {
-                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
         
-        return this.userRepo.addUser(user);
+        String publicId = null;
+        if (avatar != null && !avatar.isEmpty()) {
+            Map res = cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+            user.setAvatar(res.get("secure_url").toString());
+            publicId = res.get("public_id").toString();
+        }
+
+        try {
+            user = this.userRepo.addUser(user);
+        } catch (Exception e) {
+            if (publicId != null) {
+                cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            }
+            throw new Exception("error when work with database");
+        }
+        
+        return user;
     }
 
     @Override
@@ -83,6 +95,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfo getUserById(int id) {
         return userRepo.getUserById(id);
+    }
+
+    @Override
+    public Collection<ActivityRegistry> getRegistriesByUserId(int userId) {
+        return this.userRepo.getRegistriesByUserId(userId);
+    }
+
+    @Override
+    public Collection<ActivityConfirmedAttendance> getAttendsByUserId(int userId) {
+        return this.userRepo.getAttendsByUserId(userId);
+    }
+
+    @Override
+    public Collection<MissingActivity> getMissingsByUserId(int userId) {
+        return this.userRepo.getMissingsByUserId(userId);
+    }
+
+    @Override
+    public <T extends UserInfo> Collection<T> getUsers(Class<T> type) {
+        return this.userRepo.getUsers(type);
     }
 
 }

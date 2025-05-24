@@ -28,40 +28,40 @@ import org.springframework.web.bind.annotation.RestController;
  * @author GIGABYTE
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/terms")
 @CrossOrigin
 public class ApiTermController {
     
     @Autowired
     private TermService termService;
     
-    @PostMapping("/terms")
+    @PostMapping
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<Term> create(@RequestBody Term term) {
         return new ResponseEntity<>(this.termService.addOrUpdate(term), HttpStatus.CREATED);
     }
     
-    @PatchMapping("/terms/{termId}")
+    @PatchMapping("/{termId}")
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<Term> patialUpdate(@PathVariable("termId") int termId, @RequestBody Term term) {
         return new ResponseEntity<>(this.termService.addOrUpdate(term), HttpStatus.OK);
     }
     
-    @GetMapping("/terms")
+    @GetMapping
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<List<Term>> list() {
         List<Term> terms = this.termService.getTerms().stream().collect(Collectors.toList());
         return new ResponseEntity<>(terms, HttpStatus.OK);
     }
     
-    @GetMapping("/terms/{termId}/activities")
+    @GetMapping("/{termId}/activities")
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<List<ExtraActivity>> getActivitesByTermId(@PathVariable("termId") int termId) {
         List<ExtraActivity> activities = this.termService.getActivitesByTermId(termId).stream().collect(Collectors.toList());
         return new ResponseEntity<>(activities, HttpStatus.OK);
     }
     
-    @GetMapping("/terms/{termId}")
+    @GetMapping("/{termId}")
     @JsonView(DisplayView.Internal.class)
     public ResponseEntity<Term> retrieve(@PathVariable("termId") int termId) {
         return new ResponseEntity<>(this.termService.getTermById(termId), HttpStatus.OK);
