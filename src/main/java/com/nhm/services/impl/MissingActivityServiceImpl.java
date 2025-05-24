@@ -6,9 +6,11 @@ package com.nhm.services.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ExecuteStatus;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.repositories.MissingActivityRepository;
+import com.nhm.services.ActivityConfirmedAttendanceService;
 import com.nhm.services.MissingActivityService;
 import java.io.IOException;
 import java.util.Map;
@@ -26,6 +28,9 @@ public class MissingActivityServiceImpl implements MissingActivityService {
     
     @Autowired
     private MissingActivityRepository missingRepo;
+    
+    @Autowired
+    private ActivityConfirmedAttendanceService attendanceService;
     
     @Autowired
     private Cloudinary cloudinary;
@@ -49,7 +54,9 @@ public class MissingActivityServiceImpl implements MissingActivityService {
         }
         
         if (missing.getExecutedStatus().equals(ExecuteStatus.CONFIRMED.name())) {
-            
+            ActivityConfirmedAttendance attendance = missing.getActivityConfirmedAttendanceId();
+            attendance.setCensorState(ActivityConfirmedAttendance.CensorState.CONFIRMED.name());
+            attendanceService.addOrUpdate(attendance, proofPicture);
         }
         
         return missing;

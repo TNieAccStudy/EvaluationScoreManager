@@ -13,4 +13,5 @@ import com.nhm.pojo.ActivityRegistry;
 public interface ActivityRegistryRepository {
     ActivityRegistry addOrUpdate(ActivityRegistry registry);
     ActivityRegistry getRegistryById(int id);
+    
 }
