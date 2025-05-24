@@ -7,6 +7,7 @@ package com.nhm.services.impl;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.repositories.MissingActivityRepository;
 import com.nhm.services.MissingActivityService;
+import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,11 @@ public class MissingActivityServiceImpl implements MissingActivityService {
     @Override
     public MissingActivity getMissingById(int id) {
         return this.missingRepo.getMissingById(id);
+    }
+
+    @Override
+    public Collection<MissingActivity> getMissingActivities() {
+        return this.missingRepo.getMissingActivities();
     }
     
 }

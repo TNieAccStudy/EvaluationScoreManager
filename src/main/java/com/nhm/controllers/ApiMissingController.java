@@ -8,6 +8,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.services.MissingActivityService;
 import com.nhm.viewconfigs.DisplayView;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +40,13 @@ public class ApiMissingController {
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<MissingActivity> create(@RequestBody MissingActivity missing) {
         return new ResponseEntity<>(this.missingService.addOrUpdate(missing), HttpStatus.CREATED);
+    }
+    
+    @GetMapping("/missings")
+    @JsonView(DisplayView.Public.class)
+    public ResponseEntity<Collection<MissingActivity>> list() {
+        List<MissingActivity> missingActivities = this.missingService.getMissingActivities().stream().collect(Collectors.toList());
+        return new ResponseEntity<>(missingActivities, HttpStatus.OK);
     }
     
     @PatchMapping("/missings/{missingId}")

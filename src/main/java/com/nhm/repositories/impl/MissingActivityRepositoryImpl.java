@@ -7,6 +7,7 @@ package com.nhm.repositories.impl;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.repositories.MissingActivityRepository;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.stereotype.Repository;
@@ -37,6 +38,11 @@ public class MissingActivityRepositoryImpl extends BaseRepositoryImpl implements
     @Override
     public MissingActivity getMissingById(int id) {
         return super.getItemById(id, MissingActivity.class);
+    }
+
+    @Override
+    public Collection<MissingActivity> getMissingActivities() {
+        return super.getItems(MissingActivity.class);
     }
     
 }

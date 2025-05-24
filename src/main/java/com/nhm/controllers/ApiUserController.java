@@ -38,6 +38,7 @@ public class ApiUserController {
 
     @Autowired
     private UserService userDetailsService;
+    
 
     @PostMapping(path = "/users", 
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, 
@@ -83,5 +84,8 @@ public class ApiUserController {
     public ResponseEntity<UserInfo> getUserDetail(@PathVariable("userId") int userId) {
         return new ResponseEntity<>(this.userDetailsService.getUserById(userId), HttpStatus.OK);
     }
+    
+    
+    
     
 }

@@ -13,6 +13,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,9 +59,13 @@ public class ExtraActivityRepositoryImpl extends BaseRepositoryImpl implements E
 
     @Override
     public Collection<ActivityRegistry> getResigtriesByActivityId(int activityId) {
-        return super.getItemsByObjId(activityId, ActivityRegistry.class, (cb, data) -> {
+        Collection<ActivityRegistry> registries = super.getItemsByObjId(activityId, ActivityRegistry.class, (cb, data) -> {
             return cb.equal(data.get("extraActivityId").get("id"), Long.valueOf(activityId));
         });
+        System.out.println("data of registries");
+        registries.stream().forEach(r -> System.out.println("data of registry : " + r));
+        
+        return registries;
     }
 
     @Override

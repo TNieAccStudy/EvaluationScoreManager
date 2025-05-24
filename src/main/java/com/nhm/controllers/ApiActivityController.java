@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,43 +36,53 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 @CrossOrigin
 public class ApiActivityController {
-    
+
     @Autowired
     private ExtraActivityService activityService;
-    
+
     @PostMapping(path = {"/activities"})
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<ExtraActivity> create(@RequestBody ExtraActivity activity) {
         return new ResponseEntity<>(this.activityService.addOrUpdate(activity), HttpStatus.CREATED);
     }
-    
+
     @PatchMapping("/activities/{activityId}")
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<ExtraActivity> patialUpdate(@PathVariable("activityId") int activityId, @RequestBody ExtraActivity activity) {
         return new ResponseEntity<>(this.activityService.addOrUpdate(activity), HttpStatus.OK);
     }
-    
+
     @GetMapping(path = {"/activities"})
     @JsonView(DisplayView.Simplify.class)
-    public ResponseEntity<List<ExtraActivity>> list() {
+    public ResponseEntity<List<ExtraActivity>> list(@RequestParam(name = "termId",required = false) Integer termId , @RequestParam(name = "semesterId",required = false) Integer semesterId) {
         List<ExtraActivity> activities = this.activityService.getActivities().stream().collect(Collectors.toList());
-        
+
+        if (termId != null) {
+            activities = activities.stream().filter(a -> a.getTermId().getId().equals(termId)).collect(Collectors.toList());
+        }
+
+        if (semesterId != null) {
+            activities = activities.stream()
+                    .filter(a -> a.getSemesterId().getId().equals(semesterId))
+                    .collect(Collectors.toList());
+        }
+
         return new ResponseEntity<>(activities, HttpStatus.OK);
     }
-    
+
     @GetMapping("/activities/{activityId}")
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<ExtraActivity> getActivityById(@PathVariable("activityId") int activityId) {
         return new ResponseEntity<>(this.activityService.getActivityById(activityId), HttpStatus.OK);
     }
-    
+
     @GetMapping("/activities/{activityId}/attendances")
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<List<ActivityConfirmedAttendance>> getAttendancesByActivityId(@PathVariable("activityId") int activityId) {
         List<ActivityConfirmedAttendance> attendances = this.activityService.getAttendancesByActivityId(activityId).stream().collect(Collectors.toList());
         return new ResponseEntity<>(attendances, HttpStatus.OK);
     }
-    
+
     @GetMapping("/activities/{activityId}/registries")
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<List<ActivityRegistry>> getRegiestriesByActivityId(@PathVariable("activityId") int activityId) {
@@ -79,18 +90,17 @@ public class ApiActivityController {
         return new ResponseEntity<>(registries, HttpStatus.OK);
     }
 
-    
     @GetMapping("/activities/{activityId}/missings")
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<List<MissingActivity>> getMissingsByActivityId(@PathVariable("activityId") int activityId) {
         List<MissingActivity> missings = this.activityService.getMissingsByActivityId(activityId).stream().collect(Collectors.toList());
         return new ResponseEntity<>(missings, HttpStatus.OK);
     }
-    
+
     @DeleteMapping("/activities/{activityId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable("activityId") int activityId) {
         this.activityService.deleteActivityById(activityId);
     }
-    
+
 }

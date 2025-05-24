@@ -6,10 +6,14 @@ package com.nhm.services.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.nhm.pojo.ActivityConfirmedAttendance;
+import com.nhm.pojo.ActivityRegistry;
+import com.nhm.pojo.MissingActivity;
 import com.nhm.pojo.UserInfo;
 import com.nhm.repositories.UserRepository;
 import com.nhm.services.UserService;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -83,6 +87,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfo getUserById(int id) {
         return userRepo.getUserById(id);
+    }
+
+    @Override
+    public Collection<ActivityRegistry> getRegistriesByUserId(int userId) {
+        return this.userRepo.getRegistriesByUserId(userId);
+    }
+
+    @Override
+    public Collection<ActivityConfirmedAttendance> getAttendsByUserId(int userId) {
+        return this.userRepo.getAttendsByUserId(userId);
+    }
+
+    @Override
+    public Collection<MissingActivity> getMissingsByUserId(int userId) {
+        return this.userRepo.getMissingsByUserId(userId);
     }
 
 }
