@@ -66,26 +66,33 @@ public class SpringSecurityConfigs {
     
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        String ASSISTANT_ROLE = "ASSISTANT";
+        String STUDENT_ROLE = "STUDENT";
+        String AFFAIRS_ROLE = "AFFAIRS";
+        
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(c -> c.disable())
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(HttpMethod.POST, "/api/login","/api/users", "/api/bulletins").anonymous()
+                        .requestMatchers(HttpMethod.POST, "/api/login","/api/users").anonymous()
+                        .requestMatchers(HttpMethod.POST, "/api/bulletins", "api/assistants").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/classes", "/api/departments", "/api/semesters", "/api/terms", "api/interactions").permitAll()
                         
                         .requestMatchers("/api/**").authenticated()
                         
-                        .requestMatchers(HttpMethod.POST, "/api/missings", "/api/attendances", "api/interactions", "api/registries").hasRole("STUDENT")
+                        .requestMatchers(HttpMethod.POST, "/api/missings", "/api/attendances", "api/interactions", "api/registries").hasRole(STUDENT_ROLE)
+                        .requestMatchers(HttpMethod.GET, "/api/missings", "/api/attendances", "api/interactions", "api/registries").hasRole(STUDENT_ROLE)
+                        .requestMatchers(HttpMethod.GET, "/api/current-student/registries", "/api/current-student/attendances", "/api/current-student/missings").hasRole(STUDENT_ROLE)
+                        .requestMatchers(HttpMethod.GET, "/api/secure/profile").hasRole(STUDENT_ROLE)
                         
-                        .requestMatchers("/api/missings", "/api/cancels").hasRole("ASSISTANT")
-                        .requestMatchers(HttpMethod.DELETE, "/api/activities").hasRole("AFFAIRS")
-                        .requestMatchers("/api/activities/**").hasRole("ASSISTANT")
-                        .requestMatchers(HttpMethod.DELETE, "/api/bulletins").hasRole("AFFAIRS")
-                        .requestMatchers("/api/bulletins/**").hasRole("ASSISTANT")
+                        .requestMatchers("/api/attendances", "/api/missings", "/api/students/**").hasAnyRole(ASSISTANT_ROLE, AFFAIRS_ROLE)
+                        .requestMatchers("/api/missings", "/api/cancels").hasRole(ASSISTANT_ROLE)
+                        .requestMatchers(HttpMethod.DELETE, "/api/activities", "/api/bulletins").hasRole(AFFAIRS_ROLE)
+                        .requestMatchers("/api/activities/**", "/api/bulletins/**").hasRole(ASSISTANT_ROLE)
                         
-                        .requestMatchers("/api/**").hasRole("AFFAIRS")
+                        .requestMatchers("/api/**").permitAll()
                         
                 )
                 .addFilterBefore(new JWTFilter(), UsernamePasswordAuthenticationFilter.class);
-                //exec general...
         
         return http.build();
     }
