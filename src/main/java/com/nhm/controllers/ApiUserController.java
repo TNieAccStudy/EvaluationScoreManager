@@ -6,14 +6,20 @@ package com.nhm.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.nhm.pojo.ActivityConfirmedAttendance;
+import com.nhm.pojo.ActivityRegistry;
+import com.nhm.pojo.MissingActivity;
+import com.nhm.pojo.Student;
 import com.nhm.pojo.StudentAssistant;
 import com.nhm.pojo.UserInfo;
 import com.nhm.services.UserService;
 import com.nhm.utils.JwtUtils;
 import com.nhm.viewconfigs.DisplayView;
+import jakarta.ws.rs.core.Response;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,10 +90,57 @@ public class ApiUserController {
         return new ResponseEntity<>(assistants,HttpStatus.OK);
     }
     
-//    @GetMapping("/users/{userId}")
-//    @JsonView(DisplayView.Internal.class)
-//    public ResponseEntity<UserInfo> getUserDetail(@PathVariable("userId") int userId) {
-//        return new ResponseEntity<>(this.userDetailsService.getUserById(userId), HttpStatus.OK);
-//    }
+    @GetMapping("/students")
+    @JsonView(DisplayView.Simplify.class)
+    @CrossOrigin
+    public ResponseEntity<List<Student>> getStudents() {
+        List<Student> assistants = this.userDetailsService.getUsers(Student.class).stream().collect(Collectors.toList());
+        return new ResponseEntity<>(assistants,HttpStatus.OK);
+    }
+    
+    @GetMapping("/students/{username}")
+    @JsonView(DisplayView.Public.class)
+    public ResponseEntity<UserInfo> getStudentDetail(@PathVariable("username") String username) {
+        return new ResponseEntity<>(this.userDetailsService.getUserByUsername(username), HttpStatus.OK);
+    }
+    
+    @GetMapping("/students/current-student/registries")
+    @JsonView(DisplayView.Simplify.class)
+    public ResponseEntity<?> getRegistriesForCurrentStudent(Principal principal) {
+        try {
+            Student u = (Student) UserInfo.getUserByUsernameWithInstance(principal.getName(), userDetailsService, Student.class);
+            List<ActivityRegistry> registries = userDetailsService.getRegistriesByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
+            
+            return new ResponseEntity<>(registries, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.entry("error", "your account doesn't enough permission."));
+        }
+    }
+    
+    @GetMapping("/students/current-student/attendances")
+    @JsonView(DisplayView.Simplify.class)
+    public ResponseEntity<?> getAttendancesForCurrentStudent(Principal principal) {
+        try {
+            Student u = (Student) UserInfo.getUserByUsernameWithInstance(principal.getName(), userDetailsService, Student.class);
+            List<ActivityConfirmedAttendance> attendances = userDetailsService.getAttendsByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
+            
+            return new ResponseEntity<>(attendances, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.entry("error", "your account doesn't enough permission."));
+        }
+    }
+    
+    @GetMapping("/students/current-student/missings")
+    @JsonView(DisplayView.Simplify.class)
+    public ResponseEntity<?> getMissingsForCurrentStudent(Principal principal) {
+        try {
+            Student u = (Student) UserInfo.getUserByUsernameWithInstance(principal.getName(), userDetailsService, Student.class);
+            List<MissingActivity> missings = userDetailsService.getMissingsByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
+            
+            return new ResponseEntity<>(missings, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.entry("error", "your account doesn't enough permission."));
+        }
+    }
     
 }
