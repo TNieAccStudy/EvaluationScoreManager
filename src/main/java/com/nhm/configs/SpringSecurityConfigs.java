@@ -81,7 +81,7 @@ public class SpringSecurityConfigs {
                         
                         .requestMatchers(HttpMethod.POST, "/api/missings", "/api/attendances", "api/interactions", "api/registries").hasRole(STUDENT_ROLE)
                         .requestMatchers(HttpMethod.GET, "/api/missings", "/api/attendances", "api/interactions", "api/registries").hasRole(STUDENT_ROLE)
-                        .requestMatchers(HttpMethod.GET, "/api/current-student/registries", "/api/current-student/attendances", "/api/current-student/missings").hasRole(STUDENT_ROLE)
+                        .requestMatchers(HttpMethod.GET, "/api/current-student/**").hasRole(STUDENT_ROLE)
                         .requestMatchers(HttpMethod.GET, "/api/secure/profile").hasRole(STUDENT_ROLE)
                         
                         .requestMatchers("/api/attendances", "/api/missings", "/api/students/**").hasAnyRole(ASSISTANT_ROLE, AFFAIRS_ROLE)
