@@ -6,12 +6,17 @@ package com.nhm.repositories.impl;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,25 +61,6 @@ public abstract class BaseRepositoryImpl {
         }
     }
 
-//    protected <T> Collection<T> getItems(Class classType) {
-//        Session s = sessionFactory.getObject().getCurrentSession();
-//        CriteriaBuilder cb = s.getCriteriaBuilder();
-//        CriteriaQuery<T> q = cb.createQuery(classType);
-//        
-//        Root<T> data = q.from(classType);
-//        q.select(data);
-//        
-//        Query<T> query = s.createQuery(q);
-//        
-//        return query.getResultList();
-//    }
-    protected <T> Collection<T> getItems(Class<T> classType) {
-        Session s = sessionFactory.getObject().getCurrentSession();
-
-        Query<T> query = s.createNamedQuery(String.format("%s.findAll", classType.getSimpleName()), classType);
-        return query.getResultList();
-    }
-
     protected <T> T getItemById(int id, Class<T> classType) {
         Session s = sessionFactory.getObject().getCurrentSession();
         return s.get(classType, id);
@@ -86,9 +72,17 @@ public abstract class BaseRepositoryImpl {
         T obj = s.get(classType, id);
         s.remove(obj);
     }
+    
+    protected <T> Collection<T> getItems(Class<T> classType) {
+        Session s = sessionFactory.getObject().getCurrentSession();
 
-    protected <T> Collection<T> getItemsByObjId(int objId, Class<T> resultType,
-            BiFunction<CriteriaBuilder, Root<T>, Expression<Boolean>>... whereConditions) {
+        Query<T> query = s.createNamedQuery(String.format("%s.findAll", classType.getSimpleName()), classType);
+        return query.getResultList();
+    }
+    
+    protected <T> Collection<T> getItems(Class<T> resultType,
+            List<BiFunction<CriteriaBuilder, Root<T>, Predicate>> whereConditions,
+            Function<Query<T>, Query<T>> supportedQuery) {
         Session s = this.sessionFactory.getObject().getCurrentSession();
 
         CriteriaBuilder cb = s.getCriteriaBuilder();
@@ -96,16 +90,31 @@ public abstract class BaseRepositoryImpl {
 
         Root<T> data = q.from(resultType);
         q.select(data);
-
-        for (var w : whereConditions) {
-            q.where(w.apply(cb, data));
-        }
+        
+        List<Predicate> predicates = new ArrayList<>();
+        whereConditions.forEach(w -> predicates.add(w.apply(cb, data)));
+        q.where(predicates.toArray(new Predicate[0]));
 
         Query<T> query = s.createQuery(q);
+        if (supportedQuery != null)
+            query = supportedQuery.apply(query);
+        
         return query.getResultList();
     }
+    
+    protected <T> Collection<T> getItems(Class<T> resultType,
+            List<BiFunction<CriteriaBuilder, Root<T>, Predicate>> whereConditions) {
+        return this.getItems(resultType, whereConditions, (q)->q);
+    }
 
-    protected <T> Collection<T> getItemsByObjIdWithCustomQuery(int objId, Class<T> resultType,
+    protected <T> Collection<T> getItems(Class<T> resultType,
+            BiFunction<CriteriaBuilder, Root<T>, Predicate>... whereConditions) {
+        return this.getItems(resultType, 
+                Arrays.stream(whereConditions).collect(Collectors.toList())
+        );
+    }
+
+    protected <T> Collection<T> getItemsWithCustomQuery(Class<T> resultType,
             BiFunction<CriteriaBuilder, CriteriaQuery<T>, CriteriaQuery<T>> execQuery) {
         Session s = this.sessionFactory.getObject().getCurrentSession();
 
@@ -115,6 +124,23 @@ public abstract class BaseRepositoryImpl {
         q = execQuery.apply(cb, q);
 
         Query<T> query = s.createQuery(q);
+        
         return query.getResultList();
     }
+    
+    //example if call where with cutomQuery
+    //call customquery -> then exec like this for repo:
+    //Root general to get all type.
+//    @Override
+//    public Collection<Bulletin> getBulletinsWithParams(int id, Map<Root<?>, BiFunction<CriteriaBuilder, Root, Expression<Boolean>>> whereParams) {
+//        BiFunction<CriteriaBuilder, Root<Bulletin>, Expression<Boolean>>[] whereConditions = whereParams.entrySet().stream()
+//                    .map(e -> e.getValue())
+//                    .toArray(BiFunction<CriteriaBuilder, Root, Expression<Boolean>>[]::new);
+//        return super.getItemsByObjId(id, Bulletin.class, 
+//                whereConditions
+//        );
+//    }
+    // and execute it in execQuery.
+    
+    
 }

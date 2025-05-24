@@ -14,7 +14,9 @@ public interface UserRepository {
     UserInfo addUser(UserInfo u);
     boolean authenticate(String username, String password);
     UserInfo getUserById(int id);
+    Collection<UserInfo> getUsers();
     Collection<ActivityRegistry> getRegistriesByUserId(int userId);
     Collection<ActivityConfirmedAttendance> getAttendsByUserId(int userId);
     Collection<MissingActivity> getMissingsByUserId(int userId);
+    <T extends UserInfo> Collection<T> getUsers(Class<T> type);
 }

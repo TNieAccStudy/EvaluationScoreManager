@@ -4,12 +4,18 @@
  */
 package com.nhm.services.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.nhm.pojo.ExecuteStatus;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.repositories.MissingActivityRepository;
 import com.nhm.services.MissingActivityService;
+import java.io.IOException;
+import java.util.Map;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -19,11 +25,34 @@ import org.springframework.stereotype.Service;
 public class MissingActivityServiceImpl implements MissingActivityService {
     
     @Autowired
-    MissingActivityRepository missingRepo;
+    private MissingActivityRepository missingRepo;
+    
+    @Autowired
+    private Cloudinary cloudinary;
 
     @Override
-    public MissingActivity addOrUpdate(MissingActivity missing) {
-        return this.missingRepo.addOrUpdate(missing);
+    public MissingActivity addOrUpdate(MissingActivity missing, MultipartFile proofPicture) throws IOException, Exception {
+        String publicId = null;
+        if (proofPicture != null && !proofPicture.isEmpty()) {
+            Map res = this.cloudinary.uploader().upload(proofPicture.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+            missing.setProofPicture(res.get("secure_url").toString());
+            publicId = res.get("public_id").toString();
+        }
+
+        try {
+            missing = this.missingRepo.addOrUpdate(missing);
+        } catch (Exception e) {
+            if (publicId != null) {
+                this.cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            }
+            throw new Exception("have some error when work with data");
+        }
+        
+        if (missing.getExecutedStatus().equals(ExecuteStatus.CONFIRMED.name())) {
+            
+        }
+        
+        return missing;
     }
 
     @Override

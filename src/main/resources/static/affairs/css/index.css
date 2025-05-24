@@ -1,0 +1,38 @@
+.stats-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: space-between;
+}
+
+.stats-cards .card {
+  background-color: #2c2f38;
+  flex: 1 1 45%; /* mỗi card chiếm khoảng 45% chiều ngang, 2 card trên 1 dòng */
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  min-width: 280px; /* card nhỏ nhất */
+  box-sizing: border-box;
+}
+
+.quick-actions h2 {
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.btn {
+  background-color: #4CAF50;
+  border: none;
+  padding: 12px 20px;
+  margin-right: 10px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #45a049;
+}

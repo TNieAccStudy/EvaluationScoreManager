@@ -6,8 +6,13 @@ package com.nhm.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.nhm.pojo.ActivityRegistry;
+import com.nhm.pojo.Student;
+import com.nhm.pojo.UserInfo;
 import com.nhm.services.ActivityRegistryService;
+import com.nhm.services.UserService;
 import com.nhm.viewconfigs.DisplayView;
+import java.security.Principal;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,26 +30,36 @@ import org.springframework.web.bind.annotation.RestController;
  * @author GIGABYTE
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/registries")
 @CrossOrigin
 public class ApiRegistryController {
     
     @Autowired
     private ActivityRegistryService registryService;
     
-    @PostMapping("/registries")
+    @Autowired
+    private UserService userService;
+    
+    @PostMapping
     @JsonView(DisplayView.Public.class)
-    public ResponseEntity<ActivityRegistry> create(@RequestBody ActivityRegistry registry) {
+    public ResponseEntity<?> create(@RequestBody ActivityRegistry registry, Principal principal) {
+        try {
+            UserInfo u = UserInfo.getUserByUsernameWithInstance(principal.getName(), userService, Student.class);
+            registry.setStudentId((Student)u);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.entry("error", "your account doesn't enough permission."));
+        }
+        
         return new ResponseEntity<>(this.registryService.addOrUpdate(registry), HttpStatus.CREATED);
     }
     
-    @PatchMapping("/registries/{registryId}")
+    @PatchMapping("/{registryId}")
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<ActivityRegistry> patialUpdate(@PathVariable("registryId") int registryId, @RequestBody ActivityRegistry registry) {
         return new ResponseEntity<>(this.registryService.addOrUpdate(registry), HttpStatus.OK);
     }
     
-    @GetMapping("/registries/{registryId}")
+    @GetMapping("/{registryId}")
     @JsonView(DisplayView.Internal.class)
     public ResponseEntity<ActivityRegistry> retrieve(@PathVariable("registryId") int registryId) {
         return new ResponseEntity<>(this.registryService.getRegistryById(registryId), HttpStatus.OK);

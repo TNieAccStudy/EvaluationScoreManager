@@ -27,38 +27,38 @@ import org.springframework.web.bind.annotation.RestController;
  * @author GIGABYTE
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/departments")
 @CrossOrigin
 public class ApiDepartmentController {
     
     @Autowired
     private DepartmentService departmentService;
     
-    @PostMapping("/departments")
+    @PostMapping
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<Department> create(@RequestBody Department department) {
         return new ResponseEntity<>(this.departmentService.addOrUpdate(department), HttpStatus.CREATED);
     }
     
-    @PatchMapping("/departments/{departmentId}")
+    @PatchMapping("/{departmentId}")
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<Department> updatePatial(@PathVariable("departmentId") int departmentId , @RequestBody Department department) {
         return new ResponseEntity<>(this.departmentService.addOrUpdate(department), HttpStatus.OK);
     }
     
-    @GetMapping("/departments/{departmentId}")
+    @GetMapping("/{departmentId}")
     @JsonView(DisplayView.Internal.class)
-    public ResponseEntity<Department> retrive(@PathVariable("departmentId") int departmentId) {
+    public ResponseEntity<Department> retrieve(@PathVariable("departmentId") int departmentId) {
         return new ResponseEntity<>(this.departmentService.getDepartmentById(departmentId), HttpStatus.OK);
     }
     
-    @GetMapping("/departments")
+    @GetMapping
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<Collection<Department>> list() {
         return new ResponseEntity<>(this.departmentService.getDepartments(), HttpStatus.OK);
     }
     
-    @GetMapping("/departments/{departmentId}/classes")
+    @GetMapping("/{departmentId}/classes")
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<Collection<Classe>> getClassesByDepartmentId(@PathVariable("departmentId") int departmentId) {
         return new ResponseEntity<>(this.departmentService.getClassesByDepartmentId(departmentId), HttpStatus.OK);

@@ -8,6 +8,7 @@ import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ActivityRegistry;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.pojo.UserInfo;
+import java.io.IOException;
 import java.util.Collection;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,10 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface UserService extends UserDetailsService {
     UserInfo getUserByUsername(String username);
-    UserInfo addUser(UserInfo user, MultipartFile avatar);
+    UserInfo addUser(UserInfo user, MultipartFile avatar) throws IOException, Exception;
     boolean authenticate(String username, String password);
     UserInfo getUserById(int id);
-        Collection<ActivityRegistry> getRegistriesByUserId(int userId);
+    Collection<ActivityRegistry> getRegistriesByUserId(int userId);
     Collection<ActivityConfirmedAttendance> getAttendsByUserId(int userId);
     Collection<MissingActivity> getMissingsByUserId(int userId);
+    <T extends UserInfo> Collection<T> getUsers(Class<T> type);
 }

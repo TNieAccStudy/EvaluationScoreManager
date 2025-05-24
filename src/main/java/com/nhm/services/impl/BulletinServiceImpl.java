@@ -10,7 +10,17 @@ import com.nhm.pojo.Interaction;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.repositories.BulletinRepository;
 import com.nhm.services.BulletinService;
+import com.nhm.utils.PaginatorUtils;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +40,39 @@ public class BulletinServiceImpl implements BulletinService {
     }
 
     @Override
-    public Collection<Bulletin> getBulletins() {
-        return this.bulletinRepo.getBulletins();
+    public <T extends Bulletin> Collection<T> getBulletins(Map<String, String> params, Class<T> type) {
+        List<BiFunction<CriteriaBuilder, Root<T>, Predicate>> whereParams = new ArrayList<>();
+        
+//        if (params.containsKey("term")) {
+//            whereParams.add((cb, root) -> cb.equal(root.get("termId").get("id"), Long.valueOf(params.get("term"))));
+//        }
+        
+        if (params.containsKey("semester")) {
+            whereParams.add((cb, root) -> cb.equal(root.get("semesterId").get("id"), Long.valueOf(params.get("semester"))));
+        }
+        
+        if (params.containsKey("assistant")) {
+            whereParams.add((cb, root) -> cb.equal(root.get("studentAssistantId").get("id"), Long.valueOf(params.get("assistant"))));
+        }
+        
+        if (params.containsKey("kw")) {
+            whereParams.add((cb, root) -> cb.like(root.get("title"), params.get("kw")));
+        }
+        
+        Function<Query<T>, Query<T>> supportedQuery = null;
+        if (params.containsKey("page")) {
+            int pageSize = PaginatorUtils.pageSize;
+            int startIndex = Integer.parseInt(params.get("page")) * pageSize;
+            supportedQuery = (q) -> {
+                q.setFirstResult(startIndex);
+                q.setMaxResults(pageSize);
+                return q;
+            };
+        }
+        
+        return this.bulletinRepo.getBulletinsWithParams(type, whereParams, supportedQuery);
     }
+    //need to ask for S in SOLID about problem: is cur code affect to (not carry on other?)
 
     @Override
     public void deleteBulletinById(int id) {
@@ -40,8 +80,8 @@ public class BulletinServiceImpl implements BulletinService {
     }
 
     @Override
-    public Collection<Interaction> getInteractionsByBulletinId(int id) {
-        return this.bulletinRepo.getInteractionsByBulletinId(id);
+    public <T extends Interaction>Collection<T> getInteractionsByBulletinId(int id, Class<T> type) {
+        return this.bulletinRepo.getInteractionsByBulletinId(type, id);
     }
 
     @Override

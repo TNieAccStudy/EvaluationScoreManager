@@ -48,7 +48,7 @@ public class ClassRepositoryImpl extends BaseRepositoryImpl implements ClassRepo
 
     @Override
     public Collection<Student> getStudentsByClassId(int id) {
-        return super.getItemsByObjId(id, Student.class, (cb, data) -> cb.equal(data.get("classId").get("id"), Long.valueOf(id)));
+        return super.getItems(Student.class, (cb, data) -> cb.equal(data.get("classId").get("id"), Long.valueOf(id)));
     }
     
 }

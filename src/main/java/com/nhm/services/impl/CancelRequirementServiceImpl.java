@@ -27,8 +27,8 @@ public class CancelRequirementServiceImpl implements CancelRequirementService {
     }
 
     @Override
-    public Collection<CancelRequirement> getCancels() {
-        return this.cancelRepo.getCancels();
+    public <T extends CancelRequirement> Collection<T> getCancels(Class<T> type) {
+        return this.cancelRepo.getCancels(type);
     }
 
     @Override

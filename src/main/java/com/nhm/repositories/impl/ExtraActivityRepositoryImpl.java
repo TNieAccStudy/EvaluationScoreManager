@@ -6,15 +6,22 @@ package com.nhm.repositories.impl;
 
 import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ActivityRegistry;
+import com.nhm.pojo.Bulletin;
 import com.nhm.pojo.ExtraActivity;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.repositories.ExtraActivityRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +48,8 @@ public class ExtraActivityRepositoryImpl extends BaseRepositoryImpl implements E
     }
 
     @Override
-    public Collection<ExtraActivity> getActivities() {
-        return super.getItems(ExtraActivity.class);
+    public Collection<ExtraActivity> getActivities(List<BiFunction<CriteriaBuilder, Root<ExtraActivity>, Predicate>> whereParams, Function<Query<ExtraActivity>, Query<ExtraActivity>> supportedQuery) {
+        return super.getItems(ExtraActivity.class, whereParams, supportedQuery);
     }
 
     @Override
@@ -52,20 +59,16 @@ public class ExtraActivityRepositoryImpl extends BaseRepositoryImpl implements E
 
     @Override
     public Collection<ActivityConfirmedAttendance> getAttendancesByActivityId(int activityId) {
-        return super.getItemsByObjId(activityId, ActivityConfirmedAttendance.class, (cb, data) -> {
+        return super.getItems(ActivityConfirmedAttendance.class, (cb, data) -> {
             return cb.equal(data.get("extraActivityId").get("id"), Long.valueOf(activityId));
         });
     }
 
     @Override
     public Collection<ActivityRegistry> getResigtriesByActivityId(int activityId) {
-        Collection<ActivityRegistry> registries = super.getItemsByObjId(activityId, ActivityRegistry.class, (cb, data) -> {
+        return super.getItems(ActivityRegistry.class, (cb, data) -> {
             return cb.equal(data.get("extraActivityId").get("id"), Long.valueOf(activityId));
         });
-        System.out.println("data of registries");
-        registries.stream().forEach(r -> System.out.println("data of registry : " + r));
-        
-        return registries;
     }
 
     @Override
@@ -75,7 +78,7 @@ public class ExtraActivityRepositoryImpl extends BaseRepositoryImpl implements E
 
     @Override
     public Collection<MissingActivity> getMissingsByActivityId(int activityId) {
-        return super.getItemsByObjId(activityId, MissingActivity.class, (cb, data) -> {
+        return super.getItems(MissingActivity.class, (cb, data) -> {
             return cb.equal(data.get("extraActivityId").get("id"), Long.valueOf(activityId));
         });
     }

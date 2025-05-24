@@ -4,18 +4,25 @@
  */
 package com.nhm.repositories.impl;
 
-import com.nhm.pojo.ActivityBulletin;
 import com.nhm.pojo.Bulletin;
 import com.nhm.pojo.ExtraActivity;
 import com.nhm.pojo.Interaction;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.pojo.SummaryBulletin;
 import com.nhm.repositories.BulletinRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,18 +49,13 @@ public class BulletinRepositoryImpl extends BaseRepositoryImpl implements Bullet
     }
 
     @Override
-    public Collection<Bulletin> getBulletins() {
-        return super.getItems(Bulletin.class);
-    }
-
-    @Override
     public void deleteBulletinById(int id) {
         super.removeItemById(id, Bulletin.class);
     }
 
     @Override
-    public Collection<Interaction> getInteractionsByBulletinId(int id) {
-        return super.getItemsByObjId(id, Interaction.class, (cb, data) -> {
+    public <T extends Interaction>Collection<T> getInteractionsByBulletinId(Class<T> type, int id) {
+        return super.getItems(type, (cb, data) -> {
             return cb.equal(data.get("bulletinId").get("id"), Long.valueOf(id));
         });
     }
@@ -90,6 +92,16 @@ public class BulletinRepositoryImpl extends BaseRepositoryImpl implements Bullet
     @Override
     public Bulletin getBulletinById(int id) {
         return super.getItemById(id, Bulletin.class);
+    }
+
+    @Override
+    public <T extends Bulletin> Collection<T> getBulletinsWithParams(Class<T> type, 
+            List<BiFunction<CriteriaBuilder, Root<T>, Predicate>> whereParams, 
+            Function<Query<T>, Query<T>> supportedQuery) {
+        return super.getItems(type, 
+                whereParams,
+                supportedQuery
+        );
     }
     
 }

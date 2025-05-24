@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -46,7 +48,8 @@ public class SpringSecurityConfigs {
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
 //            Exception {
 //        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .csrf(c -> c.disable()).authorizeHttpRequests(requests ->
+//                .csrf(c -> c.disable())
+//                   .authorizeHttpRequests(requests ->
 //                 requests.requestMatchers("/", "/home").authenticated()
 //                        .requestMatchers("/api/**").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/products").hasRole("ADMIN")
@@ -64,7 +67,26 @@ public class SpringSecurityConfigs {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(srf -> srf.disable());
+                .csrf(c -> c.disable())
+                .authorizeHttpRequests(requests -> requests
+                         .requestMatchers(HttpMethod.POST, "/api/login","/api/users", "/api/bulletins").anonymous()
+                        
+                        // .requestMatchers("/api/**").anonymous()
+                        .requestMatchers("/api/**").authenticated()
+                        
+                        .requestMatchers(HttpMethod.POST, "/api/missings", "/api/attendances", "api/interactions", "api/registries").hasRole("STUDENT")
+                        
+                        .requestMatchers("/api/missings", "/api/cancels").hasRole("ASSISTANT")
+                        .requestMatchers(HttpMethod.DELETE, "/api/activities").hasRole("AFFAIRS")
+                        .requestMatchers("/api/activities/**").hasRole("ASSISTANT")
+                        .requestMatchers(HttpMethod.DELETE, "/api/bulletins").hasRole("AFFAIRS")
+                        .requestMatchers("/api/bulletins/**").hasRole("ASSISTANT")
+                        
+                        .requestMatchers("/api/**").authenticated()
+                        
+                )
+                .addFilterBefore(new JWTFilter(), UsernamePasswordAuthenticationFilter.class);
+                //exec general...
         
         return http.build();
     }
