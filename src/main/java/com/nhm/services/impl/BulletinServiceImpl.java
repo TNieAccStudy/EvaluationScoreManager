@@ -59,16 +59,12 @@ public class BulletinServiceImpl implements BulletinService {
             whereParams.add((cb, root) -> cb.like(root.get("title"), params.get("kw")));
         }
         
-        Function<Query<T>, Query<T>> supportedQuery = null;
+        int pageSize = PaginatorUtils.pageSize;
+        int startIndex = 0;
         if (params.containsKey("page")) {
-            int pageSize = PaginatorUtils.pageSize;
-            int startIndex = Integer.parseInt(params.get("page")) * pageSize;
-            supportedQuery = (q) -> {
-                q.setFirstResult(startIndex);
-                q.setMaxResults(pageSize);
-                return q;
-            };
+            startIndex = (Integer.parseInt(params.get("page"))-1) * pageSize;
         }
+        Function<Query<T>, Query<T>> supportedQuery = PaginatorUtils.pageQueryDefault(startIndex, pageSize, type);
         
         return this.bulletinRepo.getBulletinsWithParams(type, whereParams, supportedQuery);
     }

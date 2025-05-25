@@ -5,7 +5,6 @@
 package com.nhm.configs;
 
 import com.nhm.formatters.SemesterFormatter;
-import com.nhm.formatters.AsisstantFormatter;
 import com.nhm.formatters.TermFormatter;
 import com.nhm.formatters.UserFormatter;
 import java.util.List;
@@ -43,9 +42,9 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
 //        registry.addFormatter(new ExtraActivityFormatter());
-//        registry.addFormatter(new SemesterFormatter());
+        registry.addFormatter(new SemesterFormatter());
 //        registry.addFormatter(new TermFormatter());
-//        registry.addFormatter(new UserFormatter());
+        registry.addFormatter(new UserFormatter());
 //        registry.addFormatter(new AsisstantFormatter());
     }
     

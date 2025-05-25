@@ -33,6 +33,7 @@ import java.util.Date;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -87,6 +88,7 @@ public class Bulletin extends BaseModel implements Serializable {
     protected String content;
     @Basic(optional = false)
     @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "duration")
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
