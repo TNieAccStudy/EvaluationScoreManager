@@ -6,12 +6,10 @@ package com.nhm.repositories.impl;
 
 import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ActivityRegistry;
-import com.nhm.pojo.Bulletin;
 import com.nhm.pojo.ExtraActivity;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.repositories.ExtraActivityRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.lang.reflect.InvocationTargetException;
@@ -60,7 +58,8 @@ public class ExtraActivityRepositoryImpl extends BaseRepositoryImpl implements E
     @Override
     public Collection<ActivityConfirmedAttendance> getAttendancesByActivityId(int activityId) {
         return super.getItems(ActivityConfirmedAttendance.class, (cb, data) -> {
-            return cb.equal(data.get("extraActivityId").get("id"), Long.valueOf(activityId));
+            
+            return cb.equal(data.get("registryId").get("extraActivityId").get("id"), Long.valueOf(activityId));
         });
     }
 

@@ -1,13 +1,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <div th:fragment="sidebar-menu">
         <ul class="sidebar-menu">
-            <li class="sidebar-item active">Blog Dashboard</li>
-            <li class="sidebar-item">Blog Posts</li>
-            <li class="sidebar-item">Add New Post</li>
-            <li class="sidebar-item">Forms & Components</li>
-            <li class="sidebar-item">Tables</li>
-            <li class="sidebar-item">User Profile</li>
-            <li class="sidebar-item">Errors</li>
+            <li class="sidebar-item active"><a th:href='@{/affairs/index}'>Affairs Dashboard</a></li>
+            <li class="sidebar-item"><a th:href='@{/affairs/bulletins}'>Bulletins</a></li>
+            <li class="sidebar-item"><a th:href='@{/affairs/activities}'>Activities</a></li>
+            <li class="sidebar-item"><a th:href='@{/affairs/cancels}'>Cancel requirement</a></li>
+            <li class="sidebar-item"><a th:href='@{/affairs/accounts}'>Accounts</a></li>
+            
+            <!-- khong dung the a -->
         </ul>
     </div>
 </html>

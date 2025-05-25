@@ -75,8 +75,8 @@ public class SpringSecurityConfigs {
                 .csrf(c -> c.disable())
                 .authorizeHttpRequests(requests -> requests
                         
-                        .requestMatchers(HttpMethod.POST, "/api/missings", "/api/attendances", "api/interactions", "api/registries").hasAnyRole(STUDENT_ROLE)
-                        .requestMatchers(HttpMethod.GET, "/api/missings", "/api/attendances", "api/interactions", "api/registries").hasAnyRole(STUDENT_ROLE)
+                        .requestMatchers(HttpMethod.POST, "/api/missings", "/api/attendances", "/api/interactions", "/api/registries").hasAnyRole(STUDENT_ROLE)
+                        .requestMatchers(HttpMethod.GET, "/api/missings", "/api/attendances", "/api/interactions", "/api/registries").hasAnyRole(STUDENT_ROLE)
                         .requestMatchers(HttpMethod.GET, "/api/students/current-student/**").hasAnyRole(STUDENT_ROLE)
                         .requestMatchers(HttpMethod.GET, "/api/secure/profile").hasAnyRole(STUDENT_ROLE)
                         
@@ -89,9 +89,10 @@ public class SpringSecurityConfigs {
                         
                         .requestMatchers(HttpMethod.POST, "/api/login","/api/users").anonymous()
                         .requestMatchers(HttpMethod.GET, "/api/classes", "/api/departments", "/api/semesters", "/api/terms", "api/interactions").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/bulletins", "api/assistants").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/bulletins", "/api/assistants").permitAll()
                         
                         .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/affairs/**").permitAll()
                         
                 )
                 .addFilterBefore(new JWTFilter(), UsernamePasswordAuthenticationFilter.class);
