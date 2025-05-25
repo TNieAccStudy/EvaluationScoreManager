@@ -1,0 +1,128 @@
+/* Quick Actions Section */
+.quick-actions-section h3 {
+    font-size: 1.4rem;
+    color: #ffffff;
+    margin-bottom: 15px;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.action-card {
+    background-color: #1f2a5c;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    border: 1px solid #2a2a4a;
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    background-color: #2a3a7c;
+    border-color: #3a4a9c;
+}
+
+.action-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    display: block;
+    color: #ffffff;
+}
+
+.action-card h4 {
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.action-card p {
+    font-size: 0.85rem;
+    color: #b0b0d0;
+    line-height: 1.4;
+}
+
+/* Responsive Design for Quick Actions */
+@media (max-width: 768px) {
+    .actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .action-icon {
+        font-size: 2rem;
+    }
+
+    .action-card h4 {
+        font-size: 1.1rem;
+    }
+
+    .action-card p {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Welcome Section */
+.welcome-section {
+    margin-bottom: 30px;
+}
+
+.welcome-section h2 {
+    font-size: 1.8rem;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.welcome-section p {
+    font-size: 1rem;
+    color: #b0b0d0;
+}
+
+/* Stats Section */
+.stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background-color: #1f2a5c;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card h3 {
+    font-size: 1.1rem;
+    color: #b0b0d0;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 1.5rem;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Responsive Design for Stats Section */
+@media (max-width: 768px) {
+    .stats-section {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+}

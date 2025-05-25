@@ -1,0 +1,182 @@
+/* Nodes Section */
+.nodes-section {
+    padding: 20px;
+}
+
+.section-header {
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-size: 1.8rem;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.section-header p {
+    font-size: 1rem;
+    color: #b0b0d0;
+}
+
+/* Nodes Table */
+.nodes-table {
+    background-color: #1f2a5c;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr 1.5fr 1fr;
+    padding: 15px;
+    background-color: #2a3a7c;
+    font-size: 0.95rem;
+    color: #e0e0e0;
+    font-weight: 500;
+    border-bottom: 1px solid #2a2a4a;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr 1.5fr 1fr;
+    padding: 15px;
+    font-size: 0.9rem;
+    color: #e0e0e0;
+    border-bottom: 1px solid #2a2a4a;
+    transition: background-color 0.2s ease;
+}
+
+.table-row:last-child {
+    border-bottom: none;
+}
+
+.table-row:hover {
+    background-color: #2a2a4a;
+}
+
+.table-column {
+    display: flex;
+    align-items: center;
+}
+
+/* Status Indicators */
+.status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status.active {
+    background-color: #2a9d8f;
+    color: #ffffff;
+}
+
+.status.pending {
+    background-color: #e9c46a;
+    color: #1a1a2e;
+}
+
+.status.inactive {
+    background-color: #e63946;
+    color: #ffffff;
+}
+
+/* Action Buttons */
+.action-button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-right: 5px;
+}
+
+.action-button.edit {
+    background-color: #0f3460;
+    color: #ffffff;
+}
+
+.action-button.edit:hover {
+    background-color: #1a4a80;
+}
+
+.action-button.delete {
+    background-color: #e63946;
+    color: #ffffff;
+}
+
+.action-button.delete:hover {
+    background-color: #d00000;
+}
+
+/* Responsive Design for Nodes Table */
+@media (max-width: 768px) {
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr 2fr 1fr 1fr 1.5fr 1.5fr;
+        font-size: 0.85rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .section-header p {
+        font-size: 0.9rem;
+    }
+
+    .action-button {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .nodes-table {
+        font-size: 0.8rem;
+    }
+
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .table-column {
+        justify-content: flex-start;
+    }
+
+    .table-header {
+        display: none;
+    }
+
+    .table-row {
+        background-color: #2a2a4a;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        padding: 15px;
+    }
+
+    .table-row:hover {
+        background-color: #3a3a5a;
+    }
+
+    .table-column::before {
+        content: attr(data-label);
+        font-weight: 500;
+        color: #b0b0d0;
+        margin-right: 10px;
+        width: 100px;
+    }
+
+    .table-column:nth-child(1)::before { content: "Node ID"; }
+    .table-column:nth-child(2)::before { content: "Name"; }
+    .table-column:nth-child(3)::before { content: "Status"; }
+    .table-column:nth-child(4)::before { content: "Type"; }
+    .table-column:nth-child(5)::before { content: "Last Updated"; }
+    .table-column:nth-child(6)::before { content: "Actions"; }
+}

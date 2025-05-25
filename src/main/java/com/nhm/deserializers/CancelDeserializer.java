@@ -1,0 +1,46 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.nhm.deserializers;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.nhm.pojo.CancelRequirement;
+import com.nhm.services.CancelRequirementService;
+import java.io.IOException;
+import org.springframework.stereotype.Component;
+
+/**
+ *
+ * @author GIGABYTE
+ */
+@Component
+public class CancelDeserializer extends BaseDeserializer<CancelRequirement, CancelRequirementService> implements InheritanceJsonDeserializeMixin<CancelRequirement, CancelRequirementService> {
+
+    @Override
+    public CancelRequirement deserialize(JsonParser jp, DeserializationContext dc) throws IOException {
+        return InheritanceJsonDeserializeMixin.super.deserialize(jp, dc);
+    }
+
+    @Override
+    public String getTypeObjectName() {
+        return "cancelType";
+    }
+
+    @Override
+    public CancelRequirementService getService() {
+        return this.service;
+    }
+
+    @Override
+    public CancelRequirement getObjById(CancelRequirementService service, Long id) {
+        return service.getCancelById(id.intValue());
+    }
+
+    @Override
+    public Class<CancelRequirement> getDeserializedClass() {
+        return CancelRequirement.class;
+    }
+    
+}

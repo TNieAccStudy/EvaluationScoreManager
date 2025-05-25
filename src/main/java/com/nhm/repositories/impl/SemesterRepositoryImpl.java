@@ -1,0 +1,64 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.nhm.repositories.impl;
+
+import com.nhm.pojo.Bulletin;
+import com.nhm.pojo.ExtraActivity;
+import com.nhm.pojo.Semester;
+import com.nhm.repositories.SemesterRepository;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ *
+ * @author GIGABYTE
+ */
+@Repository
+@Transactional
+public class SemesterRepositoryImpl extends BaseRepositoryImpl implements SemesterRepository {
+
+    @Override
+    public Semester addOrUpdate(Semester semester) {
+        try {
+            return super.addOrUpdate(semester, Semester.class);
+        } catch (NoSuchMethodException ex) {
+            Logger.getLogger(SemesterRepositoryImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(SemesterRepositoryImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(SemesterRepositoryImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public Collection<Semester> getSemesters() {
+        return super.getItems(Semester.class);
+    }
+
+    @Override
+    public Collection<ExtraActivity> getActivitesByTermId(int semesterId) {
+        return super.getItems(ExtraActivity.class, (cb, data) -> {
+            return cb.equal(data.get("semesterId").get("id"), Long.valueOf(semesterId));
+        });
+    }
+
+    @Override
+    public <T extends Bulletin> Collection<T> getBulletinsByTermId(Class<T> type, int semesterId) {
+        return super.getItems(type, (cb, data) -> {
+            return cb.equal(data.get("semesterId").get("id"), Long.valueOf(semesterId));
+        });
+    }
+
+    @Override
+    public Semester getSemesterById(int id) {
+        return super.getItemById(id, Semester.class);
+    }
+    
+}

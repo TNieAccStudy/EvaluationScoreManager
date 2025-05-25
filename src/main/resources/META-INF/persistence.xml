@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+  <!-- Define Persistence Unit -->
+  <persistence-unit name="my_persistence_unit">
+    <class>com.nhm.pojo.UserInfo</class>
+    <class>com.nhm.pojo.Reactions</class>
+    <class>com.nhm.pojo.Interaction</class>
+    <class>com.nhm.pojo.ActivityConfirmedAttendance</class>
+    <class>com.nhm.pojo.ExtraActivity</class>
+    <class>com.nhm.pojo.StudentAffairsOfficer</class>
+    <class>com.nhm.pojo.ActivityRegistry</class>
+    <class>com.nhm.pojo.ActivityBulletin</class>
+    <class>com.nhm.pojo.Bulletin</class>
+    <class>com.nhm.pojo.SummaryBulletin</class>
+    <class>com.nhm.pojo.CancelBulletinRequirement</class>
+    <class>com.nhm.pojo.CancelActivityRequirement</class>
+    <class>com.nhm.pojo.CancelRequirement</class>
+    <class>com.nhm.pojo.StudentAssistant</class>
+    <class>com.nhm.pojo.Comment</class>
+    <class>com.nhm.pojo.Semester</class>
+    <class>com.nhm.pojo.Term</class>
+    <class>com.nhm.pojo.Student</class>
+    <class>com.nhm.pojo.MissingActivity</class>
+    <class>com.nhm.pojo.Department</class>
+    <class>com.nhm.pojo.Classe</class>
+  </persistence-unit>
+</persistence>
