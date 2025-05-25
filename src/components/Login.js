@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { Alert, Button, Form } from "react-bootstrap";
 import Apis, { authApis, endpoints } from "../configs/Apis";
 import MySpinner from "./layouts/MySpinner";
@@ -48,7 +48,7 @@ const Login = () => {
       });
       nav("/");
     } catch (ex) {
-      console.error(ex);
+      setMsg(ex.message);
     } finally {
       setLoading(false);
     }
@@ -56,7 +56,7 @@ const Login = () => {
 
   return (
     <>
-      <h1 className="text-center text-success mt-1">ĐĂNG KÝ</h1>
+      <h1 className="text-center text-success mt-1">Đăng Nhập</h1>
 
       {msg && <Alert variant="danger">{msg}</Alert>}
 

@@ -1,12 +1,46 @@
 import axios from "axios";
 import cookie from "react-cookies";
 
-const BASE_URL = "http://localhost:3000/ManageTrainingPoints/api/";
+const BASE_URL = "http://localhost:8080/ManageTrainingPoints/api/";
 
 export const endpoints = {
   register: "/users",
   login: "/login",
   "current-user": "/secure/profile",
+
+  bulletins: "/bulletins",
+  "bulletins-detail": (bulletinId) => `/bulletins/${bulletinId}`,
+  "bulletins-interactions": (bulletinId) =>
+    `/bulletins/${bulletinId}/interactions`,
+
+  activities: "/activities",
+  "activities-registries": (activityId) =>
+    `/activities/${activityId}/registries`,
+  "activities-attendances": (activityId) =>
+    `/activities/${activityId}/attendances`,
+  "activities-registries-of-student": "/students/current-student/registries",
+  "activities-attendances-of-student": "/students/current-student/attendances",
+  "activity-detail": (activityId) => `/activities/${activityId}`,
+
+  registries: "/registries",
+  "registries-detail": (registryId) => `/registries/${registryId}`,
+
+  missings: "/missings",
+
+  classes: "/classes",
+  terms: "/terms",
+  "terms-detail": (termId) => `/terms/${termId}`,
+  "activities-terms": (termId) => `/terms/${termId}/activities`,
+
+  semesters: "/semesters",
+
+  departments: "/departments",
+  "classed-department": (departmentId) =>
+    `/departments/${departmentId}/classes`,
+
+  assistants: "/assistants",
+  students: "/students",
+  attendances: "attendances",
 };
 
 export const authApis = () => {
