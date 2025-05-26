@@ -60,8 +60,8 @@ public class BulletinServiceImpl implements BulletinService {
         }
         
         int pageSize = PaginatorUtils.pageSize;
-        int startIndex=0;
-        if (params.containsKey("page")) {  
+        int startIndex = 0;
+        if (params.containsKey("page")) {
             startIndex = (Integer.parseInt(params.get("page"))-1) * pageSize;
         }
         Function<Query<T>, Query<T>> supportedQuery = PaginatorUtils.pageQueryDefault(startIndex, pageSize, type);

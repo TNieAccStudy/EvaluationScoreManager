@@ -7,6 +7,9 @@ package com.nhm.utils;
 import java.util.function.Function;
 import org.hibernate.query.Query;
 
+import java.util.function.Function;
+import org.hibernate.query.Query;
+
 /**
  *
  * @author GIGABYTE

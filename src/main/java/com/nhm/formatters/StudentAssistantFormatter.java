@@ -4,11 +4,9 @@
  */
 package com.nhm.formatters;
 
-import com.nhm.pojo.ExtraActivity;
-import com.nhm.services.ExtraActivityService;
+import com.nhm.pojo.StudentAssistant;
 import java.text.ParseException;
 import java.util.Locale;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
 
@@ -16,19 +14,18 @@ import org.springframework.stereotype.Component;
  *
  * @author GIGABYTE
  */
-public class ExtraActivityFormatter implements Formatter<ExtraActivity> {
-
+@Component
+public class StudentAssistantFormatter implements Formatter<StudentAssistant> {
     @Override
-    public String print(ExtraActivity object, Locale locale) {
+    public String print(StudentAssistant object, Locale locale) {
         return String.valueOf(object.getId());
     }
 
     @Override
-    public ExtraActivity parse(String text, Locale locale) throws ParseException {
-        ExtraActivity activity = new ExtraActivity();
-        activity.setId(Long.valueOf(text));
+    public StudentAssistant parse(String text, Locale locale) throws ParseException {
+        StudentAssistant u = new StudentAssistant();
+        u.setId(Long.valueOf(text));
         
-        return activity;
+        return u;
     }
-    
 }

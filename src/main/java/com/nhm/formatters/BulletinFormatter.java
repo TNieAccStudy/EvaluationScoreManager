@@ -4,7 +4,7 @@
  */
 package com.nhm.formatters;
 
-import com.nhm.pojo.StudentAssistant;
+import com.nhm.pojo.Bulletin;
 import java.text.ParseException;
 import java.util.Locale;
 import org.springframework.format.Formatter;
@@ -13,18 +13,17 @@ import org.springframework.format.Formatter;
  *
  * @author GIGABYTE
  */
-public class AsisstantFormatter implements Formatter<StudentAssistant> {
+public class BulletinFormatter implements Formatter<Bulletin> {
     @Override
-    public String print(StudentAssistant object, Locale locale) {
+    public String print(Bulletin object, Locale locale) {
         return String.valueOf(object.getId());
     }
 
     @Override
-    public StudentAssistant parse(String text, Locale locale) throws ParseException {
-        StudentAssistant u = new StudentAssistant();
+    public Bulletin parse(String text, Locale locale) throws ParseException {
+        Bulletin u = new Bulletin();
         u.setId(Long.valueOf(text));
         
         return u;
     }
-    
 }

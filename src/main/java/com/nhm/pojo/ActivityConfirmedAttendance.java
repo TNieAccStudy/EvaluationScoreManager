@@ -155,7 +155,20 @@ public class ActivityConfirmedAttendance extends BaseModel implements Serializab
     public static enum CensorState {
         PENDING,
         CONFIRMED,
-        CANCEl
+        CANCElED;
+        
+        public static CensorState responseCensorStateFormExecStatus(ExecuteStatus execStatus) throws Exception {
+            switch(execStatus) {
+                case CANCELED:
+                    return CensorState.CANCElED;
+                case CONFIRMED:
+                    return CensorState.CONFIRMED;
+                case PENDING:
+                    return CensorState.PENDING;
+                default:
+                    throw new Exception("don't have any type of execStatus");
+            }
+        }
     }
     
 }

@@ -59,18 +59,8 @@ public class ExtraActivityServiceImpl implements ExtraActivityService {
             whereParams.add((cb, root) -> cb.like(root.get("title"), params.get("kw")));
         }
         
-        Function<Query<ExtraActivity>, Query<ExtraActivity>> supportedQuery = null;
-        if (params.containsKey("page")) {
-            int pageSize = PaginatorUtils.pageSize;
-            int startIndex = Integer.parseInt(params.get("page")) * pageSize;
-            supportedQuery = (q) -> {
-                q.setFirstResult(startIndex);
-                q.setMaxResults(pageSize);
-                return q;
-            };
-        }
         
-        return this.activityRepo.getActivities(whereParams, supportedQuery);
+        return this.activityRepo.getActivities(whereParams, null);
     }
 
     @Override

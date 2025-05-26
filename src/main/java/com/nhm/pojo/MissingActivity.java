@@ -19,6 +19,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -72,6 +73,7 @@ public class MissingActivity extends BaseModel implements Serializable {
     private ActivityConfirmedAttendance activityConfirmedAttendanceId;
     @JoinColumn(name = "extra_activity_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @NotNull
     @JsonView({
         DisplayView.Public.class,
         DisplayView.Simplify.class
@@ -90,6 +92,7 @@ public class MissingActivity extends BaseModel implements Serializable {
     private StudentAssistant studentAssistantId;
     @JoinColumn(name = "summary_bulletin_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @NotNull
     @JsonView({
         DisplayView.Public.class,
         DisplayView.Simplify.class

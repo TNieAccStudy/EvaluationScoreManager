@@ -47,3 +47,7 @@ build/
 nbbuild/
 dist/
 nbdist/
+
+db_generation/
+test/
+venv/

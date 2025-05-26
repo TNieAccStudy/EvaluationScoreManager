@@ -53,12 +53,6 @@ public class MissingActivityServiceImpl implements MissingActivityService {
             throw new Exception("have some error when work with data");
         }
         
-        if (missing.getExecutedStatus().equals(ExecuteStatus.CONFIRMED.name())) {
-            ActivityConfirmedAttendance attendance = missing.getActivityConfirmedAttendanceId();
-            attendance.setCensorState(ActivityConfirmedAttendance.CensorState.CONFIRMED.name());
-            attendanceService.addOrUpdate(attendance, proofPicture);
-        }
-        
         return missing;
     }
 

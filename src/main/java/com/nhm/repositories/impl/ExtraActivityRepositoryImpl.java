@@ -6,12 +6,10 @@ package com.nhm.repositories.impl;
 
 import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ActivityRegistry;
-import com.nhm.pojo.Bulletin;
 import com.nhm.pojo.ExtraActivity;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.repositories.ExtraActivityRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.lang.reflect.InvocationTargetException;

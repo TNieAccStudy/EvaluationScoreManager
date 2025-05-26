@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,8 +78,19 @@ public class ApiMissingController {
     
     @PatchMapping("/{missingId}/response")
     @JsonView(DisplayView.Public.class)
-    public ResponseEntity<?> responseMissing(@PathVariable("missingId") int missingId, Principal principal) throws Exception {
+    public ResponseEntity<?> responseMissing(@PathVariable("missingId") int missingId, 
+            @RequestBody Map<String, String> payload, 
+            Principal principal) throws Exception {
+        
         MissingActivity missing = this.missingService.getMissingById(missingId);
+        
+        String execStatus = payload.get("executeStatus");
+        if (execStatus != null) {
+            missing.setExecutedStatus(execStatus);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.entry("error", "your request is missing execStatus"));
+        }
+        
         try {
             UserInfo u = UserInfo.getUserByUsernameWithInstance(principal.getName(), userService, StudentAssistant.class);
             missing.setStudentAssistantId((StudentAssistant)u);

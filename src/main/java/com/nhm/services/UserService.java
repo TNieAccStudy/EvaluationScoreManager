@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface UserService extends UserDetailsService {
     UserInfo getUserByUsername(String username);
     UserInfo addUser(UserInfo user, MultipartFile avatar) throws IOException, Exception;
+    UserInfo updateUser(UserInfo u);
     boolean authenticate(String username, String password);
     UserInfo getUserById(int id);
     Collection<ActivityRegistry> getRegistriesByUserId(int userId);

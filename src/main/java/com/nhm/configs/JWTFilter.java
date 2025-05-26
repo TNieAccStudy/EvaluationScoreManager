@@ -24,14 +24,22 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+//        //temp
+//        String path = request.getRequestURI();
+//        if (path.startsWith("/affairs")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+//        //close
+
         String token = JwtUtils.getTokenFromHeader(request);
         if (token != null) {
             try {
                 String username = JwtUtils.validateTokenAndGetUsername(token);
                 if (username != null) {
                     List<GrantedAuthority> authorities = JwtUtils.extractRoles(token);
-                    UsernamePasswordAuthenticationToken auth =
-                            new UsernamePasswordAuthenticationToken(username, null, authorities);
+                    UsernamePasswordAuthenticationToken auth
+                            = new UsernamePasswordAuthenticationToken(username, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             } catch (Exception e) {
@@ -41,5 +49,5 @@ public class JWTFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-    
+
 }
