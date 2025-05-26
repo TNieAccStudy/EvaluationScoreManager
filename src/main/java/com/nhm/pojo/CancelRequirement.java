@@ -82,14 +82,14 @@ public class CancelRequirement extends BaseModel implements Serializable {
         DisplayView.Simplify.class
     })
     protected String executedStatus = ExecuteStatus.PENDING.name();
-    @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
+    @JoinColumn(name = "student_assistant_id", referencedColumnName = "user_ptr_id")
     @ManyToOne
     @JsonView({
         DisplayView.Public.class,
         DisplayView.Simplify.class
     })
     protected StudentAssistant studentAssistantId;
-    @JoinColumn(name = "student_affairs_officer_id", referencedColumnName = "id")
+    @JoinColumn(name = "student_affairs_officer_id", referencedColumnName = "user_ptr_id")
     @ManyToOne
     @JsonView(DisplayView.Public.class)
     protected StudentAffairsOfficer studentAffairsOfficerId;

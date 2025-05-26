@@ -89,7 +89,7 @@ public class ExtraActivity extends BaseModel implements Serializable {
     })
 //    @JsonDeserialize(using = TermDeserializer.class)
     private Semester semesterId;
-    @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
+    @JoinColumn(name = "student_assistant_id", referencedColumnName = "user_ptr_id")
     @ManyToOne(optional = false)
     @JsonView(DisplayView.Internal.class)
 //    @JsonDeserialize(using = StudentAssistantDeserializer.class)

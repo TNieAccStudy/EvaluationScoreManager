@@ -68,7 +68,7 @@ public class Interaction extends BaseModel implements Serializable {
         DisplayView.Simplify.class
     })
     protected Bulletin bulletinId;
-    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    @JoinColumn(name = "student_id", referencedColumnName = "user_ptr_id")
     @ManyToOne(optional = false)
     @JsonView({
         DisplayView.Public.class,

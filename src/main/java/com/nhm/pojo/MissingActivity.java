@@ -79,18 +79,18 @@ public class MissingActivity extends BaseModel implements Serializable {
         DisplayView.Simplify.class
     })
     private ExtraActivity extraActivityId;
-    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    @JoinColumn(name = "student_id", referencedColumnName = "user_ptr_id")
     @ManyToOne(optional = false)
     @JsonView({
         DisplayView.Public.class,
         DisplayView.Simplify.class
     })
     private Student studentId;
-    @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
+    @JoinColumn(name = "student_assistant_id", referencedColumnName = "user_ptr_id")
     @ManyToOne
     @JsonView(DisplayView.Internal.class)
     private StudentAssistant studentAssistantId;
-    @JoinColumn(name = "summary_bulletin_id", referencedColumnName = "id")
+    @JoinColumn(name = "summary_bulletin_id", referencedColumnName = "bulletin_ptr_id")
     @ManyToOne(optional = false)
     @NotNull
     @JsonView({
