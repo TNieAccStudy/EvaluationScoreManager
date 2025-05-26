@@ -32,7 +32,8 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @ComponentScan(basePackages = {
     "com.nhm.controllers",
     "com.nhm.repositories",
-    "com.nhm.services"
+    "com.nhm.services",
+    "com.nhm.dto"
 })
 public class SpringSecurityConfigs {
 
