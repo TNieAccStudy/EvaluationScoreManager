@@ -28,7 +28,7 @@
 
 .table-header {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr 1.5fr 1fr;
+    grid-template-columns: 0.5fr 2fr 1fr 1fr 1.5fr 2fr 1fr 1fr; /* Điều chỉnh tỷ lệ cột */
     padding: 15px;
     background-color: #2a3a7c;
     font-size: 0.95rem;
@@ -39,7 +39,7 @@
 
 .table-row {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr 1.5fr 1fr;
+    grid-template-columns: 0.5fr 2fr 1fr 1fr 1.5fr 2fr 1fr 1fr; /* Đồng bộ với table-header */
     padding: 15px;
     font-size: 0.9rem;
     color: #e0e0e0;
@@ -58,6 +58,10 @@
 .table-column {
     display: flex;
     align-items: center;
+    white-space: nowrap; /* Ngăn nội dung xuống dòng */
+    overflow: hidden; /* Ẩn nội dung vượt quá */
+    text-overflow: ellipsis; /* Hiển thị ... khi nội dung bị cắt */
+    max-width: 100%; /* Đảm bảo không vượt quá cột */
 }
 
 /* Status Indicators */
@@ -66,6 +70,7 @@
     border-radius: 12px;
     font-size: 0.8rem;
     font-weight: 500;
+    white-space: nowrap; /* Đảm bảo trạng thái không xuống dòng */
 }
 
 .status.active {
@@ -92,6 +97,7 @@
     cursor: pointer;
     transition: background-color 0.2s ease;
     margin-right: 5px;
+    white-space: nowrap; /* Ngăn nút xuống dòng */
 }
 
 .action-button.edit {
@@ -116,7 +122,7 @@
 @media (max-width: 768px) {
     .table-header,
     .table-row {
-        grid-template-columns: 1fr 2fr 1fr 1fr 1.5fr 1.5fr;
+        grid-template-columns: 0.5fr 2fr 1fr 1fr 1.5fr 2fr 1fr 1fr; /* Đồng bộ */
         font-size: 0.85rem;
     }
 
@@ -148,6 +154,9 @@
 
     .table-column {
         justify-content: flex-start;
+        white-space: normal; /* Cho phép xuống dòng ở màn hình nhỏ */
+        overflow: visible; /* Hiển thị toàn bộ nội dung */
+        text-overflow: initial; /* Bỏ dấu ... */
     }
 
     .table-header {
@@ -173,10 +182,12 @@
         width: 100px;
     }
 
-    .table-column:nth-child(1)::before { content: "Node ID"; }
-    .table-column:nth-child(2)::before { content: "Name"; }
-    .table-column:nth-child(3)::before { content: "Status"; }
-    .table-column:nth-child(4)::before { content: "Type"; }
-    .table-column:nth-child(5)::before { content: "Last Updated"; }
-    .table-column:nth-child(6)::before { content: "Actions"; }
+    .table-column:nth-child(1)::before { content: "Bulletin ID"; }
+    .table-column:nth-child(2)::before { content: "Title"; }
+    .table-column:nth-child(3)::before { content: "Endtime"; }
+    .table-column:nth-child(4)::before { content: "Semester"; }
+    .table-column:nth-child(5)::before { content: "Assistant Name"; }
+    .table-column:nth-child(6)::before { content: "Assistant Mail"; }
+    .table-column:nth-child(7)::before { content: "State"; }
+    .table-column:nth-child(8)::before { content: "Actions"; }
 }

@@ -7,6 +7,7 @@ package com.nhm.controllers;
 import com.nhm.pojo.Bulletin;
 import com.nhm.pojo.CancelRequirement;
 import com.nhm.pojo.ExtraActivity;
+import com.nhm.pojo.StudentAssistant;
 import com.nhm.pojo.UserInfo;
 import com.nhm.services.BulletinService;
 import com.nhm.services.CancelRequirementService;
@@ -79,6 +80,16 @@ public class AffairsExecController {
         BeanUtils.copyProperties(userInfo, existing, "id", "enable", "createdDate", "updatedDate");
         
         userService.updateUser(existing);
+
+        return "redirect:/affairs/accounts";
+    }
+    
+    @PostMapping("/add-assistant")
+    public String addAssistantExec(@ModelAttribute("studentAssistant") StudentAssistant studentAssistant) throws Exception {
+        
+        studentAssistant.setAvatar("https://res.cloudinary.com/duiwbkm7z/image/upload/v1748296725/istockphoto-1169486855-612x612_idzoa9.jpg");
+        studentAssistant.setUserRole(UserInfo.UserRole.ROLE_ASSISTANT.name());
+        userService.addUser(studentAssistant, null);
 
         return "redirect:/affairs/accounts";
     }

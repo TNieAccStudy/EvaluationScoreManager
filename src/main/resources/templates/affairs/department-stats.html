@@ -3,10 +3,10 @@
     <header>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Class stats template</title>
+        <title>Department stats template</title>
 
         <th:block id="custom-links">
-            <link rel="stylesheet" th:href="@{/affairs/css/class-stats.css}" />
+            <link rel="stylesheet" th:href="@{/affairs/css/department-stats.css}" />
 
         </th:block>
 
@@ -32,7 +32,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Class Name</th>
+                            <th>Department Name</th>
                             <th>Total Score</th>
                         </tr>
                     </thead>
@@ -73,7 +73,7 @@
                 function submitSemester() {
                     var semesterId = document.getElementById('semesterId').value;
                     if (semesterId) {
-                        var baseUrl = /*[[@{/affairs/stats/class}]]*/ '';
+                        var baseUrl = /*[[@{/affairs/stats/department}]]*/ '';
                         window.location.href = baseUrl + '?semesterId=' + semesterId;
                     } else {
                         alert('Please select a semester!');
