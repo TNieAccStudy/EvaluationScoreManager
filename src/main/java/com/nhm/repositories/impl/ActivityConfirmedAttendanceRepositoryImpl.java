@@ -7,6 +7,7 @@ package com.nhm.repositories.impl;
 import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.repositories.ActivityConfirmedAttendanceRepository;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.stereotype.Repository;
@@ -37,6 +38,11 @@ public class ActivityConfirmedAttendanceRepositoryImpl extends BaseRepositoryImp
     @Override
     public ActivityConfirmedAttendance getAttendanceById(int id) {
         return super.getItemById(id, ActivityConfirmedAttendance.class);
+    }
+
+    @Override
+    public Collection<ActivityConfirmedAttendance> getAttendances() {
+         return super.getItems(ActivityConfirmedAttendance.class);
     }
     
 }

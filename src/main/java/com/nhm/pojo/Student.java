@@ -52,7 +52,7 @@ public class Student extends UserInfo implements Serializable {
     @Size(min = 1, max = 11)
     @Column(name = "mssv")
     @JsonView({
-        DisplayView.Internal.class,
+        DisplayView.Public.class,
         DisplayView.Simplify.class
     })
     private String mssv;

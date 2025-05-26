@@ -6,6 +6,7 @@ package com.nhm.services;
 
 import com.nhm.pojo.ActivityConfirmedAttendance;
 import java.io.IOException;
+import java.util.Collection;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -15,4 +16,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ActivityConfirmedAttendanceService {
     ActivityConfirmedAttendance addOrUpdate(ActivityConfirmedAttendance activity, MultipartFile proofPicture) throws IOException, Exception;
     ActivityConfirmedAttendance getAttendanceById(int id);
+    Collection<ActivityConfirmedAttendance> getAttendances();
 }

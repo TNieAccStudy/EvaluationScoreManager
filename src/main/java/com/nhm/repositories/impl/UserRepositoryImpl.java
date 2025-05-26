@@ -10,11 +10,12 @@ import com.nhm.pojo.MissingActivity;
 import com.nhm.pojo.Student;
 import com.nhm.pojo.UserInfo;
 import com.nhm.repositories.UserRepository;
-import jakarta.persistence.Query;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
@@ -34,10 +35,10 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
     @Override
     public UserInfo getUserByUsername(String username) {
         Session s = this.sessionFactory.getObject().getCurrentSession();
-        Query q = s.createNamedQuery("UserInfo.findByUsername", UserInfo.class);
+        Query<UserInfo> q = s.createNamedQuery("UserInfo.findByUsername", UserInfo.class);
         q.setParameter("username", username);
 
-        return (UserInfo) q.getSingleResult();
+        return q.getSingleResult();
     }
 
     @Override
@@ -82,7 +83,10 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
      */
     @Override
     public Collection<ActivityRegistry> getRegistriesByUserId(int userId) {
-        return this.getItemsOfUserByUserId(userId, ActivityRegistry.class, t -> t.getActivityRegistryCollection());
+        return this.getItemsOfUserByUserId(userId, ActivityRegistry.class, t -> {
+            Hibernate.initialize(t.getActivityRegistryCollection());
+            return t.getActivityRegistryCollection();
+        });
     }
 
     /**
@@ -93,9 +97,12 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
     @Override
     public Collection<ActivityConfirmedAttendance> getAttendsByUserId(int userId) {
         return this.getItemsOfUserByUserId(userId, ActivityConfirmedAttendance.class, 
-                t -> t.getActivityRegistryCollection().stream()
+                t -> {
+                    Hibernate.initialize(t.getActivityRegistryCollection());
+                    return t.getActivityRegistryCollection().stream()
                     .map(ActivityRegistry::getActivityConfirmedAttendance)
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toList());
+                });
     }
 
     /**
@@ -105,7 +112,10 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
      */
     @Override
     public Collection<MissingActivity> getMissingsByUserId(int userId) {
-        return this.getItemsOfUserByUserId(userId, MissingActivity.class, t -> t.getMissingActivityCollection());
+        return this.getItemsOfUserByUserId(userId, MissingActivity.class, t -> {
+            Hibernate.initialize(t.getMissingActivityCollection());
+            return t.getMissingActivityCollection();
+        });
     }
 
     @Override

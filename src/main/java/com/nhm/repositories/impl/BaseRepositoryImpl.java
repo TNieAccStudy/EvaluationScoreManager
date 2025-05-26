@@ -48,9 +48,10 @@ public abstract class BaseRepositoryImpl {
             } else {
                 System.out.println("Merging existing object with id = " + idValue);
                 obj = (T) s.merge(obj);
+                s.flush();
             }
 
-            s.refresh(obj);
+            s.refresh(obj); 
 
             System.out.println("After flush, obj = " + obj);
             return obj;

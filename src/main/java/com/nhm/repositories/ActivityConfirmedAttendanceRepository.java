@@ -5,6 +5,7 @@
 package com.nhm.repositories;
 
 import com.nhm.pojo.ActivityConfirmedAttendance;
+import java.util.Collection;
 
 /**
  *
@@ -13,4 +14,5 @@ import com.nhm.pojo.ActivityConfirmedAttendance;
 public interface ActivityConfirmedAttendanceRepository {
     ActivityConfirmedAttendance addOrUpdate(ActivityConfirmedAttendance confirmedAttendance);
     ActivityConfirmedAttendance getAttendanceById(int id);
+    Collection<ActivityConfirmedAttendance> getAttendances();
 }
