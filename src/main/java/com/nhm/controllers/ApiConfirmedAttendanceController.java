@@ -47,8 +47,6 @@ public class ApiConfirmedAttendanceController {
     public ResponseEntity<ActivityConfirmedAttendance> create(@RequestPart("data") ActivityConfirmedAttendance attendance, @RequestPart("proofPicture") MultipartFile proofPicture) throws Exception {
         return new ResponseEntity<>(this.attendanceService.addOrUpdate(attendance, proofPicture), HttpStatus.CREATED);
     }
-    
-    @PatchMapping(path="/{attendanceId}")
 
     @GetMapping
     @JsonView(DisplayView.Public.class)

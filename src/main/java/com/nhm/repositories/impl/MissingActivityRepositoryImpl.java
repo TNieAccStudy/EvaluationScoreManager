@@ -10,6 +10,7 @@ import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ActivityRegistry;
 import com.nhm.pojo.ExecuteStatus;
 import com.nhm.pojo.MissingActivity;
+import com.nhm.repositories.ActivityConfirmedAttendanceRepository;
 import com.nhm.repositories.MissingActivityRepository;
 import com.nhm.utils.CloudinaryUtils;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -35,6 +36,9 @@ public class MissingActivityRepositoryImpl extends BaseRepositoryImpl implements
     
     @Autowired
     private Cloudinary cloudinary;
+    
+    @Autowired
+    private ActivityConfirmedAttendanceRepository attendanceRepo;
 
     @Override
     public MissingActivity addOrUpdate(MissingActivity missing) {
@@ -47,8 +51,7 @@ public class MissingActivityRepositoryImpl extends BaseRepositoryImpl implements
                 attendance.setCensorState(censorStateChange);
                 Session s = sessionFactory.getObject().getCurrentSession();
                 
-                s.merge(attendance);
-                s.flush();
+                attendanceRepo.addOrUpdate(attendance);
             } else {
                 Session s = this.sessionFactory.getObject().getCurrentSession();
                 CriteriaBuilder cb = s.getCriteriaBuilder();
@@ -78,14 +81,7 @@ public class MissingActivityRepositoryImpl extends BaseRepositoryImpl implements
                 attendance.setProofPicture(missing.getProofPicture());
                 attendance.setCensorState(censorStateChange);
                 
-                if (attendance.getId() == null) {
-                    s.persist(attendance);
-                } else {
-                    s.merge(attendance);
-                    s.flush();
-                }
-                
-                s.refresh(attendance);
+                attendance = attendanceRepo.addOrUpdate(attendance);
                 
                 missing.setActivityConfirmedAttendanceId(attendance);
                 

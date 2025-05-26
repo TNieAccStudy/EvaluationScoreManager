@@ -6,6 +6,7 @@ package com.nhm.services.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.nhm.dto.CSVAttendancesData;
 import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ActivityRegistry;
 import com.nhm.pojo.MissingActivity;
@@ -17,6 +18,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -65,7 +68,7 @@ public class UserServiceImpl implements UserService {
         if (user.getUserRole() == null || user.getUserRole().equals("")) {
             user.setUserRole("ROLE_USER");
         }
-        
+
         String publicId = null;
         if (avatar != null && !avatar.isEmpty()) {
             Map res = cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
@@ -81,7 +84,7 @@ public class UserServiceImpl implements UserService {
             }
             throw new Exception("error when work with database");
         }
-        
+
         return user;
     }
 
@@ -118,6 +121,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfo updateUser(UserInfo u) {
         return this.userRepo.updateUser(u);
+    }
+
+    @Override
+    public int getEvaluationScoreByUserIdWithSemesterId(int studentId, int semesterId) {
+        return this.userRepo.getEvaluationScoreByUserIdOfSemesterId(studentId, semesterId);
+    }
+
+    @Override
+    public Collection<ActivityConfirmedAttendance> loadAttendanceFromCSVAttendanceData(CSVAttendancesData csvAttendanceData, MultipartFile proofPictureGeneralFile) throws IOException, Exception {
+        if (proofPictureGeneralFile != null && !proofPictureGeneralFile.isEmpty()) {
+            Map res = cloudinary.uploader().upload(proofPictureGeneralFile.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+            csvAttendanceData.setProofPictureGeneral(res.get("secure_url").toString());
+            
+            return this.userRepo.loadAttendanceFromCSVAttendanceData(csvAttendanceData);
+        }
+        throw new Exception("data is missing ?");
     }
 
 }
