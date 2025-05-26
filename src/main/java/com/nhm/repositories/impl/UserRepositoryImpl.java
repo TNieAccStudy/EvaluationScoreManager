@@ -4,13 +4,23 @@
  */
 package com.nhm.repositories.impl;
 
+import com.nhm.dto.CSVAttendancesData;
 import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ActivityRegistry;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.pojo.Student;
 import com.nhm.pojo.UserInfo;
+import com.nhm.repositories.ActivityConfirmedAttendanceRepository;
 import com.nhm.repositories.UserRepository;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.hibernate.Hibernate;
@@ -31,6 +41,9 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
     
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private ActivityConfirmedAttendanceRepository attendaceRepo;
 
     @Override
     public UserInfo getUserByUsername(String username) {
@@ -136,5 +149,79 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
         s.flush();
         
         return u;
+    }
+    
+    private int getEvaluationScoreByUserIdWithRegistryPredicate(int studentId, 
+            BiFunction<CriteriaBuilder, Root<ActivityConfirmedAttendance>, Predicate> execRegistryPredicate) {
+        Session s = this.sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<Long> q = cb.createQuery(Long.class);
+        
+        Root<ActivityConfirmedAttendance> attendance = q.from(ActivityConfirmedAttendance.class);
+        
+        q.select(cb.sum(attendance.get("activityRegistryId").get("bonusScore")));
+        
+        List<Predicate> predicates = new ArrayList<>();
+        
+        predicates.add(cb.equal(attendance.get("censorState"), ActivityConfirmedAttendance.CensorState.CONFIRMED.name()));
+        
+        if (execRegistryPredicate != null) {
+            predicates.add(execRegistryPredicate.apply(cb, attendance));
+        }
+        
+        q.where(predicates.toArray(new Predicate[0]));
+        
+        TypedQuery<Long> totalScoreQuery = s.createQuery(q);
+        
+        return totalScoreQuery.getSingleResult().intValue();
+    }
+
+    @Override
+    public int getEvaluationScoreByUserIdOfSemesterId(int studentId, int semesterId) {
+        return getEvaluationScoreByUserIdWithRegistryPredicate(studentId, (cb, attendance) -> cb.and(
+                cb.equal(attendance.get("activityRegistryId").get("studentId").get("id"), Long.valueOf(studentId)),
+                cb.equal(attendance.get("activityRegistryId").get("extraActivityId").get("semesterId").get("id"), Long.valueOf(semesterId))
+        ));
+    }
+
+    @Override
+    public int getTotalEvaluationScoreByUserId(int studentId) {
+        return getEvaluationScoreByUserIdWithRegistryPredicate(studentId, 
+                (cb, attendance) -> cb.equal(attendance.get("activityRegistryId").get("studentId").get("id"), Long.valueOf(studentId))
+        );
+    }
+
+    @Override
+    public Student getStudentByMssv(String mssv) {
+        return this.sessionFactory.getObject().getCurrentSession().createNamedQuery("Student.findByMssv", Student.class).getSingleResult();
+    }
+
+    @Override
+    public Collection<ActivityConfirmedAttendance> loadAttendanceFromCSVAttendanceData(CSVAttendancesData csvAttendanceData) {
+        Session s = this.sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<ActivityRegistry> q = cb.createQuery(ActivityRegistry.class);
+        Root<ActivityRegistry> registryData = q.from(ActivityRegistry.class);
+        
+        Predicate studentsPredicate = registryData.get("studentId").get("mssv").in(csvAttendanceData.getAttendedStudents());
+        Predicate activityPredicate = cb.equal(registryData.get("extraActivityId").get("id"), csvAttendanceData.getExtraActivityId().getId());
+        
+        q.select(registryData).where(studentsPredicate, activityPredicate);
+        
+        Query<ActivityRegistry> qRegistries = s.createQuery(q);
+        
+        List<ActivityRegistry> registries = qRegistries.getResultList();
+        
+        List<ActivityConfirmedAttendance> attendances = registries.stream().map(r -> {
+            ActivityConfirmedAttendance attendance = new ActivityConfirmedAttendance();
+            attendance.setActivityRegistryId(r);
+            attendance.setCensorState(ActivityConfirmedAttendance.CensorState.CONFIRMED.name());
+            attendance.setProofPicture(csvAttendanceData.getProofPictureGeneral());
+            
+            return attendance;
+        }).collect(Collectors.toList());
+        
+        return this.attendaceRepo.responseAndAddListAttendance(attendances);
+        
     }
 }

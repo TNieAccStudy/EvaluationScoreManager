@@ -4,6 +4,7 @@
  */
 package com.nhm.services;
 
+import com.nhm.dto.CSVAttendancesData;
 import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ActivityRegistry;
 import com.nhm.pojo.MissingActivity;
@@ -27,4 +28,6 @@ public interface UserService extends UserDetailsService {
     Collection<ActivityConfirmedAttendance> getAttendsByUserId(int userId);
     Collection<MissingActivity> getMissingsByUserId(int userId);
     <T extends UserInfo> Collection<T> getUsers(Class<T> type);
+    int getEvaluationScoreByUserIdWithSemesterId(int studentId, int semesterId);
+    Collection<ActivityConfirmedAttendance> loadAttendanceFromCSVAttendanceData(CSVAttendancesData csvAttendanceData, MultipartFile proofPictureGeneralFile) throws IOException, Exception;
 }
