@@ -1,0 +1,62 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{affairs/base :: base(~{::title}, ~{::div.content}, ~{::#custom-links}, ~{::#custom-javascripts})}">
+    <header>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Add Student Assistant</title>
+
+        <th:block id="custom-links">
+            <link rel="stylesheet" th:href="@{/affairs/css/add-assistant.css}" />
+            <!-- Bootstrap CSS for styling -->
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        </th:block>
+    </header>
+    <body>
+        <div class="content">
+            <h2 class="text-center mb-4">Add New Student Assistant</h2>
+            <form th:action="@{/affairs/exec/add-assistant}" th:object="${studentAssistant}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required
+                           th:placeholder="'Enter first name'" />
+                    <div th:if="${#fields.hasErrors('firstName')}" class="text-danger" th:errors="*{firstName}"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required
+                           th:placeholder="'Enter last name'" />
+                    <div th:if="${#fields.hasErrors('lastName')}" class="text-danger" th:errors="*{lastName}"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" th:field="*{username}" required
+                           th:placeholder="'Enter username'" />
+                    <div th:if="${#fields.hasErrors('username')}" class="text-danger" th:errors="*{username}"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" th:field="*{password}" required
+                           th:placeholder="'Enter password'" />
+                    <div th:if="${#fields.hasErrors('password')}" class="text-danger" th:errors="*{password}"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}" required
+                           th:placeholder="'Enter email'" />
+                    <div th:if="${#fields.hasErrors('email')}" class="text-danger" th:errors="*{email}"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone</label>
+                    <input type="tel" class="form-control" id="phone" th:field="*{phone}" required
+                           th:placeholder="'Enter phone number (e.g., 123-456-7890)'" />
+                    <div th:if="${#fields.hasErrors('phone')}" class="text-danger" th:errors="*{phone}"></div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Add Assistant</button>
+            </form>
+        </div>
+
+    <th:block id="custom-javascripts">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </th:block>
+</body>
+</html>

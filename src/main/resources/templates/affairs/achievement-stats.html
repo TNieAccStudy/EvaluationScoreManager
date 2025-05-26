@@ -3,36 +3,21 @@
     <header>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Class stats template</title>
+        <title>Class Stats</title>
 
         <th:block id="custom-links">
-            <link rel="stylesheet" th:href="@{/affairs/css/class-stats.css}" />
-
+            <link rel="stylesheet" th:href="@{/affairs/css/achievement-stats.css}" />
         </th:block>
-
     </header>
     <body>
         <div class="content">
-            <!-- Điều khiển chọn semester và nút -->
-            <div class="controls">
-                <label for="semesterId" class="form-label">Select Semester</label>
-                <select class="form-select" id="semesterId" name="semesterId">
-                    <option value="">Select a semester</option>
-                    <option th:each="semester : ${semesters}" th:value="${semester.id}" th:text="${semester.name}"></option>
-                    <!-- Dữ liệu mẫu nếu không có từ backend -->
-                    <option th:unless="${semesters}" value="1">Semester 1</option>
-                    <option th:unless="${semesters}" value="2">Semester 2</option>
-                    <option th:unless="${semesters}" value="3">Semester 3</option>
-                </select>
-                <button class="btn btn-primary" onclick="submitSemester()">Submit</button>
-            </div>
-
+            <!-- Loại bỏ phần controls (select và nút) -->
             <!-- Bảng thống kê -->
             <div class="table-container">
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Class Name</th>
+                            <th>Name</th>
                             <th>Total Score</th>
                         </tr>
                     </thead>
@@ -67,19 +52,8 @@
             </div>
         </div>
 
-    <th:block id="custom-javascripts" th:inline="javascript">
+    <th:block id="custom-javascripts">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-                function submitSemester() {
-                    var semesterId = document.getElementById('semesterId').value;
-                    if (semesterId) {
-                        var baseUrl = /*[[@{/affairs/stats/class}]]*/ '';
-                        window.location.href = baseUrl + '?semesterId=' + semesterId;
-                    } else {
-                        alert('Please select a semester!');
-                    }
-                }
-            </script>
     </th:block>
 </body>
 </html>

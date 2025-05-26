@@ -7,6 +7,7 @@ package com.nhm.controllers;
 import com.nhm.pojo.ActivityBulletin;
 import com.nhm.pojo.Bulletin;
 import com.nhm.pojo.CancelRequirement;
+import com.nhm.pojo.StudentAssistant;
 import com.nhm.pojo.UserInfo;
 import com.nhm.services.BulletinService;
 import com.nhm.services.CancelRequirementService;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -28,22 +30,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/affairs")
 public class AffairsController {
-    
+
     @Autowired
     private BulletinService bulletinService;
-    
+
     @Autowired
     private ExtraActivityService activityService;
-    
+
     @Autowired
     private CancelRequirementService cancelService;
-    
+
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private StatsService statsService;
-    
+
     @RequestMapping(path = {
         "/index",
         ""
@@ -51,76 +53,100 @@ public class AffairsController {
     public String affairIndex() {
         return "affairs/index.html";
     }
-    
+
     @RequestMapping("/bulletins")
     public String bulletinList(Model model) {
-        
+
         model.addAttribute("bulletins", bulletinService.getBulletins(Map.of(), Bulletin.class));
-        
+
         return "affairs/bulletin-list.html";
     }
-    
+
     @RequestMapping("/bulletins/{bulletinId}")
     public String bulletinDetail(Model model, @PathVariable("bulletinId") int bulletinId) {
-        
+
         model.addAttribute("bulletin", bulletinService.getBulletinById(bulletinId));
-        
+
         return "affairs/details/bulletin-detail.html";
     }
-    
+
     @RequestMapping("/activities")
     public String activityList(Model model) {
-        
+
         model.addAttribute("activities", activityService.getActivities(Map.of()));
-        
+
         return "affairs/activity-list.html";
     }
-    
+
     @RequestMapping("/activities/{activityId}")
     public String activityDetail(Model model, @PathVariable("activityId") int activityId) {
-        
+
         model.addAttribute("activity", activityService.getActivityById(activityId));
-        
+
         return "affairs/details/activity-detail.html";
     }
-    
+
     @RequestMapping("/cancels")
     public String cancelList(Model model) {
-        
+
         model.addAttribute("cancels", cancelService.getCancels(CancelRequirement.class));
-        
+
         return "affairs/cancel-list.html";
     }
-    
+
     @RequestMapping("/cancels/{cancelId}")
     public String cancelDetail(Model model, @PathVariable("cancelId") int cancelId) {
-        
+
         model.addAttribute("cancel", cancelService.getCancelById(cancelId));
-        
+
         return "affairs/details/cancel-detail.html";
     }
-    
+
     @RequestMapping("/accounts")
     public String userList(Model model) {
-        
+
         model.addAttribute("users", userService.getUsers(UserInfo.class));
-        
+
         return "affairs/account-list.html";
     }
-    
+
     @RequestMapping("/accounts/{accountId}")
     public String userDetail(Model model, @PathVariable("accountId") int userId) {
-        
+
         model.addAttribute("userInfo", userService.getUserById(userId));
-        
+
         return "affairs/details/user-detail.html";
     }
     
+    @RequestMapping("/add-assistant")
+    public String addAssistant(Model model) {
+
+        model.addAttribute("studentAssistant", new StudentAssistant());
+
+        return "affairs/add-assistant.html";
+    }
+
     @RequestMapping("/stats/class")
-    public String classStats(Model model) {
-        model.addAttribute("datas", statsService.classStatsWithSemeseter(1).stream().collect(Collectors.toList()));
+    public String classStats(Model model, @RequestParam(name = "semesterId", defaultValue = "1") int semesterId) {
+        model.addAttribute("datas", statsService.classStatsWithSemeseter(semesterId).stream().collect(Collectors.toList()));
         
         return "affairs/class-stats.html";
     }
     
+    @RequestMapping("/stats/department")
+    public String departmentStats(Model model, @RequestParam(name = "semesterId", defaultValue = "1") int semesterId) {
+        model.addAttribute("datas", statsService.departmentStatsWithSemeseter(semesterId).stream().collect(Collectors.toList()));
+
+        return "affairs/department-stats.html";
+    }
+    
+    @RequestMapping("/stats/achievement")
+    public String achievementStats(Model model) {
+
+        model.addAttribute("datas", statsService.achievementStats().stream().collect(Collectors.toList()));
+
+        return "affairs/achievement-stats.html";
+    }
+    
+
 }
