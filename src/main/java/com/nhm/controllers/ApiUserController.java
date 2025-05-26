@@ -6,6 +6,7 @@ package com.nhm.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.nhm.dto.CSVAttendancesData;
 import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ActivityRegistry;
 import com.nhm.pojo.MissingActivity;
@@ -15,7 +16,6 @@ import com.nhm.pojo.UserInfo;
 import com.nhm.services.UserService;
 import com.nhm.utils.JwtUtils;
 import com.nhm.viewconfigs.DisplayView;
-import jakarta.ws.rs.core.Response;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -89,6 +90,18 @@ public class ApiUserController {
         List<StudentAssistant> assistants = this.userDetailsService.getUsers(StudentAssistant.class).stream().collect(Collectors.toList());
         return new ResponseEntity<>(assistants, HttpStatus.OK);
     }
+    
+    @PostMapping(path="/assistants/current-assistant/postCSVAttendances",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @JsonView(DisplayView.Simplify.class)
+    public ResponseEntity<List<ActivityConfirmedAttendance>> getAttendancesForCurrentStudent(@RequestPart("data") CSVAttendancesData csvAttendanceData, @RequestPart(value = "proofPictureGeneral", required = false) MultipartFile proofPictureGeneral, Principal principal) throws Exception {
+        UserInfo u = userDetailsService.getUserByUsername(principal.getName());
+        
+        List<ActivityConfirmedAttendance> attendances = userDetailsService.loadAttendanceFromCSVAttendanceData(csvAttendanceData, proofPictureGeneral).stream().collect(Collectors.toList());
+        
+        return new ResponseEntity<>(attendances, HttpStatus.OK);
+    }
 
     @GetMapping("/students")
     @JsonView(DisplayView.Simplify.class)
@@ -103,10 +116,21 @@ public class ApiUserController {
     public ResponseEntity<UserInfo> getStudentDetail(@PathVariable("username") String username) {
         return new ResponseEntity<>(this.userDetailsService.getUserByUsername(username), HttpStatus.OK);
     }
+    
+    @GetMapping("/students/{username}/score")
+    @JsonView(DisplayView.Simplify.class)
+    public ResponseEntity<Map<String, Object>> getEvaluationScoreForCurrentStudent(@PathVariable("username") String username, @RequestParam("semester") int semesterId) {
+        UserInfo u = userDetailsService.getUserByUsername(username);
+        int totalScore = userDetailsService.getEvaluationScoreByUserIdWithSemesterId(u.getId().intValue(), semesterId);
+        Student.Achievement achieve = Student.Achievement.getAchievementByScore(totalScore);
+        Map<String, Object> results = Map.of("totalScore", totalScore, "achievement", achieve.name());
+        
+        return new ResponseEntity<>(results, HttpStatus.OK);
+    }
 
     @GetMapping("/students/current-student/registries")
     @JsonView(DisplayView.Simplify.class)
-    public ResponseEntity<?> getRegistriesForCurrentStudent(Principal principal) {
+    public ResponseEntity<List<ActivityRegistry>> getRegistriesForCurrentStudent(Principal principal) {
         UserInfo u = userDetailsService.getUserByUsername(principal.getName());
         List<ActivityRegistry> registries = userDetailsService.getRegistriesByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
 
@@ -115,20 +139,31 @@ public class ApiUserController {
 
     @GetMapping("/students/current-student/attendances")
     @JsonView(DisplayView.Simplify.class)
-    public ResponseEntity<?> getAttendancesForCurrentStudent(Principal principal) {
+    public ResponseEntity<List<ActivityConfirmedAttendance>> getAttendancesForCurrentStudent(Principal principal) {
         UserInfo u = userDetailsService.getUserByUsername(principal.getName());
-        List<ActivityRegistry> registries = userDetailsService.getRegistriesByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
+        List<ActivityConfirmedAttendance> registries = userDetailsService.getAttendsByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
 
         return new ResponseEntity<>(registries, HttpStatus.OK);
     }
 
     @GetMapping("/students/current-student/missings")
     @JsonView(DisplayView.Simplify.class)
-    public ResponseEntity<?> getMissingsForCurrentStudent(Principal principal) {
+    public ResponseEntity<List<MissingActivity>> getMissingsForCurrentStudent(Principal principal) {
         UserInfo u = userDetailsService.getUserByUsername(principal.getName());
-        List<ActivityRegistry> registries = userDetailsService.getRegistriesByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
+        List<MissingActivity> registries = userDetailsService.getMissingsByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
 
         return new ResponseEntity<>(registries, HttpStatus.OK);
+    }
+    
+    @GetMapping("/students/current-student/score")
+    @JsonView(DisplayView.Simplify.class)
+    public ResponseEntity<Map<String, Object>> getEvaluationScoreForCurrentStudent(Principal principal, @RequestParam("semester") int semesterId) {
+        UserInfo u = userDetailsService.getUserByUsername(principal.getName());
+        int totalScore = userDetailsService.getEvaluationScoreByUserIdWithSemesterId(u.getId().intValue(), semesterId);
+        Student.Achievement achieve = Student.Achievement.getAchievementByScore(totalScore);
+        Map<String, Object> results = Map.of("totalScore", totalScore, "achievement", achieve.name());
+        
+        return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
 }
