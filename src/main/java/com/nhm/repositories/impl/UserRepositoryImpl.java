@@ -159,7 +159,7 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
         
         Root<ActivityConfirmedAttendance> attendance = q.from(ActivityConfirmedAttendance.class);
         
-        q.select(cb.sum(attendance.get("activityRegistryId").get("bonusScore")));
+        q.select(cb.sum(attendance.get("activityRegistryId").get("extraActivityId").get("bonusScore")));
         
         List<Predicate> predicates = new ArrayList<>();
         
