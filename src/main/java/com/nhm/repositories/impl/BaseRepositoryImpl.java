@@ -39,7 +39,7 @@ public abstract class BaseRepositoryImpl {
         
         Session s = this.sessionFactory.getObject().getCurrentSession();
         try {
-            Method getIdMethod = obj.getClass().getMethod("getId");
+            Method getIdMethod = classType.getMethod("getId");
             Object idValue = getIdMethod.invoke(obj);
 
             if (idValue == null) {
@@ -47,7 +47,8 @@ public abstract class BaseRepositoryImpl {
                 s.persist(obj);
             } else {
                 System.out.println("Merging existing object with id = " + idValue);
-                obj = (T) s.merge(obj);
+                s.merge(obj);
+                s.flush();
             }
 
             s.refresh(obj);

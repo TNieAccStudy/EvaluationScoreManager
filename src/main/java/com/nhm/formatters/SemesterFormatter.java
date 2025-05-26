@@ -8,11 +8,13 @@ import com.nhm.pojo.Semester;
 import java.text.ParseException;
 import java.util.Locale;
 import org.springframework.format.Formatter;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author GIGABYTE
  */
+@Component
 public class SemesterFormatter implements Formatter<Semester> {
 
     @Override

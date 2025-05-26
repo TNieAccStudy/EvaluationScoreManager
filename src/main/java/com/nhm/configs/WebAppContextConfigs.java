@@ -4,9 +4,13 @@
  */
 package com.nhm.configs;
 
+import com.nhm.formatters.BulletinFormatter;
+import com.nhm.formatters.ClassFormatter;
+import com.nhm.formatters.ExtraActivityFormatter;
 import com.nhm.formatters.SemesterFormatter;
+import com.nhm.formatters.StudentAffairsOfficerFormatter;
+import com.nhm.formatters.StudentAssistantFormatter;
 import com.nhm.formatters.TermFormatter;
-import com.nhm.formatters.UserFormatter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -41,13 +45,16 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-//        registry.addFormatter(new ExtraActivityFormatter());
+        registry.addFormatter(new ExtraActivityFormatter());
         registry.addFormatter(new SemesterFormatter());
-//        registry.addFormatter(new TermFormatter());
-        registry.addFormatter(new UserFormatter());
-//        registry.addFormatter(new AsisstantFormatter());
+        registry.addFormatter(new TermFormatter());
+//        registry.addFormatter(userFormatter);
+        registry.addFormatter(new StudentAssistantFormatter());
+        registry.addFormatter(new StudentAffairsOfficerFormatter());
+        registry.addFormatter(new BulletinFormatter());
+        registry.addFormatter(new ClassFormatter());
     }
-    
+
     @Autowired
     private MappingJackson2HttpMessageConverter customConverter;
 
@@ -60,12 +67,12 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/js/**")
                 .addResourceLocations("classpath:/static/js/");
-        
+
         registry.addResourceHandler("/css/**")
-            .addResourceLocations("classpath:/static/css/");
-        
+                .addResourceLocations("classpath:/static/css/");
+
         registry.addResourceHandler("/affairs/**")
-            .addResourceLocations("classpath:/static/affairs/");
+                .addResourceLocations("classpath:/static/affairs/");
     }
-    
+
 }
