@@ -58,8 +58,7 @@ public class ExtraActivityRepositoryImpl extends BaseRepositoryImpl implements E
     @Override
     public Collection<ActivityConfirmedAttendance> getAttendancesByActivityId(int activityId) {
         return super.getItems(ActivityConfirmedAttendance.class, (cb, data) -> {
-            
-            return cb.equal(data.get("registryId").get("extraActivityId").get("id"), Long.valueOf(activityId));
+            return cb.equal(data.get("activityRegistryId").get("extraActivityId").get("id"), Long.valueOf(activityId));
         });
     }
 

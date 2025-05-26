@@ -15,6 +15,8 @@ import com.nhm.repositories.UserRepository;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -57,8 +59,12 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
     @Override
     public UserInfo addUser(UserInfo u) {
         Session s = this.sessionFactory.getObject().getCurrentSession();
-        s.persist(u);
-        
+        if(u.getId()==null){
+            s.persist(u);
+        }
+        else{
+            s.merge(u);
+        }
         return u;
     }
 
@@ -155,7 +161,7 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
             BiFunction<CriteriaBuilder, Root<ActivityConfirmedAttendance>, Predicate> execRegistryPredicate) {
         Session s = this.sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
-        CriteriaQuery<Long> q = cb.createQuery(Long.class);
+        CriteriaQuery<Integer> q = cb.createQuery(Integer.class);
         
         Root<ActivityConfirmedAttendance> attendance = q.from(ActivityConfirmedAttendance.class);
         
@@ -171,9 +177,9 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
         
         q.where(predicates.toArray(new Predicate[0]));
         
-        TypedQuery<Long> totalScoreQuery = s.createQuery(q);
+        TypedQuery<Integer> totalScoreQuery = s.createQuery(q);
         
-        return totalScoreQuery.getSingleResult().intValue();
+        return totalScoreQuery.getSingleResult();
     }
 
     @Override
@@ -203,7 +209,7 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
         CriteriaQuery<ActivityRegistry> q = cb.createQuery(ActivityRegistry.class);
         Root<ActivityRegistry> registryData = q.from(ActivityRegistry.class);
         
-        Predicate studentsPredicate = registryData.get("studentId").get("mssv").in(csvAttendanceData.getAttendedStudents());
+        Predicate studentsPredicate = registryData.get("student").get("mssv").in(csvAttendanceData.getAttendedStudents());
         Predicate activityPredicate = cb.equal(registryData.get("extraActivityId").get("id"), csvAttendanceData.getExtraActivityId().getId());
         
         q.select(registryData).where(studentsPredicate, activityPredicate);

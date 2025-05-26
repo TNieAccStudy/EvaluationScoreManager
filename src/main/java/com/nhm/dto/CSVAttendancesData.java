@@ -15,6 +15,18 @@ public class CSVAttendancesData {
     private List<String> attendedStudents;
     private ExtraActivity extraActivityId;
     private String proofPictureGeneral;
+    
+    public CSVAttendancesData() {
+        
+    }
+
+    public CSVAttendancesData(List<String> attendedStudents, ExtraActivity extraActivityId, String proofPictureGeneral) {
+        this.attendedStudents = attendedStudents;
+        this.extraActivityId = extraActivityId;
+        this.proofPictureGeneral = proofPictureGeneral;
+    }
+    
+    
 
     public List<String> getAttendedStudents() {
         return attendedStudents;

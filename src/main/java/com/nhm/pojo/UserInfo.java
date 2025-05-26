@@ -57,8 +57,7 @@ import java.util.Arrays;
         value = {
             @JsonSubTypes.Type(value = Student.class, name = "student"),
             @JsonSubTypes.Type(value = StudentAssistant.class, name = "studentAssistant"),
-            @JsonSubTypes.Type(value = StudentAffairsOfficer.class, name = "studentAffairsOfficer"),
-        }
+            @JsonSubTypes.Type(value = StudentAffairsOfficer.class, name = "studentAffairsOfficer"),}
 )
 public class UserInfo extends BaseModel implements Serializable {
 
@@ -94,7 +93,10 @@ public class UserInfo extends BaseModel implements Serializable {
     @NotNull
     @Size(min = 1, max = 60)
     @Column(name = "username")
-    @JsonView(DisplayView.Internal.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     protected String username;
     @Basic(optional = false)
     @NotNull
@@ -250,31 +252,34 @@ public class UserInfo extends BaseModel implements Serializable {
     public String toString() {
         return "com.nhm.pojo.UserInfo[ id=" + id + " ]";
     }
-    
-    public static enum UserRole{
+
+    public static enum UserRole {
         ROLE_STUDENT,
         ROLE_ASSISTANT,
         ROLE_AFFAIRS
     }
-    
+
     public static UserInfo getUserByUsernameWithInstance(String username, UserService userService, Class instanceType) throws Exception {
         UserInfo u = userService.getUserByUsername(username);
-        
-        if(instanceType.isInstance(u))
+
+        if (instanceType.isInstance(u)) {
             return u;
+        }
         throw new Exception("your instance not have style with " + instanceType.getSimpleName());
     }
-    
+
     public static Class<? extends UserInfo> getSubClassByString(String userType) {
-        if (userType == null)
+        if (userType == null) {
             return UserInfo.class;
-        
+        }
+
         JsonSubTypes jsonSubTypeAnnotation = UserInfo.class.getAnnotation(JsonSubTypes.class);
-        for(var t : jsonSubTypeAnnotation.value()) {
-            if (t.name().equals(userType))
+        for (var t : jsonSubTypeAnnotation.value()) {
+            if (t.name().equals(userType)) {
                 return (Class<? extends UserInfo>) t.value();
+            }
         }
         return UserInfo.class;
     }
-    
+
 }

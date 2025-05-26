@@ -68,8 +68,8 @@ public class SpringSecurityConfigs {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         
-        String[] STUDENT_ROLE = new String[]{"STUDENT", "ASSISTANT", "AFFAIRS"};
-        String[] ASSISTANT_ROLE = new String[]{"ASSISTANT", "AFFAIRS"};
+        String[] STUDENT_ROLE = new String[]{"STUDENT", "STUDENTASSISTANT", "AFFAIRS"};
+        String[] ASSISTANT_ROLE = new String[]{"STUDENTASSISTANT", "AFFAIRS"};
         String AFFAIRS_ROLE = "AFFAIRS";
         
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -79,11 +79,11 @@ public class SpringSecurityConfigs {
                         .requestMatchers(HttpMethod.POST, "/api/missings", "/api/attendances", "/api/interactions", "/api/registries").hasAnyRole(STUDENT_ROLE)
                         .requestMatchers(HttpMethod.GET, "/api/missings", "/api/attendances", "/api/interactions", "/api/registries").hasAnyRole(STUDENT_ROLE)
                         .requestMatchers(HttpMethod.GET, "/api/students/current-student/**").hasAnyRole(STUDENT_ROLE)
-                        .requestMatchers(HttpMethod.GET, "/api/secure/profile").hasAnyRole(STUDENT_ROLE)
+                        .requestMatchers(HttpMethod.GET, "/api/secure/profile").authenticated()
                         
                         .requestMatchers(HttpMethod.DELETE, "/api/activities", "/api/bulletins").hasRole(AFFAIRS_ROLE)
                         .requestMatchers("/api/missings", "/api/cancels").hasAnyRole(ASSISTANT_ROLE)
-                        .requestMatchers("/api/activities/**", "/api/bulletins/**").hasAnyRole(ASSISTANT_ROLE)
+                        .requestMatchers("/api/activities/**", "/api/bulletins/**").hasAnyRole(STUDENT_ROLE)
                         .requestMatchers(HttpMethod.POST, "/api/attendances", "/api/missings", "/api/students/**").hasAnyRole(ASSISTANT_ROLE)
                         .requestMatchers(HttpMethod.GET, "/api/stats/class", "/api/stats/achievement").hasAnyRole(ASSISTANT_ROLE)
                         
@@ -114,7 +114,7 @@ public class SpringSecurityConfigs {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of("http://localhost:3000/")); 
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
         config.setAllowCredentials(true); 

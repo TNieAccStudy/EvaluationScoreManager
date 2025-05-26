@@ -10,6 +10,7 @@ import com.nhm.repositories.ActivityConfirmedAttendanceRepository;
 import com.nhm.repositories.SemesterRepository;
 import com.nhm.repositories.UserRepository;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +40,12 @@ public class ActivityConfirmedAttendanceRepositoryImpl extends BaseRepositoryImp
                 Student student = confirmedAttendance.getActivityRegistryId().getStudentId();
                 int totalScore = userRepo.getTotalEvaluationScoreByUserId(student.getId().intValue());
                 int numberSemester = semesterRepo.getSemesters().size();
-                student.setAchievement(Student.Achievement.getAchievementByScore((int)(totalScore/numberSemester)).name());
+                student = (Student) userRepo.getUserById(student.getId().intValue());
+                
+                System.out.println("value of total/numberSem : " + (int)(totalScore/numberSemester));
+                student.setAchievement(
+                        Student.Achievement.getAchievementByScore((int)(totalScore/numberSemester)).name()
+                );
                 
                 userRepo.addUser(student);
             }
@@ -67,6 +73,11 @@ public class ActivityConfirmedAttendanceRepositoryImpl extends BaseRepositoryImp
         activityConfirmedAttendances.stream().forEach(a -> s.persist(a));
         
         return activityConfirmedAttendances;
+    }
+
+    @Override
+    public Collection<ActivityConfirmedAttendance> getAttendances() {
+        return super.getItems(ActivityConfirmedAttendance.class);
     }
     
 }

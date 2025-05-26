@@ -73,7 +73,10 @@ public class ExtraActivity extends BaseModel implements Serializable {
     @Lob
     @Size(max = 2147483647)
     @Column(name = "description")
-    @JsonView(DisplayView.Public.class)
+    @JsonView({
+        DisplayView.Public.class,
+        DisplayView.Simplify.class
+    })
     private String description;
     @OneToMany(mappedBy = "extraActivityId")
     @JsonView(CollectionView.ActivityColelction.class)

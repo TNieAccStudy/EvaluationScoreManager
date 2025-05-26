@@ -13,6 +13,7 @@ import com.nhm.pojo.MissingActivity;
 import com.nhm.pojo.Student;
 import com.nhm.pojo.StudentAssistant;
 import com.nhm.pojo.UserInfo;
+import com.nhm.services.ActivityRegistryService;
 import com.nhm.services.UserService;
 import com.nhm.utils.JwtUtils;
 import com.nhm.viewconfigs.DisplayView;
@@ -48,6 +49,9 @@ public class ApiUserController {
 
     @Autowired
     private UserService userDetailsService;
+    
+    @Autowired
+    private ActivityRegistryService registryService;
 
     @PostMapping(path = "/users",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -60,6 +64,9 @@ public class ApiUserController {
     }
 
     @PostMapping("/login")
+    @JsonView({
+        DisplayView.Internal.class
+    })
     public ResponseEntity<?> login(@RequestBody UserInfo u) {
 
         if (this.userDetailsService.authenticate(u.getUsername(), u.getPassword())) {
@@ -95,7 +102,11 @@ public class ApiUserController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @JsonView(DisplayView.Simplify.class)
-    public ResponseEntity<List<ActivityConfirmedAttendance>> getAttendancesForCurrentStudent(@RequestPart("data") CSVAttendancesData csvAttendanceData, @RequestPart(value = "proofPictureGeneral", required = false) MultipartFile proofPictureGeneral, Principal principal) throws Exception {
+    public ResponseEntity<List<ActivityConfirmedAttendance>> getAttendancesForCurrentStudent(
+            @RequestPart("data") CSVAttendancesData csvAttendanceData, 
+            @RequestPart(value = "proofPictureGeneral", required = false) 
+                    MultipartFile proofPictureGeneral, 
+            Principal principal) throws Exception {
         UserInfo u = userDetailsService.getUserByUsername(principal.getName());
         
         List<ActivityConfirmedAttendance> attendances = userDetailsService.loadAttendanceFromCSVAttendanceData(csvAttendanceData, proofPictureGeneral).stream().collect(Collectors.toList());
@@ -141,9 +152,9 @@ public class ApiUserController {
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<List<ActivityConfirmedAttendance>> getAttendancesForCurrentStudent(Principal principal) {
         UserInfo u = userDetailsService.getUserByUsername(principal.getName());
-        List<ActivityConfirmedAttendance> registries = userDetailsService.getAttendsByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
+        List<ActivityConfirmedAttendance> attendances = userDetailsService.getAttendsByUserId(u.getId().intValue()).stream().collect(Collectors.toList());
 
-        return new ResponseEntity<>(registries, HttpStatus.OK);
+        return new ResponseEntity<>(attendances, HttpStatus.OK);
     }
 
     @GetMapping("/students/current-student/missings")

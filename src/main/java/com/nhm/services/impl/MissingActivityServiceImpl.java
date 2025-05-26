@@ -14,6 +14,7 @@ import com.nhm.services.ActivityConfirmedAttendanceService;
 import com.nhm.services.MissingActivityService;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,6 +59,11 @@ public class MissingActivityServiceImpl implements MissingActivityService {
     @Override
     public MissingActivity getMissingById(int id) {
         return this.missingRepo.getMissingById(id);
+    }
+
+    @Override
+    public Collection<MissingActivity> getMissingActivities() {
+        return this.missingRepo.getMissingActivities();
     }
     
 }

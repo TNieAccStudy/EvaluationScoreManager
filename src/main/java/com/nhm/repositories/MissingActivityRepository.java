@@ -5,6 +5,7 @@
 package com.nhm.repositories;
 
 import com.nhm.pojo.MissingActivity;
+import java.util.Collection;
 
 /**
  *
@@ -13,4 +14,5 @@ import com.nhm.pojo.MissingActivity;
 public interface MissingActivityRepository {
     MissingActivity addOrUpdate(MissingActivity missing);
     MissingActivity getMissingById(int id);
+    Collection<MissingActivity> getMissingActivities();
 }

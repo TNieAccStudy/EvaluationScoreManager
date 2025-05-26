@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/activities")
 @CrossOrigin
 public class ApiActivityController {
-    
+
     @Autowired
     private ExtraActivityService activityService;
     @Autowired
@@ -59,7 +59,7 @@ public class ApiActivityController {
         
         return new ResponseEntity<>(this.activityService.addOrUpdate(activity), HttpStatus.CREATED);
     }
-    
+
     @PatchMapping("/{activityId}")
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<ExtraActivity> patialUpdate(@PathVariable("activityId") int activityId, @RequestBody ExtraActivity activity) {
@@ -79,8 +79,8 @@ public class ApiActivityController {
     public ResponseEntity<ExtraActivity> retrieve(@PathVariable("activityId") int activityId) {
         return new ResponseEntity<>(this.activityService.getActivityById(activityId), HttpStatus.OK);
     }
-    
-    @GetMapping("/activities/{activityId}/attendances")
+
+    @GetMapping("/{activityId}/attendances")
     @JsonView(DisplayView.Simplify.class)
     public ResponseEntity<List<ActivityConfirmedAttendance>> getAttendancesByActivityId(@PathVariable("activityId") int activityId) {
         List<ActivityConfirmedAttendance> attendances = this.activityService.getAttendancesByActivityId(activityId).stream().collect(Collectors.toList());
@@ -100,11 +100,11 @@ public class ApiActivityController {
         List<MissingActivity> missings = this.activityService.getMissingsByActivityId(activityId).stream().collect(Collectors.toList());
         return new ResponseEntity<>(missings, HttpStatus.OK);
     }
-    
-    @DeleteMapping("/activities/{activityId}")
+
+    @DeleteMapping("/{activityId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable("activityId") int activityId) {
         this.activityService.deleteActivityById(activityId);
     }
-    
+
 }

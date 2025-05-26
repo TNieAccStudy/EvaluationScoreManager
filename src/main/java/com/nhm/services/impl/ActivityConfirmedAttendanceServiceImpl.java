@@ -10,6 +10,7 @@ import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.repositories.ActivityConfirmedAttendanceRepository;
 import com.nhm.services.ActivityConfirmedAttendanceService;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,11 @@ public class ActivityConfirmedAttendanceServiceImpl implements ActivityConfirmed
     @Override
     public ActivityConfirmedAttendance getAttendanceById(int id) {
         return this.attendanceRepo.getAttendanceById(id);
+    }
+
+    @Override
+    public Collection<ActivityConfirmedAttendance> getAttendances() {
+        return this.attendanceRepo.getAttendances();
     }
 
 }

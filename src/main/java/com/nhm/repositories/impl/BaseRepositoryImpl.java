@@ -51,7 +51,7 @@ public abstract class BaseRepositoryImpl {
                 s.flush();
             }
 
-            s.refresh(obj);
+            s.refresh(obj); 
 
             System.out.println("After flush, obj = " + obj);
             return obj;

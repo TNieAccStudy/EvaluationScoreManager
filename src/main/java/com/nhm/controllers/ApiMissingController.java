@@ -14,6 +14,8 @@ import com.nhm.services.UserService;
 import com.nhm.viewconfigs.DisplayView;
 import java.security.Principal;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -65,6 +67,13 @@ public class ApiMissingController {
     @JsonView(DisplayView.Public.class)
     public ResponseEntity<MissingActivity> patialUpdate(@PathVariable("missingId") int missingId, @RequestPart("data") MissingActivity missing, @RequestPart("proofPicture") MultipartFile proofPicture) throws Exception {
         return new ResponseEntity<>(this.missingService.addOrUpdate(missing, proofPicture), HttpStatus.OK);
+    }
+
+    @GetMapping
+    @JsonView(DisplayView.Public.class)
+    public ResponseEntity<?> list() {
+       return new ResponseEntity<>(this.missingService.getMissingActivities().stream()
+                .collect(Collectors.toList()), HttpStatus.OK);
     }
     
     @PatchMapping("/{missingId}/response")

@@ -17,6 +17,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Session;
@@ -102,6 +103,11 @@ public class MissingActivityRepositoryImpl extends BaseRepositoryImpl implements
     @Override
     public MissingActivity getMissingById(int id) {
         return super.getItemById(id, MissingActivity.class);
+    }
+
+    @Override
+    public Collection<MissingActivity> getMissingActivities() {
+        return super.getItems(MissingActivity.class);
     }
     
 }

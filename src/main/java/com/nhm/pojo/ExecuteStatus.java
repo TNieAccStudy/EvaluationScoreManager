@@ -11,5 +11,5 @@ package com.nhm.pojo;
 public enum ExecuteStatus {
     PENDING,
     CONFIRMED,
-    CANCEL
+    CANCELED
 }
