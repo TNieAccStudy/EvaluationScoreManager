@@ -72,6 +72,8 @@ public class ActivityConfirmedAttendanceRepositoryImpl extends BaseRepositoryImp
         
         activityConfirmedAttendances.stream().forEach(a -> s.persist(a));
         
+        s.flush();
+        
         return activityConfirmedAttendances;
     }
 

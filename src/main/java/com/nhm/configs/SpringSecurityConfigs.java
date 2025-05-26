@@ -84,10 +84,14 @@ public class SpringSecurityConfigs {
                         .requestMatchers("/api/missings", "/api/cancels").hasAnyRole(ASSISTANT_ROLE)
                         .requestMatchers("/api/activities/**", "/api/bulletins/**").hasAnyRole(STUDENT_ROLE)
                         .requestMatchers(HttpMethod.POST, "/api/attendances", "/api/missings", "/api/students/**").hasAnyRole(ASSISTANT_ROLE)
-                        
+                        .requestMatchers(HttpMethod.GET, "/api/stats/class", "/api/stats/achievement").hasAnyRole(ASSISTANT_ROLE)
         
+                        //exec for affairs
+                        .requestMatchers(HttpMethod.GET, "/api/stats/**").hasRole(AFFAIRS_ROLE)
+                        .requestMatchers("/affairs/**").hasRole(AFFAIRS_ROLE)
                         
                         .requestMatchers(HttpMethod.POST, "/api/login","/api/users").anonymous()
+                        .requestMatchers("/login").anonymous()
                         .requestMatchers(HttpMethod.GET, "/api/classes", "/api/departments", "/api/semesters", "/api/terms", "api/interactions").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/bulletins", "/api/assistants").permitAll()
                         
@@ -95,6 +99,13 @@ public class SpringSecurityConfigs {
                         .requestMatchers("/affairs/**").permitAll()
                         
                 )
+                
+                .formLogin(form -> form.loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/affairs", true)
+                .failureUrl("/login?error=true").permitAll())
+                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll())
+                
                 .addFilterBefore(new JWTFilter(), UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
