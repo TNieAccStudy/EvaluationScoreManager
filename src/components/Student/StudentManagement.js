@@ -31,18 +31,17 @@ const StudentManagement = () => {
           params: { semester: selectedSemester },
         }
       );
-      console.log("Evaluation score loaded:", res.data);
       return res.data;
     } catch (err) {
       console.error("Error loading evaluation score:", err);
       return null;
     }
   };
+
   const loadSemesters = async () => {
     try {
       setLoading(true);
       const res = await authApis().get(endpoints["semesters"]);
-      console.log("Semesters loaded:", res.data);
       setSemesters(res.data);
     } catch (err) {
       console.error("Error loading semesters:", err);
@@ -56,7 +55,6 @@ const StudentManagement = () => {
     setLoading(true);
     try {
       const response = await authApis().get(endpoints["students"]);
-      console.log("Danh sách sinh viên:", response.data);
 
       const mergedStudents = await Promise.all(
         response.data.map(async (student) => {
@@ -92,6 +90,7 @@ const StudentManagement = () => {
   useEffect(() => {
     loadSemesters();
   }, []);
+
   useEffect(() => {
     loadStudents();
   }, [selectedSemester]);
@@ -106,9 +105,58 @@ const StudentManagement = () => {
     return matchClass && matchAchievement;
   });
 
+  const exportToCSV = () => {
+    if (filteredStudents.length === 0) return;
+
+    const headers = [
+      "STT",
+      "MSSV",
+      "Họ tên",
+      "Lớp",
+      "Điểm đánh giá",
+      "Thành tích (ĐG)",
+      "Ngày tạo",
+    ];
+
+    const rows = filteredStudents.map((student, index) => [
+      index + 1,
+      student.mssv,
+      `${student.firstName} ${student.lastName}`,
+      student.classId?.name || "",
+      student.evalScore?.totalScore || "",
+      student.evalScore?.achievement || "",
+      new Date(student.createdDate).toLocaleString("vi-VN"),
+    ]);
+
+    const csvContent =
+      "\uFEFF" + // Thêm BOM để Excel đọc đúng tiếng Việt
+      [headers, ...rows]
+        .map((row) =>
+          row.map((item) => `"${String(item).replace(/"/g, '""')}"`).join(",")
+        )
+        .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "report_danh_sach_sinh_vien.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <Container className="mt-4">
       <h3 className="mb-4 text-center">Danh sách sinh viên</h3>
+
+      <Row className="mb-3">
+        <Col className="text-end">
+          <button className="btn btn-success" onClick={exportToCSV}>
+            Export to CSV
+          </button>
+        </Col>
+      </Row>
 
       {loading && (
         <div className="text-center my-5">
@@ -121,7 +169,6 @@ const StudentManagement = () => {
 
       {!loading && !error && (
         <>
-          {/* Select box filter */}
           <Row className="mb-3">
             <Col md={4}>
               <Form.Group controlId="filterSemester">
@@ -138,7 +185,7 @@ const StudentManagement = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col md={6}>
+            <Col md={4}>
               <Form.Group controlId="filterClass">
                 <Form.Label>Lọc theo lớp</Form.Label>
                 <Form.Select
@@ -154,7 +201,7 @@ const StudentManagement = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col md={6}>
+            <Col md={4}>
               <Form.Group controlId="filterAchievement">
                 <Form.Label>Lọc theo thành tích</Form.Label>
                 <Form.Select
