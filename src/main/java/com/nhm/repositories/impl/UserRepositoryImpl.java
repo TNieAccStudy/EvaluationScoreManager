@@ -7,6 +7,7 @@ package com.nhm.repositories.impl;
 import com.nhm.dto.CSVAttendancesData;
 import com.nhm.pojo.ActivityConfirmedAttendance;
 import com.nhm.pojo.ActivityRegistry;
+import com.nhm.pojo.ExtraActivity;
 import com.nhm.pojo.MissingActivity;
 import com.nhm.pojo.Student;
 import com.nhm.pojo.UserInfo;
@@ -40,10 +41,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
-    
+
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private ActivityConfirmedAttendanceRepository attendaceRepo;
 
@@ -59,10 +60,9 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
     @Override
     public UserInfo addUser(UserInfo u) {
         Session s = this.sessionFactory.getObject().getCurrentSession();
-        if(u.getId()==null){
+        if (u.getId() == null) {
             s.persist(u);
-        }
-        else{
+        } else {
             s.merge(u);
         }
         return u;
@@ -79,26 +79,28 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
     public UserInfo getUserById(int id) {
         return super.getItemById(id, UserInfo.class);
     }
-    
+
     /**
      * Data return null to exec api with wrong type
+     *
      * @param userId
-     * @return 
+     * @return
      */
     protected <T> Collection<T> getItemsOfUserByUserId(int userId, Class<T> itemType, Function<Student, Collection<T>> itemsExecPick) {
         Session s = this.sessionFactory.getObject().getCurrentSession();
         UserInfo user = s.get(UserInfo.class, Long.valueOf(userId));
-        
+
         if (user instanceof Student student) {
             return itemsExecPick.apply(student);
-        } 
+        }
         return null;
     }
 
     /**
      * Data return null to exec api with wrong type
+     *
      * @param userId
-     * @return 
+     * @return
      */
     @Override
     public Collection<ActivityRegistry> getRegistriesByUserId(int userId) {
@@ -110,24 +112,26 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
 
     /**
      * Data return null to exec api with wrong type
+     *
      * @param userId
-     * @return 
+     * @return
      */
     @Override
     public Collection<ActivityConfirmedAttendance> getAttendsByUserId(int userId) {
-        return this.getItemsOfUserByUserId(userId, ActivityConfirmedAttendance.class, 
+        return this.getItemsOfUserByUserId(userId, ActivityConfirmedAttendance.class,
                 t -> {
                     Hibernate.initialize(t.getActivityRegistryCollection());
                     return t.getActivityRegistryCollection().stream()
-                    .map(ActivityRegistry::getActivityConfirmedAttendance)
-                    .collect(Collectors.toList());
+                            .map(ActivityRegistry::getActivityConfirmedAttendance)
+                            .collect(Collectors.toList());
                 });
     }
 
     /**
      * Data return null to exec api with wrong type
+     *
      * @param userId
-     * @return 
+     * @return
      */
     @Override
     public Collection<MissingActivity> getMissingsByUserId(int userId) {
@@ -151,34 +155,34 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
     public UserInfo updateUser(UserInfo u) {
         Session s = this.sessionFactory.getObject().getCurrentSession();
         s.merge(u);
-        
+
         s.flush();
-        
+
         return u;
     }
-    
-    private int getEvaluationScoreByUserIdWithRegistryPredicate(int studentId, 
+
+    private int getEvaluationScoreByUserIdWithRegistryPredicate(int studentId,
             BiFunction<CriteriaBuilder, Root<ActivityConfirmedAttendance>, Predicate> execRegistryPredicate) {
         Session s = this.sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
         CriteriaQuery<Integer> q = cb.createQuery(Integer.class);
-        
+
         Root<ActivityConfirmedAttendance> attendance = q.from(ActivityConfirmedAttendance.class);
-        
+
         q.select(cb.sum(attendance.get("activityRegistryId").get("extraActivityId").get("bonusScore")));
-        
+
         List<Predicate> predicates = new ArrayList<>();
-        
+
         predicates.add(cb.equal(attendance.get("censorState"), ActivityConfirmedAttendance.CensorState.CONFIRMED.name()));
-        
+
         if (execRegistryPredicate != null) {
             predicates.add(execRegistryPredicate.apply(cb, attendance));
         }
-        
+
         q.where(predicates.toArray(new Predicate[0]));
-        
+
         TypedQuery<Integer> totalScoreQuery = s.createQuery(q);
-        
+
         return totalScoreQuery.getSingleResult();
     }
 
@@ -192,7 +196,7 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
 
     @Override
     public int getTotalEvaluationScoreByUserId(int studentId) {
-        return getEvaluationScoreByUserIdWithRegistryPredicate(studentId, 
+        return getEvaluationScoreByUserIdWithRegistryPredicate(studentId,
                 (cb, attendance) -> cb.equal(attendance.get("activityRegistryId").get("studentId").get("id"), Long.valueOf(studentId))
         );
     }
@@ -208,26 +212,28 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
         CriteriaBuilder cb = s.getCriteriaBuilder();
         CriteriaQuery<ActivityRegistry> q = cb.createQuery(ActivityRegistry.class);
         Root<ActivityRegistry> registryData = q.from(ActivityRegistry.class);
-        
-        Predicate studentsPredicate = registryData.get("student").get("mssv").in(csvAttendanceData.getAttendedStudents());
-        Predicate activityPredicate = cb.equal(registryData.get("extraActivityId").get("id"), csvAttendanceData.getExtraActivityId().getId());
-        
-        q.select(registryData).where(studentsPredicate, activityPredicate);
-        
+        Join<ActivityRegistry, Student> studentJoin = registryData.join("studentId");
+
+        Predicate studentsPredicate = studentJoin.get("mssv").in(csvAttendanceData.getAttendedStudents());
+        Join<ActivityRegistry, ExtraActivity> activityJoin = registryData.join("extraActivityId");
+        Predicate activityPredicate = cb.equal(activityJoin.get("id"), csvAttendanceData.getExtraActivityId().getId());
+
+        q.select(registryData).where(cb.and(studentsPredicate, activityPredicate));
+
         Query<ActivityRegistry> qRegistries = s.createQuery(q);
-        
+
         List<ActivityRegistry> registries = qRegistries.getResultList();
-        
+
         List<ActivityConfirmedAttendance> attendances = registries.stream().map(r -> {
             ActivityConfirmedAttendance attendance = new ActivityConfirmedAttendance();
             attendance.setActivityRegistryId(r);
             attendance.setCensorState(ActivityConfirmedAttendance.CensorState.CONFIRMED.name());
             attendance.setProofPicture(csvAttendanceData.getProofPictureGeneral());
-            
+
             return attendance;
         }).collect(Collectors.toList());
-        
+
         return this.attendaceRepo.responseAndAddListAttendance(attendances);
-        
+
     }
 }

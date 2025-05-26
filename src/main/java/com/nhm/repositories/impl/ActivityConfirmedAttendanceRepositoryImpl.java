@@ -26,30 +26,44 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class ActivityConfirmedAttendanceRepositoryImpl extends BaseRepositoryImpl implements ActivityConfirmedAttendanceRepository {
-    
+
     @Autowired
     private UserRepository userRepo;
-    
+
     @Autowired
     private SemesterRepository semesterRepo;
 
     @Override
     public ActivityConfirmedAttendance addOrUpdate(ActivityConfirmedAttendance confirmedAttendance) {
         try {
-            if (confirmedAttendance.getCensorState().equals(ActivityConfirmedAttendance.CensorState.CONFIRMED.name())) {
+
+            if (confirmedAttendance != null
+                    && ActivityConfirmedAttendance.CensorState.CONFIRMED.name().equals(confirmedAttendance.getCensorState())
+                    && confirmedAttendance.getActivityRegistryId() != null
+                    && confirmedAttendance.getActivityRegistryId().getStudentId() != null) {
+
                 Student student = confirmedAttendance.getActivityRegistryId().getStudentId();
-                int totalScore = userRepo.getTotalEvaluationScoreByUserId(student.getId().intValue());
+
                 int numberSemester = semesterRepo.getSemesters().size();
+                if (numberSemester == 0) {
+                    numberSemester = 1;
+                }
+
+                int totalScore = userRepo.getTotalEvaluationScoreByUserId(student.getId().intValue());
                 student = (Student) userRepo.getUserById(student.getId().intValue());
-                
-                System.out.println("value of total/numberSem : " + (int)(totalScore/numberSemester));
-                student.setAchievement(
-                        Student.Achievement.getAchievementByScore((int)(totalScore/numberSemester)).name()
-                );
-                
+
+                int averageScore = totalScore / numberSemester;
+
+                System.out.println("value of total/numberSem : " + averageScore);
+                Student.Achievement achievement = Student.Achievement.getAchievementByScore(averageScore);
+                if (achievement != null) {
+                    student.setAchievement(achievement.name());
+                } else {
+                    student.setAchievement(null);
+                }
                 userRepo.addUser(student);
             }
-            
+
             return super.addOrUpdate(confirmedAttendance, ActivityConfirmedAttendance.class);
         } catch (NoSuchMethodException ex) {
             Logger.getLogger(ActivityConfirmedAttendanceRepositoryImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -69,9 +83,9 @@ public class ActivityConfirmedAttendanceRepositoryImpl extends BaseRepositoryImp
     @Override
     public List<ActivityConfirmedAttendance> responseAndAddListAttendance(List<ActivityConfirmedAttendance> activityConfirmedAttendances) {
         Session s = this.sessionFactory.getObject().getCurrentSession();
-        
+
         activityConfirmedAttendances.stream().forEach(a -> s.persist(a));
-        
+
         return activityConfirmedAttendances;
     }
 
@@ -79,5 +93,5 @@ public class ActivityConfirmedAttendanceRepositoryImpl extends BaseRepositoryImp
     public Collection<ActivityConfirmedAttendance> getAttendances() {
         return super.getItems(ActivityConfirmedAttendance.class);
     }
-    
+
 }
