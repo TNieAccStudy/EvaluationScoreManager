@@ -102,7 +102,7 @@ public class Bulletin extends BaseModel implements Serializable {
         DisplayView.Simplify.class
     })
     protected String state = BulletinState.OPENING.name();
-    @JoinColumn(name = "student_assistant_id", referencedColumnName = "id")
+    @JoinColumn(name = "student_assistant_id", referencedColumnName = "user_ptr_id")
     @ManyToOne(optional = false)
     @JsonView({
         DisplayView.Public.class,

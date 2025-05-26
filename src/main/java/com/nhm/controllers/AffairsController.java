@@ -11,8 +11,10 @@ import com.nhm.pojo.UserInfo;
 import com.nhm.services.BulletinService;
 import com.nhm.services.CancelRequirementService;
 import com.nhm.services.ExtraActivityService;
+import com.nhm.services.StatsService;
 import com.nhm.services.UserService;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +40,9 @@ public class AffairsController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private StatsService statsService;
     
     @RequestMapping(path = {
         "/index",
@@ -112,7 +117,8 @@ public class AffairsController {
     }
     
     @RequestMapping("/stats/class")
-    public String classStats() {
+    public String classStats(Model model) {
+        model.addAttribute("datas", statsService.classStatsWithSemeseter(1).stream().collect(Collectors.toList()));
         
         return "affairs/class-stats.html";
     }

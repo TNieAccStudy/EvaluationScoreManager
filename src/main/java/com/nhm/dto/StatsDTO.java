@@ -15,10 +15,15 @@ public class StatsDTO {
     public StatsDTO() {
         
     }
-
+    
     public StatsDTO(String name, int totalScore) {
         this.name = name;
         this.totalScore = totalScore;
+    }
+
+    public StatsDTO(String name, Long totalScore) {
+        this.name = name;
+        this.totalScore = totalScore.intValue();
     }
 
     public String getName() {

@@ -17,13 +17,14 @@ import java.util.Collection;
 import java.util.List;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author GIGABYTE
  */
-
 @Repository
+@Transactional
 public class StatsRepositoryImpl extends BaseRepositoryImpl implements StatsRepository {
 
     @Override
@@ -54,21 +55,21 @@ public class StatsRepositoryImpl extends BaseRepositoryImpl implements StatsRepo
         Session s = this.sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
         CriteriaQuery<StatsDTO> q = cb.createQuery(StatsDTO.class);
-        
+
         Root<ActivityConfirmedAttendance> attendance = q.from(ActivityConfirmedAttendance.class);
-        
+
         q.multiselect(attendance.get("activityRegistryId").get("studentId").get("classId").get("departmentId").get("name"),
                 cb.sum(attendance.get("activityRegistryId").get("extraActivityId").get("bonusScore")));
-        
+
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.equal(attendance.get("censorState"), ActivityConfirmedAttendance.CensorState.CONFIRMED.name()));
         predicates.add(cb.equal(attendance.get("activityRegistryId").get("extraActivityId").get("semesterId").get("id"), Long.valueOf(semesterId)));
         q.where(predicates.toArray(new Predicate[0]));
-        
+
         q.groupBy(attendance.get("activityRegistryId").get("studentId").get("classId").get("departmentId").get("id"));
-        
+
         TypedQuery<StatsDTO> query = s.createQuery(q);
-        
+
         return query.getResultList();
     }
 
@@ -77,22 +78,21 @@ public class StatsRepositoryImpl extends BaseRepositoryImpl implements StatsRepo
         Session s = this.sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
         CriteriaQuery<StatsDTO> q = cb.createQuery(StatsDTO.class);
-        
+
         Root<ActivityConfirmedAttendance> attendance = q.from(ActivityConfirmedAttendance.class);
-        
+
         q.multiselect(attendance.get("activityRegistryId").get("studentId").get("achievement"),
                 cb.sum(attendance.get("activityRegistryId").get("extraActivityId").get("bonusScore")));
-        
+
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.equal(attendance.get("censorState"), ActivityConfirmedAttendance.CensorState.CONFIRMED.name()));
         q.where(predicates.toArray(new Predicate[0]));
-        
+
         q.groupBy(attendance.get("activityRegistryId").get("studentId").get("achievement"));
-        
+
         TypedQuery<StatsDTO> query = s.createQuery(q);
-        
+
         return query.getResultList();
     }
 
-    
 }

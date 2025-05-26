@@ -46,7 +46,7 @@ public class ActivityRegistry extends BaseModel implements Serializable {
         DisplayView.Simplify.class
     })
     private Long id;
-    @JoinColumn(name = "student_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "student_id", referencedColumnName = "user_ptr_id", nullable = false)
     @ManyToOne
     @JsonView({
         DisplayView.Public.class,
