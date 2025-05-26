@@ -111,4 +111,10 @@ public class AffairsController {
         return "affairs/details/user-detail.html";
     }
     
+    @RequestMapping("/stats/class")
+    public String classStats() {
+        
+        return "affairs/class-stats.html";
+    }
+    
 }

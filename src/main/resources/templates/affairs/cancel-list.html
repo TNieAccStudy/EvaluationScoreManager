@@ -1,0 +1,69 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{affairs/base :: base(~{::title}, ~{::div.content}, ~{::#custom-links}, ~{::#custom-javascripts})}">
+    <header>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Bulletin list template</title>
+
+        <th:block id="custom-links">
+            <link rel="stylesheet" th:href="@{/affairs/css/cancel-list.css}" />
+        </th:block>
+
+    </header>
+    <body>
+
+        <div class="content">
+            <div class="nodes-section">
+                <div class="section-header">
+                    <h2>Node Configurations</h2>
+                    <p>Manage and review configured nodes for student affairs operations</p>
+                </div>
+                <div class="nodes-table">
+                    <div class="table-header">
+                        <span class="table-column">Cancel ID</span>
+                        <span class="table-column">Reason</span>
+                        <span class="table-column">Assistant name</span>
+                        <span class="table-column">Assistant mail</span>
+                        <span class="table-column">State</span>
+                        <span class="table-column">Respondent</span>
+                        <span class="table-column">Actions</span>
+                    </div>
+
+                    <div th:each="c : ${cancels}" >
+                        <div class="table-row">
+                            <span class="table-column" th:text="${c.id}">1</span>
+                            <span class="table-column" th:text="${c.reason}">Cancel reason</span>
+                            <span class="table-column" th:text="${c.studentAssistantId.firstName + ' ' + c.studentAssistantId.lastName}">Nguyen Van A</span>
+                            <span class="table-column" th:text="${c.studentAssistantId.email}">nva@example.com</span>
+                            <span class="table-column" th:text="${c.executedStatus}">PENDING</span>
+
+                            <span class="table-column" th:text="${c.studentAffairsOfficerId != null ? c.studentAffairsOfficerId.lastName : 'not yet'}">Respondent name</span>
+                            <span class="table-column">
+                                <a class="action-button edit" 
+                                   th:href="@{/affairs/cancels/{id}(id=${c.id})}">
+                                    Edit
+                                </a>
+                                <button class="action-button delete" th:onclick="'deleteItem(\'' + @{/api/cancels/} + '\',' + ${c.id} + ')'">Delete</button>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!--                <div class="table-row">
+                                            <span class="table-column">ND001</span>
+                                            <span class="table-column">Student Sync</span>
+                                            <span class="table-column"><span class="status active">Active</span></span>
+                                            <span class="table-column">System</span>
+                                            <span class="table-column">2025-05-18 14:30</span>
+                                            <span class="table-column">
+                                                <button class="action-button edit">Edit</button>
+                                                <button class="action-button delete">Delete</button>
+                                            </span>
+                                        </div> 
+                    -->
+                </div>
+            </div>
+        </div>
+
+    <th:block id="custom-javascripts" />
+</body>
+</html>
