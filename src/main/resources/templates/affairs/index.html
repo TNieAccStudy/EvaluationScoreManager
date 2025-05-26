@@ -1,0 +1,69 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{affairs/base :: base(~{::title}, ~{::div.content}, ~{::#custom-links}, ~{::#custom-javascripts})}">
+    <header>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Index template</title>
+
+        <th:block id="custom-links">
+            <link rel="stylesheet" th:href="@{/affairs/css/index.css}" />
+        </th:block>
+
+    </header>
+    <body>
+
+        <div class="content">
+            <div class="welcome-section">
+                <h2>Welcome, Sierra!</h2>
+                <p>Here's an overview of your student affairs dashboard.</p>
+            </div>
+
+            <div class="stats-section">
+                <div class="card">
+                    <h3>Students</h3>
+                    <p>1,245</p>
+                </div>
+                <div class="card">
+                    <h3>Events</h3>
+                    <p>24</p>
+                </div>
+                <div class="card">
+                    <h3>Inquiries</h3>
+                    <p>142</p>
+                </div>
+                <div class="card">
+                    <h3>Clubs</h3>
+                    <p>18</p>
+                </div>
+            </div>
+
+            <div class="quick-actions-section">
+                <h3>Quick Actions</h3>
+                <div class="actions-grid">
+                    <div class="action-card">
+                        <span class="action-icon">👨‍🎓</span>
+                        <h4>Register Student</h4>
+                        <p>Add a new student to the system.</p>
+                    </div>
+                    <div class="action-card">
+                        <span class="action-icon">📅</span>
+                        <h4>Schedule Event</h4>
+                        <p>Create a new campus event.</p>
+                    </div>
+                    <div class="action-card">
+                        <span class="action-icon">📬</span>
+                        <h4>Respond to Inquiry</h4>
+                        <p>Address student inquiries.</p>
+                    </div>
+                    <div class="action-card">
+                        <span class="action-icon">🤝</span>
+                        <h4>Manage Clubs</h4>
+                        <p>Approve or update student clubs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <th:block id="custom-javascripts" />
+</body>
+</html>

@@ -1,0 +1,58 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{affairs/base :: base(~{::title}, ~{::div.content}, ~{::#custom-links}, ~{::#custom-javascripts})}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Class stats template</title>
+
+    <th:block id="custom-links">
+        <!--<link rel="stylesheet" th:href="@{/affairs/css/class-stats.css}" />-->
+    </th:block>
+</head>
+<body>
+
+<div class="content">
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
+
+<th:block id="custom-javascripts">
+    <script>
+        const ctx = document.getElementById('myChart');
+
+        const names = /*[[${datas}]]*/ [];
+        const values = [];
+
+        /* th:each dùng trong script cần viết lại thành JS trực tiếp như sau */
+        /*[[# th:each="d : ${datas}" ]]*/
+        /*[[ names.push('[[${d.name}]]'); ]]*/
+        /*[[ values.push([[${d.totalScore}]]); ]]*/
+        /*[[/]]*/
+
+        /* Cách viết đúng hơn: tạo trực tiếp mảng bằng JS với Thymeleaf */
+        const nameLabels = [[${datas.stream().map(d -> "'" + d.name + "'").collect(Collectors.joining(", "))}]];
+        const scoreData = [[${datas.stream().map(d -> d.totalScore).collect(Collectors.joining(", "))}]];
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [/*[[${#lists.map(datas, 'name')}]]*/ nameLabels],
+                datasets: [{
+                    label: '# of Scores',
+                    data: [/*[[${#lists.map(datas, 'totalScore')}]]*/ scoreData],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</th:block>
+</body>
+</html>

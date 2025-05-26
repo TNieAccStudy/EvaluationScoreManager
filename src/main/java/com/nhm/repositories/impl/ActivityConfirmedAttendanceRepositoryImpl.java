@@ -85,7 +85,9 @@ public class ActivityConfirmedAttendanceRepositoryImpl extends BaseRepositoryImp
         Session s = this.sessionFactory.getObject().getCurrentSession();
 
         activityConfirmedAttendances.stream().forEach(a -> s.persist(a));
-
+        
+        s.flush();
+        
         return activityConfirmedAttendances;
     }
 

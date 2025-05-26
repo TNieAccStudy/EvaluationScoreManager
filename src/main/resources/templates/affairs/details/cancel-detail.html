@@ -1,0 +1,104 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{affairs/base :: base(~{::title}, ~{::div.content}, ~{::#custom-links}, ~{::#custom-javascripts})}">
+    <header>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Cancel detail template</title>
+
+        <th:block id="custom-links">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        </th:block>
+
+    </header>
+    <body>
+
+        <div class="content">
+            <h2 th:text="${cancel.id} ? 'Edit Cancel Requirement' : 'Create New Cancel Requirement'">Cancel Requirement Form</h2>
+            <form th:action="@{/affairs/exec/cancels}" th:object="${cancel}" method="post" class="needs-validation" novalidate>
+
+                <!-- Hidden fields -->
+                <input type="hidden" th:field="*{id}" />
+
+                <!-- Hidden fields for assistant and officer (to ensure form gửi đủ data) -->
+                <input type="hidden" th:field="*{studentAssistantId.id}" />
+                <input type="hidden" 
+                       name="studentAffairsOfficerId" 
+                       th:value="${cancel.studentAffairsOfficerId != null ? cancel.studentAffairsOfficerId.id : ''}" />
+
+                <!-- Display readonly fields for user -->
+                <div class="mb-3">
+                    <label class="form-label">Student Assistant</label>
+                    <input type="text" class="form-control" readonly 
+                           th:value="${cancel.studentAssistantId != null ? cancel.studentAssistantId.firstName + ' ' + cancel.studentAssistantId.lastName : 'N/A'}" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Student Affairs Officer</label>
+                    <input type="text" class="form-control" readonly 
+                           th:value="${cancel.studentAffairsOfficerId != null ? cancel.studentAffairsOfficerId.firstName + ' ' + cancel.studentAffairsOfficerId.firstName : 'N/A'}" />
+                </div>
+
+                <!-- Extra Activity -->
+                <div class="mb-3" th:if="${#strings.equals(cancel.class.simpleName, 'CancelActivityRequirement')}">
+                    <label class="form-label">Extra Activity</label>
+                    <input type="text" class="form-control" readonly th:value="${cancel.extraActivityId.title}" />
+                    <input type="hidden" name="extraActivityId.id" th:value="${cancel.extraActivityId.id}" />
+                </div>
+
+                <!-- Bulletin -->
+                <div class="mb-3" th:if="${#strings.equals(cancel.class.simpleName, 'CancelBulletinRequirement')}">
+                    <label class="form-label">Bulletin</label>
+                    <input type="text" class="form-control" readonly th:value="${cancel.bulletinId.title}" />
+                    <input type="hidden" name="bulletinId.id" th:value="${cancel.bulletinId.id}" />
+                </div>
+
+                <!-- Reason (readonly) -->
+                <div class="mb-3">
+                    <label class="form-label">Reason</label>
+                    <input type="text" th:field="*{reason}" class="form-control" readonly />
+                </div>
+
+                <!-- Reason Detail (readonly) -->
+                <div class="mb-3">
+                    <label class="form-label">Reason Detail</label>
+                    <textarea th:field="*{reasonDetail}" class="form-control" rows="5" readonly></textarea>
+                </div>
+
+                <!-- Executed Status -->
+                <div class="mb-3">
+                    <label for="executedStatus" class="form-label">Executed Status</label>
+                    <select th:field="*{executedStatus}" class="form-select" id="executedStatus" required>
+                        <option value="">Select status</option>
+                        <option th:each="status : ${executeStatuses}" th:value="${status.name()}" th:text="${status.name()}"></option>
+                    </select>
+                    <div class="invalid-feedback">Executed status is required.</div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a th:href="@{/affairs/cancels}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+    <th:block id="custom-javascripts">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            (() => {
+                'use strict';
+                const forms = document.querySelectorAll('.needs-validation');
+                Array.from(forms).forEach(form => {
+                    form.addEventListener('submit', event => {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            })();
+        </script>
+    </th:block>
+</body>
+</html>
