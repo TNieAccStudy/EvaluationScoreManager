@@ -5,21 +5,15 @@ import { Card, Form, Spinner } from "react-bootstrap";
 const MissingActivity = () => {
   const [missingActivities, setMissingActivities] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [departments, setDepartments] = useState("");
+  const [departmentsOptions, setDeparmentOptions] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState("");
-  const loadDepartments = async () => {
-    try {
-      const res = await authApis().get(endpoints["departments"]);
-      setDepartments(res.data);
-    } catch (err) {
-      console.error("Error loading departments:", err);
-    }
-  };
-  const handleConfirm = async (activityId) => {
+  const handleUpdateState = async (missing, newState) => {
     try {
       setLoading(true);
-      await authApis().post(endpoints["confirm-missing"](activityId));
-      // Reload missing activities after confirmation
+      console.log("Updating missing activity:", newState);
+      await authApis().patch(endpoints["missing-response"](missing.id), {
+        executeStatus: newState,
+      });
       loadMissingActivities();
     } catch (err) {
       console.error("Error confirming missing activity:", err);
@@ -28,23 +22,21 @@ const MissingActivity = () => {
     }
   };
 
-  const handleCancel = async (activityId) => {
-    try {
-      setLoading(true);
-      await authApis().post(endpoints["cancel-missing"](activityId));
-      // Reload missing activities after cancellation
-      loadMissingActivities();
-    } catch (err) {
-      console.error("Error cancelling missing activity:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const loadMissingActivities = async () => {
     try {
       const res = await authApis().get(endpoints["missings"]);
-      setMissingActivities(res.data);
+      const uniqueDeparments = [
+        ...new Set(
+          res.data.map(
+            (missing) => missing?.studentId?.classId?.departmentId.name
+          )
+        ),
+      ];
+      console.log("Unique departments:", uniqueDeparments);
+      setDeparmentOptions(uniqueDeparments);
+      setMissingActivities(
+        res.data.filter((missing) => missing.executedStatus === "PENDING")
+      );
     } catch (err) {
       console.error("Error loading missing activities:", err);
     } finally {
@@ -53,7 +45,6 @@ const MissingActivity = () => {
   };
 
   useEffect(() => {
-    loadDepartments();
     loadMissingActivities();
   }, []);
 
@@ -70,10 +61,10 @@ const MissingActivity = () => {
           className="mb-3"
         >
           <option value="">Tất cả</option>
-          {departments &&
-            departments.map((department) => (
-              <option key={department.id} value={department.id}>
-                {department.name}
+          {departmentsOptions &&
+            departmentsOptions.map((department) => (
+              <option key={department} value={department}>
+                {department}
               </option>
             ))}
         </Form.Select>
@@ -89,7 +80,7 @@ const MissingActivity = () => {
         missingActivities.map((item) => (
           <Card className="mb-3 shadow-sm" key={item.id}>
             <Card.Body>
-              <Card.Title>Hoạt động: {item.extraActivityId?.name}</Card.Title>
+              <Card.Title>Hoạt động: {item.extraActivityId?.title}</Card.Title>
               <Card.Subtitle className="mb-2 text-muted">
                 Trạng thái: <strong>{item.executedStatus}</strong>
               </Card.Subtitle>
@@ -101,8 +92,8 @@ const MissingActivity = () => {
                   src={item.proofPicture}
                   alt="Ảnh minh chứng"
                   style={{
-                    maxWidth: "100%",
-                    height: "auto",
+                    maxWidth: "100px",
+                    height: "100px",
                     marginTop: "10px",
                   }}
                 />
@@ -111,18 +102,23 @@ const MissingActivity = () => {
               <p>
                 <strong>Sinh viên:</strong> {item.studentId?.username}
               </p>
+              <p>
+                <strong>MSSV:</strong> {item.studentId?.mssv}
+              </p>
+              <p>
+                <strong>Lớp:</strong> {item.studentId?.classId.name}
+              </p>
 
-              {/* ✅ Thêm 2 nút Confirm & Cancel */}
               <div className="d-flex gap-2 mt-3">
                 <button
                   className="btn btn-success"
-                  onClick={() => handleConfirm(item.id)}
+                  onClick={() => handleUpdateState(item, "CONFIRMED")}
                 >
                   ✅ Xác nhận
                 </button>
                 <button
                   className="btn btn-danger"
-                  onClick={() => handleCancel(item.id)}
+                  onClick={() => handleUpdateState(item, "CANCELED")}
                 >
                   ❌ Hủy bỏ
                 </button>

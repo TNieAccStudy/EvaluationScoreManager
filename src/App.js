@@ -23,6 +23,7 @@ import BulletinDetail from "./components/Bulletin/BulletinDetail";
 import MissingActivity from "./components/MissingActivity/MissingActivity";
 import ActivityRegistries from "./components/ActivityRegistries/ActivityRegistries";
 import "moment/locale/vi";
+import ActivityAttendances from "./components/ActivityAttendances/ActivityAttendances";
 
 const PrivateRoute = ({ children }) => {
   const token = cookie.load("token");
@@ -63,7 +64,14 @@ const App = () => {
 
           <Container>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute>
+                    <Bulletin />
+                  </PrivateRoute>
+                }
+              />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
               <Route
@@ -104,6 +112,15 @@ const App = () => {
                 element={
                   <PrivateRoute>
                     <ActivityRegistries />
+                  </PrivateRoute>
+                }
+              />
+
+              <Route
+                path="/attendances-activities"
+                element={
+                  <PrivateRoute>
+                    <ActivityAttendances />
                   </PrivateRoute>
                 }
               />

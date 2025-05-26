@@ -9,7 +9,6 @@ const Bulletin = () => {
   const [page, setPage] = useState(1);
   const [q] = useSearchParams();
   const nav = useNavigate();
-
   const loadBulletins = async () => {
     try {
       setLoading(true);
@@ -63,7 +62,7 @@ const Bulletin = () => {
         return "#383d41";
       case "OPENING":
         return "#0c5460";
-      case "CLOSE":
+      case "CLOSED":
         return "#721c24";
       default:
         return "#212529";
@@ -90,7 +89,7 @@ const Bulletin = () => {
       <h2 className="text-center mb-4 fw-bold">📢 Bản Tin Hoạt Động</h2>
       <Row className="g-4">
         {bulletins
-          .filter((event) => event.state !== "CLOSE")
+          .filter((event) => event.state !== "CLOSED")
           .map((event, index) => (
             <Col key={index} xs={12} md={6} lg={4}>
               <Card

@@ -7,15 +7,17 @@ import BulletinForm from "../Bulletin/BulletinForm";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { authApis, endpoints } from "../../configs/Apis";
+import MySpinner from "../layouts/MySpinner";
 
 const ActivityManagement = () => {
   const user = useContext(MyUserContext);
   const [activities, setActivities] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [terms, setTerms] = useState([]);
-
+  const [extraActivityIds, setExtraActivityIds] = useState([]);
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [showBulletinModal, setShowBulletinModal] = useState(false);
+  const [loading, setLoading] = useState(true);
   const nav = useNavigate();
   const [activityFormData, setActivityFormData] = useState({
     title: "",
@@ -35,6 +37,7 @@ const ActivityManagement = () => {
 
   const loadData = async () => {
     try {
+      setLoading(true);
       const [termRes, semesterRes, activityRes] = await Promise.all([
         authApis().get(endpoints["terms"]),
         authApis().get(endpoints["semesters"]),
@@ -45,8 +48,11 @@ const ActivityManagement = () => {
       setActivities(activityRes.data);
     } catch (err) {
       console.error("Failed to load data:", err);
+    } finally {
+      setLoading(false);
     }
   };
+
   useEffect(() => {
     loadData();
   }, []);
@@ -88,6 +94,7 @@ const ActivityManagement = () => {
         const res = await authApis().post(endpoints["activities"], formData, {
           headers: { "Content-Type": "application/json" },
         });
+        setExtraActivityIds((prev) => [...prev, res.data.id]);
         setActivities((prev) => [...prev, res.data]);
       }
       setShowActivityModal(false);
@@ -120,6 +127,7 @@ const ActivityManagement = () => {
     });
     setShowBulletinModal(true);
   };
+
   const handleViewStudents = async (activityId) => {
     nav(`/activities/${activityId}/students`);
   };
@@ -151,21 +159,29 @@ const ActivityManagement = () => {
   };
 
   return (
-    <Container>
-      <Row className="my-4">
+    <Container className="py-4">
+      <Row className="align-items-center mb-4">
         <Col>
-          <h2>Extra Activity Management</h2>
-          <Button onClick={handleAddActivity}>+ Add Activity</Button>
+          <h2 className="fw-bold text-primary">Quản lý Hoạt động Ngoại khóa</h2>
+        </Col>
+        <Col className="text-end">
+          <Button variant="success" onClick={handleAddActivity}>
+            + Thêm hoạt động
+          </Button>
         </Col>
       </Row>
 
-      <ActivityTable
-        activities={activities}
-        onEdit={handleEditActivity}
-        onDelete={handleDeleteActivity}
-        onShowBulletin={handleShowBulletinModal}
-        onViewStudents={handleViewStudents}
-      />
+      {loading ? (
+        <MySpinner />
+      ) : (
+        <ActivityTable
+          activities={activities}
+          onEdit={handleEditActivity}
+          onDelete={handleDeleteActivity}
+          onShowBulletin={handleShowBulletinModal}
+          onViewStudents={handleViewStudents}
+        />
+      )}
 
       <ActivityForm
         show={showActivityModal}
@@ -175,6 +191,7 @@ const ActivityManagement = () => {
         formData={activityFormData}
         setActivityFormData={setActivityFormData}
         onSave={handleSaveActivity}
+        extraActivityIds={extraActivityIds}
       />
 
       <BulletinForm

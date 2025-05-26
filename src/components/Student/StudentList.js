@@ -19,84 +19,17 @@ const StudentList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
+  const imageInputRef = useRef(null);
   const { activityId } = useParams();
   const [showModal, setShowModal] = useState(false);
   const [selectedRegistry, setSelectedRegistry] = useState(null);
   const [evidenceImage, setEvidenceImage] = useState(null);
 
-  const loadStudentAttendancesIds = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await authApis().get(
-        endpoints["activities-attendances"](activityId)
-      );
-      const ids = res.data.map((item) => item.activityRegistryId.studentId.id);
-      setStudentAttendancesIds(ids);
-    } catch (err) {
-      // handle error
-    } finally {
-      setLoading(false);
-    }
-  }, [activityId]);
-
-  const loadStudentsRegistries = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await authApis().get(
-        endpoints["activities-registries"](activityId)
-      );
-      setStudentsRegistries(res.data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [activityId]);
-
-  const HandleAddListStudentAttendance = () => {
-    fileInputRef.current.click();
-  };
-
-  const HandleUploadFile = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const csvContent = e.target.result;
-        const rows = csvContent.split("\n").filter((row) => row.trim() !== "");
-        const data = rows.map((row) => row.split(","));
-        const mssvs = data.slice(1).map((row) => row[0]);
-        console.log("Danh sách MSSV trong file:", mssvs);
-      };
-      reader.readAsText(file);
-    }
-  };
-  const handleExportCSV = () => {
-    const headers = ["MSSV", "Registry ID", "Ngày tạo", "Tham gia"];
-    const rows = studentsRegistries.map((registry) => {
-      const student = registry.studentId;
-      return [
-        student.mssv,
-        registry.id,
-        new Date(registry.createdDate).toLocaleDateString(),
-        false,
-      ];
-    });
-
-    const csvContent =
-      "\uFEFF" + [headers, ...rows].map((e) => e.join(",")).join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", "danh_sach_sinh_vien.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  const [csvData, setCsvData] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
   const handleSubmitEvidence = async (id) => {
-    if (!evidenceImage || !selectedRegistry) return;
+    if (!evidenceImage) return;
 
     const form = new FormData();
     form.append("proofPicture", evidenceImage);
@@ -120,15 +53,136 @@ const StudentList = () => {
   const handleFileChange = (e) => {
     setEvidenceImage(e.target.files[0]);
   };
+  const handleOpenModal = (registryId) => {
+    setSelectedRegistry(registryId);
+    setShowModal(true);
+  };
   const handleCloseModal = () => {
     setShowModal(false);
     setEvidenceImage(null);
     setSelectedRegistry(null);
   };
+  const loadStudentAttendancesIds = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await authApis().get(
+        endpoints["activities-attendances"](activityId)
+      );
+      const ids = res.data.map((item) => item.activityRegistryId.studentId.id);
+      setStudentAttendancesIds(ids);
+    } catch {
+    } finally {
+      setLoading(false);
+    }
+  }, [activityId]);
 
-  const handleOpenModal = (registryId) => {
-    setSelectedRegistry(registryId);
-    setShowModal(true);
+  const loadStudentsRegistries = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await authApis().get(
+        endpoints["activities-registries"](activityId)
+      );
+      setStudentsRegistries(res.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [activityId]);
+
+  const handleUploadCSVClick = () => fileInputRef.current.click();
+  const handleUploadImageClick = () => imageInputRef.current.click();
+
+  const handleCSVChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const rows = e.target.result
+        .split("\n")
+        .filter((row) => row.trim() !== "")
+        .map((row) => row.replace("\r", "").split(","));
+
+      const attendedStudents = rows
+        .slice(1)
+        .filter((row) => row[3]?.trim() === "TRUE")
+        .map((row) => row[0]?.trim());
+
+      console.log("Danh sách sinh viên:", attendedStudents);
+      setCsvData(attendedStudents);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImageFile(file);
+  };
+
+  const handleSubmitAttendanceList = async () => {
+    try {
+      setLoading(true);
+      if (!csvData || !imageFile) {
+        alert("Vui lòng nạp cả danh sách sinh viên và ảnh minh chứng.");
+        return;
+      }
+
+      const form = new FormData();
+      const data = JSON.stringify({
+        attendedStudents: csvData,
+        extraActivityId: parseInt(activityId),
+      });
+      console.log("Dữ liệu điểm danh:", data);
+      const jsonBlob = new Blob([data], { type: "application/json" });
+
+      form.append("data", jsonBlob);
+      form.append("proofPictureGeneral", imageFile);
+      console.log("Dữ liệu gửi:", form.get("data"));
+      console.log("Ảnh gửi:", imageFile.name);
+
+      try {
+        const res = await authApis().post(
+          endpoints["assistants-upload-csv"],
+          form
+        );
+        console.log("Kết quả gửi:", res.data);
+        alert("Gửi danh sách điểm danh thành công!");
+        await loadStudentAttendancesIds();
+        setCsvData(null);
+        setImageFile(null);
+      } catch (err) {
+        alert("Lỗi khi gửi: " + err.message);
+      }
+    } catch (error) {
+      console.error("Lỗi khi gửi danh sách điểm danh:", error);
+      alert("Đã xảy ra lỗi khi gửi danh sách điểm danh. Vui lòng thử lại sau.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleExportCSV = () => {
+    const headers = ["MSSV", "Activity ID", "Ngày tạo", "Tham gia"];
+    const rows = studentsRegistries.map((registry) => {
+      const student = registry.studentId;
+      const extraActivity = registry.extraActivityId;
+      return [
+        student.mssv,
+        extraActivity.id,
+        new Date(registry.createdDate).toLocaleDateString(),
+        false,
+      ];
+    });
+
+    const csvContent =
+      "\uFEFF" + [headers, ...rows].map((e) => e.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", "danh_sach_sinh_vien.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   useEffect(() => {
@@ -154,22 +208,42 @@ const StudentList = () => {
 
         {!loading && !error && (
           <>
+            {/* Hidden inputs */}
             <Form.Control
               type="file"
               accept=".csv"
               ref={fileInputRef}
-              onChange={HandleUploadFile}
+              onChange={handleCSVChange}
+              style={{ display: "none" }}
+            />
+            <Form.Control
+              type="file"
+              accept="image/*"
+              ref={imageInputRef}
+              onChange={handleImageChange}
               style={{ display: "none" }}
             />
 
-            <Button
-              variant="primary"
-              size="sm"
-              className="mb-3"
-              onClick={HandleAddListStudentAttendance}
-            >
-              Nạp danh sách điểm danh (.csv)
-            </Button>
+            {/* Buttons */}
+            <div className="d-flex gap-2 mb-3">
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleUploadCSVClick}
+              >
+                Nạp danh sách điểm danh (.csv)
+              </Button>
+              <Button variant="info" size="sm" onClick={handleUploadImageClick}>
+                Nạp ảnh minh chứng chung
+              </Button>
+              <Button
+                variant="success"
+                size="sm"
+                onClick={handleSubmitAttendanceList}
+              >
+                Gửi minh chứng + danh sách
+              </Button>
+            </div>
 
             <Table striped bordered hover responsive className="text-center">
               <thead className="table-dark">
@@ -179,10 +253,9 @@ const StudentList = () => {
                   <th>MSSV</th>
                   <th>Họ tên</th>
                   <th>Email</th>
-                  <th>Thành tích</th>
                   <th>Ngày tạo</th>
                   <th>Trạng thái</th>
-                  <th>Thao tác</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -207,7 +280,6 @@ const StudentList = () => {
                       <td>{studentInfo.mssv}</td>
                       <td>{`${studentInfo.firstName} ${studentInfo.lastName}`}</td>
                       <td>{studentInfo.username}</td>
-                      <td>{studentInfo.achievement || "Không có"}</td>
                       <td>
                         {new Date(registry.createdDate).toLocaleDateString()}
                       </td>
@@ -240,15 +312,14 @@ const StudentList = () => {
         )}
 
         <Button
-          variant="success"
+          variant="secondary"
           size="sm"
-          className="mb-3 ms-2 w-50"
+          className="mb-3 w-50"
           onClick={handleExportCSV}
         >
           Xuất danh sách (.csv)
         </Button>
       </Card>
-
       <Modal show={showModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Minh chứng tham gia</Modal.Title>

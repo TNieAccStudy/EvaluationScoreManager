@@ -13,6 +13,7 @@ import { MyDispatcherContext, MyUserContext } from "../../configs/MyContexts";
 import BulletinForm from "../Bulletin/BulletinForm";
 import moment from "moment";
 import { authApis, endpoints } from "../../configs/Apis";
+// import sendMail from "../../configs/SendEmail/SendEmail";
 
 const Header = () => {
   const [kw, setKw] = useState("");
@@ -23,6 +24,15 @@ const Header = () => {
   const [showBulletinModal, setShowBulletinModal] = useState(false);
   const [bulletinFormData, setBulletinFormData] = useState({});
 
+  // const loadStudents = async () => {
+  //   try {
+  //     const res = await authApis().get(endpoints["students"]);
+  //     return res.data;
+  //   } catch (err) {
+  //     console.error("Error loading students:", err);
+  //     return [];
+  //   }
+  // };
   const handlePostBulletinSummary = async () => {
     const formattedDate = moment(bulletinFormData.duration).format(
       "YYYY-MM-DD HH:mm:ss"
@@ -38,6 +48,26 @@ const Header = () => {
         headers: { "Content-Type": "application/json" },
       });
       if (res.status === 201) {
+        // const students = await loadStudents();
+        // students.map((student) => {
+        //   sendMail({
+        //     subject: "Bản tin tổng kết hoạt động",
+        //     to: student.email,
+        //     html: `
+        //       <h1>Xin chào ${student.username} mssv : ${student.email}!</h1>
+        //       <p>Chúng tôi xin thông báo rằng bản tin tổng kết hoạt động đã được đăng</p>
+        //       <p><strong>Tiêu đề:</strong> ${bulletinFormData.title}</p>
+        //       <p><strong>Nội dung:</strong> ${bulletinFormData.content}</p>
+        //       <p><strong>Thời gian:</strong> ${bulletinFormData.duration}</p>
+        //       <p><strong>Học kỳ:</strong> ${bulletinFormData.semesterId}</p>
+        //       <p>Tổng điềm rèn luyện của bạn là : </p>
+        //       <p>Vui lòng kiểm tra trang Bản Tin để xem chi tiết.</p>
+        //     `,
+        //   }).then(() => {
+        //     console.log(`Email sent to ${student.email}`);
+        //   });
+        // });
+
         alert("Đăng bản tin thành công");
         setShowBulletinModal(false);
         setBulletinFormData(null);
@@ -107,20 +137,9 @@ const Header = () => {
                           Bản Tin
                         </Dropdown.Item>
                         <Dropdown drop="end">
-                          {/* <Dropdown.Toggle as="div" className="dropdown-item">
-                            Quản lý hoạt động
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu> */}
                           <Dropdown.Item as={Link} to="/activities-registries">
                             Hoạt động đã đăng ký
                           </Dropdown.Item>
-                          {/* <Dropdown.Item
-                              as={Link}
-                              to="/activities-attendances"
-                            >
-                              Đã tham gia
-                            </Dropdown.Item> */}
-                          {/* </Dropdown.Menu> */}
                         </Dropdown>
                       </>
                     ) : (
@@ -138,6 +157,12 @@ const Header = () => {
                             </Dropdown.Item>
                             <Dropdown.Item as={Link} to="/missings-activities">
                               Báo thiếu
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              as={Link}
+                              to="/attendances-activities"
+                            >
+                              Minh Chứng Tham Gia
                             </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>

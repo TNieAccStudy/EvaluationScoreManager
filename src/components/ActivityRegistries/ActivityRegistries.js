@@ -9,28 +9,45 @@ import {
   Alert,
   Button,
   Form,
+  Modal,
 } from "react-bootstrap";
+import MySpinner from "../layouts/MySpinner";
 
 const ActivityRegistries = () => {
   const [activityRegistries, setActivityRegistries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activityAttendanceIds, setActivityAttendanceIds] = useState([]);
-  const [showProofFormId, setShowProofFormId] = useState(null);
-  const [proofFiles, setProofFiles] = useState({});
+  const [pendingIds, setPendingIds] = useState([]);
+  const [canceledIds, setCanceledIds] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRegistry, setSelectedRegistry] = useState(null);
+  const [evidenceImage, setEvidenceImage] = useState(null);
 
   const loadActivityAttendanceIds = async () => {
     try {
+      setLoading(true);
       const res = await authApis().get(
         endpoints["activities-attendances-of-student"]
       );
       console.log("Activity attendance IDs:", res.data);
-      const confirmedIds = res.data
-        .filter((item) => item && item.censorState === "CONFIRMED")
-        .map((item) => item.activityRegistryId.id);
+
+      const getIdsByState = (state) =>
+        res.data
+          .filter((item) => item && item.censorState === state)
+          .map((item) => item.activityRegistryId.id);
+
+      const confirmedIds = getIdsByState("CONFIRMED");
+      const pendingIds = getIdsByState("PENDING");
+      const canceledIds = getIdsByState("CANCELED");
+
+      setPendingIds(pendingIds);
+      setCanceledIds(canceledIds);
       setActivityAttendanceIds(confirmedIds);
     } catch (err) {
       console.error("Error loading activity attendance IDs:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -52,30 +69,41 @@ const ActivityRegistries = () => {
     loadActivityRegistries();
   }, []);
 
-  const handleFileChange = (e, activityId) => {
-    setProofFiles((prev) => ({
-      ...prev,
-      [activityId]: e.target.files[0],
-    }));
+  const handleOpenModal = (registryId) => {
+    setSelectedRegistry(registryId);
+    setShowModal(true);
+  };
+  const handleFileChange = (e) => {
+    setEvidenceImage(e.target.files[0]);
+  };
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEvidenceImage(null);
+    setSelectedRegistry(null);
   };
 
-  const handleProofSubmit = async (activityId) => {
-    const formData = new FormData();
-    formData.append("proofImage", proofFiles[activityId]);
+  const handleSubmitEvidence = async (id) => {
+    if (!evidenceImage) return;
 
+    const form = new FormData();
+    form.append("proofPicture", evidenceImage);
+
+    const data = JSON.stringify({
+      activityRegistryId: id,
+    });
+
+    const dataBlob = new Blob([data], { type: "application/json" });
+    form.append("data", dataBlob);
     try {
-      await authApis().post(
-        `${endpoints["upload-proof"]}/${activityId}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      alert("Gửi minh chứng thành công!");
-      setShowProofFormId(null);
-      await loadActivityAttendanceIds();
+      setLoading(true);
+      const res = await authApis().post(endpoints["attendances"], form);
+      console.log("Response from server:", res.data);
+      setPendingIds((prevPendingIds) => [...prevPendingIds, id]);
+      handleCloseModal();
     } catch (err) {
-      alert("Lỗi khi gửi minh chứng!");
+      alert("Lỗi khi gửi minh chứng: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,12 +111,7 @@ const ActivityRegistries = () => {
     <Container className="my-4">
       <h1 className="mb-4 text-center">Hoạt động ngoại khóa đã đăng ký</h1>
 
-      {loading && (
-        <div className="text-center my-5">
-          <Spinner animation="border" role="status" />
-          <span className="ms-2">Đang tải dữ liệu...</span>
-        </div>
-      )}
+      {loading && <MySpinner />}
 
       {error && (
         <Alert variant="danger" className="text-center">
@@ -99,7 +122,6 @@ const ActivityRegistries = () => {
       <Row>
         {activityRegistries.map((registry) => {
           const { extraActivityId, studentId } = registry;
-          console.log("Registry data:", registry);
           const isAttended = activityAttendanceIds.includes(registry.id);
 
           return (
@@ -145,55 +167,57 @@ const ActivityRegistries = () => {
                     </strong>
                   </Card.Text>
 
-                  {!isAttended && (
-                    <>
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        onClick={() =>
-                          setShowProofFormId(
-                            showProofFormId === extraActivityId.id
-                              ? null
-                              : extraActivityId.id
-                          )
-                        }
-                      >
-                        {showProofFormId === extraActivityId.id
-                          ? "Đóng minh chứng"
-                          : "Minh chứng tham gia"}
+                  {!isAttended ? (
+                    pendingIds.includes(registry.id) ? (
+                      <Button variant="success" size="sm">
+                        Đã gửi minh chứng
                       </Button>
-
-                      {showProofFormId === extraActivityId.id && (
-                        <Form className="mt-3">
-                          <Form.Group controlId={`file-${extraActivityId.id}`}>
-                            <Form.Label>Ảnh minh chứng</Form.Label>
-                            <Form.Control
-                              type="file"
-                              onChange={(e) =>
-                                handleFileChange(e, extraActivityId.id)
-                              }
-                            />
-                          </Form.Group>
-                          <Button
-                            variant="success"
-                            className="mt-2"
-                            onClick={() =>
-                              handleProofSubmit(extraActivityId.id)
-                            }
-                            disabled={!proofFiles[extraActivityId.id]}
-                          >
-                            Gửi minh chứng
-                          </Button>
-                        </Form>
-                      )}
-                    </>
-                  )}
+                    ) : canceledIds.includes(registry.id) ? (
+                      <Button variant="danger" size="sm" disabled>
+                        Minh Chứng Không Hợp Lệ
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => handleOpenModal(registry.id)}
+                      >
+                        Gửi Minh chứng tham gia
+                      </Button>
+                    )
+                  ) : null}
                 </Card.Body>
               </Card>
             </Col>
           );
         })}
       </Row>
+      <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Minh chứng tham gia</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="formFile">
+            <Form.Label>Chọn ảnh minh chứng:</Form.Label>
+            <Form.Control
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Hủy
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => handleSubmitEvidence(selectedRegistry)}
+          >
+            Gửi minh chứng
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

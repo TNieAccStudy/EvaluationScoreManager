@@ -20,22 +20,68 @@ const StudentManagement = () => {
 
   const [classOptions, setClassOptions] = useState([]);
   const [achievementOptions, setAchievementOptions] = useState([]);
+  const [semesters, setSemesters] = useState([]);
+  const [selectedSemester, setSelectedSemester] = useState(1);
+
+  const loadEvalScore = async (studentId) => {
+    try {
+      const res = await authApis().get(
+        endpoints["evalScores-of-student-detail"](studentId),
+        {
+          params: { semester: selectedSemester },
+        }
+      );
+      console.log("Evaluation score loaded:", res.data);
+      return res.data;
+    } catch (err) {
+      console.error("Error loading evaluation score:", err);
+      return null;
+    }
+  };
+  const loadSemesters = async () => {
+    try {
+      setLoading(true);
+      const res = await authApis().get(endpoints["semesters"]);
+      console.log("Semesters loaded:", res.data);
+      setSemesters(res.data);
+    } catch (err) {
+      console.error("Error loading semesters:", err);
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadStudents = async () => {
     setLoading(true);
     try {
       const response = await authApis().get(endpoints["students"]);
       console.log("Danh sách sinh viên:", response.data);
-      setStudents(response.data);
+
+      const mergedStudents = await Promise.all(
+        response.data.map(async (student) => {
+          const resScore = await loadEvalScore(student.username);
+          return {
+            ...student,
+            evalScore: resScore,
+          };
+        })
+      );
+
+      setStudents(mergedStudents);
 
       const uniqueClasses = [
-        ...new Set(response.data.map((s) => s.classId?.name).filter(Boolean)),
+        ...new Set(response.data.map((s) => s.classId?.name)),
       ];
       setClassOptions(uniqueClasses);
-      const uniqueAchievements = [
-        ...new Set(response.data.map((s) => s.achievement)),
+      const achievements = [
+        ...new Set(
+          mergedStudents
+            .map((s) => s.evalScore?.achievement)
+            .filter((ach) => ach !== null && ach !== undefined)
+        ),
       ];
-      setAchievementOptions(uniqueAchievements);
+      setAchievementOptions(achievements);
     } catch (err) {
       setError("Không thể tải danh sách sinh viên");
     } finally {
@@ -44,16 +90,18 @@ const StudentManagement = () => {
   };
 
   useEffect(() => {
-    loadStudents();
+    loadSemesters();
   }, []);
+  useEffect(() => {
+    loadStudents();
+  }, [selectedSemester]);
 
-  // Hàm lọc sinh viên theo lựa chọn
   const filteredStudents = students.filter((student) => {
     const matchClass =
       selectedClass === "all" || student.classId?.name === selectedClass;
     const matchAchievement =
       selectedAchievement === "all" ||
-      student.achievement === selectedAchievement;
+      student.evalScore?.achievement === selectedAchievement;
 
     return matchClass && matchAchievement;
   });
@@ -75,6 +123,21 @@ const StudentManagement = () => {
         <>
           {/* Select box filter */}
           <Row className="mb-3">
+            <Col md={4}>
+              <Form.Group controlId="filterSemester">
+                <Form.Label>Lọc theo học kỳ</Form.Label>
+                <Form.Select
+                  value={selectedSemester}
+                  onChange={(e) => setSelectedSemester(e.target.value)}
+                >
+                  {semesters.map((sem) => (
+                    <option key={sem.id} value={sem.id}>
+                      {sem.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
             <Col md={6}>
               <Form.Group controlId="filterClass">
                 <Form.Label>Lọc theo lớp</Form.Label>
@@ -118,8 +181,9 @@ const StudentManagement = () => {
                   <th>#</th>
                   <th>MSSV</th>
                   <th>Họ tên</th>
-                  <th>Thành tích</th>
                   <th>Lớp</th>
+                  <th>Điểm đánh giá</th>
+                  <th>Thành tích (ĐG)</th>
                   <th>Ngày tạo</th>
                 </tr>
               </thead>
@@ -131,8 +195,9 @@ const StudentManagement = () => {
                     <td>
                       {student.firstName} {student.lastName}
                     </td>
-                    <td>{student.achievement}</td>
                     <td>{student.classId?.name}</td>
+                    <td>{student.evalScore?.totalScore}</td>
+                    <td>{student.evalScore?.achievement}</td>
                     <td>{new Date(student.createdDate).toLocaleString()}</td>
                   </tr>
                 ))}

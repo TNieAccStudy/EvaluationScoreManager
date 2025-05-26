@@ -20,12 +20,16 @@ export const endpoints = {
     `/activities/${activityId}/attendances`,
   "activities-registries-of-student": "/students/current-student/registries",
   "activities-attendances-of-student": "/students/current-student/attendances",
+  "activities-missings-of-student": "/students/current-student/missings",
   "activity-detail": (activityId) => `/activities/${activityId}`,
 
   registries: "/registries",
   "registries-detail": (registryId) => `/registries/${registryId}`,
 
   missings: "/missings",
+  "missing-response": (missingId) => `/missings/${missingId}/response`,
+
+  cancels: "/cancels",
 
   classes: "/classes",
   terms: "/terms",
@@ -39,8 +43,14 @@ export const endpoints = {
     `/departments/${departmentId}/classes`,
 
   assistants: "/assistants",
+  "assistants-upload-csv": `/assistants/current-assistant/postCSVAttendances`,
+
   students: "/students",
+  "evalScores-of-student": "/students/current-student/score",
+  "evalScores-of-student-detail": (studentId) => `/students/${studentId}/score`,
+
   attendances: "attendances",
+  "attendances-detail": (attendanceId) => `/attendances/${attendanceId}`,
 };
 
 export const authApis = () => {

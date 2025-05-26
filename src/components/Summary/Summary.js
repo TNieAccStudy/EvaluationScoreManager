@@ -1,28 +1,59 @@
 import React, { useEffect, useState } from "react";
-import { Container, Button, Form, Card, Badge, Modal } from "react-bootstrap";
+import {
+  Container,
+  Button,
+  Form,
+  Card,
+  Badge,
+  Modal,
+  Row,
+  Col,
+} from "react-bootstrap";
 import { authApis, endpoints } from "../../configs/Apis";
 import { useParams, useSearchParams } from "react-router-dom";
+import MySpinner from "../layouts/MySpinner";
 
 const Summary = () => {
   const [termData, setTermData] = useState([]);
   const [activitiesByTerm, setActivitiesByTerm] = useState({});
   const [showMissingActivity, setShowMissingActivity] = useState(false);
   const [activityAttendanceIds, setActivityAttendanceIds] = useState([]);
+  const [activityCanceledIds, setActivityCanceledIds] = useState([]);
   const [activityRegistriesIds, setActivityRegistriesIds] = useState([]);
+  const [activityMissingsIds, setActivityMissingsIds] = useState([]);
   const [missingActivity, setMissingActivity] = useState({});
   const [selectedActivityId, setSelectedActivityId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [evalScore, setEvalScore] = useState(null);
   const [searchParams] = useSearchParams();
   const { bulletinId } = useParams();
   const semesterId = searchParams.get("semesterId");
 
+  const loadEvalScore = async () => {
+    try {
+      const res = await authApis().get(endpoints["evalScores-of-student"], {
+        params: {
+          semester: semesterId,
+        },
+      });
+
+      setEvalScore(res.data);
+    } catch (err) {
+      console.error("Error loading evaluation score:", err);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [termsRes, attendanceRes, registryRes] = await Promise.all([
-          authApis().get(endpoints["terms"]),
-          authApis().get(endpoints["activities-attendances-of-student"]),
-          authApis().get(endpoints["activities-registries-of-student"]),
-        ]);
+        setLoading(true);
+        const [termsRes, attendanceRes, registryRes, missingRes] =
+          await Promise.all([
+            authApis().get(endpoints["terms"]),
+            authApis().get(endpoints["activities-attendances-of-student"]),
+            authApis().get(endpoints["activities-registries-of-student"]),
+            authApis().get(endpoints["activities-missings-of-student"]),
+          ]);
 
         const terms = termsRes.data;
         setTermData(terms);
@@ -32,10 +63,21 @@ const Summary = () => {
           .map((item) => item.activityRegistryId.extraActivityId.id);
         setActivityAttendanceIds(confirmedAttendances);
 
+        const canceledAttendances = attendanceRes.data
+          .filter((item) => item?.censorState === "CANCELED")
+          .map((item) => item.activityRegistryId.extraActivityId.id);
+        setActivityCanceledIds(canceledAttendances);
+
         const registryIds = registryRes.data.map(
           (item) => item.extraActivityId.id
         );
         setActivityRegistriesIds(registryIds);
+
+        const missingIds = missingRes.data.map(
+          (item) => item.extraActivityId.id
+        );
+        console.log("Missing activity IDs:", missingIds);
+        setActivityMissingsIds(missingIds);
 
         if (semesterId) {
           const allActivities = {};
@@ -57,8 +99,12 @@ const Summary = () => {
           }
           setActivitiesByTerm(allActivities);
         }
+
+        await loadEvalScore();
       } catch (err) {
         console.error("Error loading data:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -91,7 +137,10 @@ const Summary = () => {
 
       const data = {
         proofContent: content,
-        summaryBulletinId: parseInt(bulletinId),
+        summaryBulletinId: {
+          bulletinType: "summary",
+          id: parseInt(bulletinId),
+        },
         extraActivityId: selectedActivityId,
       };
 
@@ -104,6 +153,7 @@ const Summary = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
+      setActivityMissingsIds((prev) => [...prev, selectedActivityId]);
       console.log("Missing activity submitted:", res.data);
       handleCloseModal();
     } catch (err) {
@@ -129,7 +179,20 @@ const Summary = () => {
 
   return (
     <Container className="mt-4">
-      <h4 className="mb-4">Phiếu báo cáo hoạt động ngoại khóa</h4>
+      <h4 className="mb-4 text-center">Phiếu báo cáo hoạt động ngoại khóa</h4>
+
+      {loading && <MySpinner />}
+
+      {!loading && evalScore && (
+        <>
+          <div className="text-center fw-bold text-info mb-4">
+            Điểm rèn luyện của bạn là: {evalScore.totalScore} điểm
+          </div>
+          <div className="text-center fw-bold text-info mb-4">
+            Thành Tích: {evalScore.achievement}
+          </div>
+        </>
+      )}
 
       {termData.map((term) => {
         const activities = activitiesByTerm[term.id];
@@ -137,45 +200,54 @@ const Summary = () => {
 
         return (
           <Container key={term.id} className="mb-5">
-            <h5>
-              {term.name} (max {term.maxValue} điểm)
+            <h5 className="mb-3 border-bottom pb-2">
+              {term.name} (Tối đa {term.maxValue} điểm)
             </h5>
 
             {activities.length === 0 ? (
               <p className="text-muted">Không có hoạt động nào.</p>
             ) : (
-              <div className="d-flex flex-wrap gap-3">
+              <Row className="g-4">
                 {activities.map((act) => (
-                  <Card
-                    key={act.id}
-                    style={{ minWidth: "280px", flex: "1 0 280px" }}
-                  >
-                    <Card.Body>
-                      <Card.Title>{act.title}</Card.Title>
-                      <Card.Text>
-                        <strong>Mô tả:</strong> {act.description}
-                        <br />
-                        <strong>Điểm:</strong> {act.bonusScore}
-                        <br />
-                        <strong>Trạng thái:</strong> {renderStatusBadge(act.id)}
-                      </Card.Text>
-                      {activityRegistriesIds.includes(act.id) &&
-                        !activityAttendanceIds.includes(act.id) && (
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedActivityId(act.id);
-                              setShowMissingActivity(true);
-                            }}
-                          >
-                            Báo thiếu
-                          </Button>
-                        )}
-                    </Card.Body>
-                  </Card>
+                  <Col key={act.id} md={6} lg={4}>
+                    <Card className="shadow-sm h-100">
+                      <Card.Body>
+                        <Card.Title>{act.title}</Card.Title>
+                        <Card.Text>
+                          <strong>Mô tả:</strong> {act.description}
+                          <br />
+                          <strong>Điểm:</strong> {act.bonusScore}
+                          <br />
+                          <strong>Trạng thái:</strong>{" "}
+                          {renderStatusBadge(act.id)}
+                        </Card.Text>
+                        {activityRegistriesIds.includes(act.id) &&
+                          !activityAttendanceIds.includes(act.id) &&
+                          (activityCanceledIds.includes(act.id) ? (
+                            <span className="text-danger small">
+                              Minh chứng không hợp lệ
+                            </span>
+                          ) : activityMissingsIds.includes(act.id) ? (
+                            <span className="text-muted small">
+                              Đã gửi yêu cầu báo thiếu
+                            </span>
+                          ) : (
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedActivityId(act.id);
+                                setShowMissingActivity(true);
+                              }}
+                            >
+                              Báo thiếu
+                            </Button>
+                          ))}
+                      </Card.Body>
+                    </Card>
+                  </Col>
                 ))}
-              </div>
+              </Row>
             )}
             <div className="fw-bold mt-3">
               Tổng điểm đạt được: {calculateTotalScore(activities)} /{" "}
