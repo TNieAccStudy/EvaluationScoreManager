@@ -127,4 +127,14 @@ public class UserRepositoryImpl extends BaseRepositoryImpl implements UserReposi
     public <T extends UserInfo> Collection<T> getUsers(Class<T> type) {
         return super.getItems(type);
     }
+
+    @Override
+    public UserInfo updateUser(UserInfo u) {
+        Session s = this.sessionFactory.getObject().getCurrentSession();
+        s.merge(u);
+        
+        s.flush();
+        
+        return u;
+    }
 }

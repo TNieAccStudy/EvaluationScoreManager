@@ -4,6 +4,7 @@
  */
 package com.nhm.controllers;
 
+import com.nhm.pojo.ActivityBulletin;
 import com.nhm.pojo.Bulletin;
 import com.nhm.pojo.CancelRequirement;
 import com.nhm.pojo.UserInfo;
@@ -70,6 +71,14 @@ public class AffairsController {
         return "affairs/activity-list.html";
     }
     
+    @RequestMapping("/activities/{activityId}")
+    public String activityDetail(Model model, @PathVariable("activityId") int activityId) {
+        
+        model.addAttribute("activity", activityService.getActivityById(activityId));
+        
+        return "affairs/details/activity-detail.html";
+    }
+    
     @RequestMapping("/cancels")
     public String cancelList(Model model) {
         
@@ -78,12 +87,28 @@ public class AffairsController {
         return "affairs/cancel-list.html";
     }
     
+    @RequestMapping("/cancels/{cancelId}")
+    public String cancelDetail(Model model, @PathVariable("cancelId") int cancelId) {
+        
+        model.addAttribute("cancel", cancelService.getCancelById(cancelId));
+        
+        return "affairs/details/cancel-detail.html";
+    }
+    
     @RequestMapping("/accounts")
     public String userList(Model model) {
         
         model.addAttribute("users", userService.getUsers(UserInfo.class));
         
         return "affairs/account-list.html";
+    }
+    
+    @RequestMapping("/accounts/{accountId}")
+    public String userDetail(Model model, @PathVariable("accountId") int userId) {
+        
+        model.addAttribute("userInfo", userService.getUserById(userId));
+        
+        return "affairs/details/user-detail.html";
     }
     
 }

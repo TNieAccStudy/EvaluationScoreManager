@@ -40,8 +40,11 @@
                             <span class="table-column" th:text="${a.studentAssistantId.firstName + ' ' + a.studentAssistantId.lastName}">Nguyen Van A</span>
                             <span class="table-column" th:text="${a.studentAssistantId.email}">nva@example.com</span>
                             <span class="table-column">
-                                <button class="action-button edit" th:onclick="'editBulletin(' + ${a.id} + ')'">Edit</button>
-                                <button class="action-button delete" th:onclick="'deleteBulletin(' + ${a.id} + ')'">Delete</button>
+                                <a class="action-button edit" 
+                                   th:href="@{/affairs/activities/{id}(id=${a.id})}">
+                                    Edit
+                                </a>
+                                <button class="action-button delete" th:onclick="'deleteItem(\'' + @{/api/activities/} + '\',' + ${a.id} + ')'">Delete</button>
                             </span>
                         </div>
                     </div>

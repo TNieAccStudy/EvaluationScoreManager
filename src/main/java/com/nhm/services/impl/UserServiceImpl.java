@@ -115,4 +115,9 @@ public class UserServiceImpl implements UserService {
         return this.userRepo.getUsers(type);
     }
 
+    @Override
+    public UserInfo updateUser(UserInfo u) {
+        return this.userRepo.updateUser(u);
+    }
+
 }

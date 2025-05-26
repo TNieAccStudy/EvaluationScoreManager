@@ -12,6 +12,7 @@ import java.util.Collection;
 public interface UserRepository {
     UserInfo getUserByUsername(String username);
     UserInfo addUser(UserInfo u);
+    UserInfo updateUser(UserInfo u);
     boolean authenticate(String username, String password);
     UserInfo getUserById(int id);
     Collection<UserInfo> getUsers();

@@ -44,7 +44,7 @@
                                    th:href="@{/affairs/bulletins/{id}(id=${b.id})}">
                                     Edit
                                 </a>
-                                <button class="action-button delete" th:onclick="'deleteBulletin(' + ${b.id} + ')'">Delete</button>
+                                <button class="action-button delete" th:onclick="'deleteItem(\'' + @{/api/bulletins/} + '\',' + ${b.id} + ')'">Delete</button>
                             </span>
                         </div>
                     </div>

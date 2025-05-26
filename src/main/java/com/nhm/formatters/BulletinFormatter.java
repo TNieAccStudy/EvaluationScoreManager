@@ -4,30 +4,26 @@
  */
 package com.nhm.formatters;
 
-import com.nhm.pojo.Term;
-import com.nhm.services.TermService;
+import com.nhm.pojo.Bulletin;
 import java.text.ParseException;
 import java.util.Locale;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.Formatter;
-import org.springframework.stereotype.Component;
 
 /**
  *
  * @author GIGABYTE
  */
-@Component
-public class TermFormatter implements Formatter<Term> {
+public class BulletinFormatter implements Formatter<Bulletin> {
     @Override
-    public String print(Term object, Locale locale) {
+    public String print(Bulletin object, Locale locale) {
         return String.valueOf(object.getId());
     }
 
     @Override
-    public Term parse(String text, Locale locale) throws ParseException {
-        Term t = new Term();
-        t.setId(Long.valueOf(text));
+    public Bulletin parse(String text, Locale locale) throws ParseException {
+        Bulletin u = new Bulletin();
+        u.setId(Long.valueOf(text));
         
-        return t;
+        return u;
     }
 }

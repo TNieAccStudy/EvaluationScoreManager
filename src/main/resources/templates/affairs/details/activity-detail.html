@@ -3,7 +3,7 @@
     <header>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Bulletin list template</title>
+        <title>Activity detail template</title>
 
         <th:block id="custom-links">
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,45 +13,59 @@
     <body>
 
         <div class="content">
-            <form th:action="@{/affairs/exec/bulletins}" th:object="${bulletin}" method="post" enctype="multipart/form-data">
-                <!-- Hidden field for Bulletin -->
+            <form th:action="@{/affairs/exec/activities}" th:object="${activity}" method="post" class="needs-validation" novalidate>
+                <!-- Hidden field for ID -->
                 <input type="hidden" th:field="*{id}" />
                 <input type="hidden" th:field="*{studentAssistantId}" />
-                <input type="hidden" th:field="*{extraActivityId}" />
 
                 <!-- Title -->
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
                     <input type="text" th:field="*{title}" class="form-control" id="title" 
-                           required minlength="1" maxlength="255" placeholder="Enter bulletin title">
+                           required minlength="1" maxlength="255" placeholder="Enter activity title">
                     <div class="invalid-feedback">
                         Title is required and must be between 1 and 255 characters.
                     </div>
                 </div>
 
-                <!-- Content -->
+                <!-- Description -->
                 <div class="mb-3">
-                    <label for="content" class="form-label">Content</label>
-                    <textarea th:field="*{content}" class="form-control" id="content" rows="5" 
-                              maxlength="2147483647" placeholder="Enter bulletin content"></textarea>
+                    <label for="description" class="form-label">Description</label>
+                    <textarea th:field="*{description}" class="form-control" id="description" rows="5" 
+                              maxlength="2147483647" placeholder="Enter activity description"></textarea>
                     <div class="invalid-feedback">
-                        Content is required.
+                        Description is required.
                     </div>
                 </div>
 
-                <!-- End Date -->
+                <!-- Bonus Score -->
                 <div class="mb-3">
-                    <label for="duration" class="form-label">End Date</label>
-                    <input type="datetime-local" th:field="*{duration}" class="form-control" id="duration" required>
+                    <label for="bonusScore" class="form-label">Bonus Score</label>
+                    <input type="number" th:field="*{bonusScore}" class="form-control" id="bonusScore" 
+                           required min="0" placeholder="Enter bonus score">
                     <div class="invalid-feedback">
-                        End date is required.
+                        Bonus score is required and must be a non-negative number.
+                    </div>
+                </div>
+
+                <!-- Term -->
+                <div class="mb-3">
+                    <label for="termId" class="form-label">Term</label>
+                    <select th:field="*{termId}" class="form-select" id="termId" required>
+                        <option value="">Select a term</option>
+                        <option th:each="term : ${terms}" 
+                                th:value="${term.id}" 
+                                th:text="${term.name}"></option>
+                    </select>
+                    <div class="invalid-feedback">
+                        Term is required.
                     </div>
                 </div>
 
                 <!-- Semester -->
                 <div class="mb-3">
-                    <label for="semester" class="form-label">Semester</label>
-                    <select th:field="*{semesterId.id}" class="form-select" id="semester" required>
+                    <label for="semesterId" class="form-label">Semester</label>
+                    <select th:field="*{semesterId}" class="form-select" id="semesterId" required>
                         <option value="">Select a semester</option>
                         <option th:each="semester : ${semesters}" 
                                 th:value="${semester.id}" 
@@ -62,24 +76,20 @@
                     </div>
                 </div>
 
-                <!-- State -->
+                <!-- Student Assistant -->
                 <div class="mb-3">
-                    <label for="state" class="form-label">State</label>
-                    <select th:field="*{state}" class="form-select" id="state" required>
-                        <option value="">Select state</option>
-                        <option th:each="state : ${bulletinStates}"
-                                th:value="${state.name()}"
-                                th:text="${state.name()}"></option>
-                    </select>
+                    <label for="studentAssistantId" class="form-label">AssistantId</label>
+                    <input type="text" th:value="${activity.studentAssistantId.id}" class="form-control" id="studentAssistantId" 
+                           required minlength="1" maxlength="255" readonly>
                     <div class="invalid-feedback">
-                        State is required.
+                        Title is required and must be between 1 and 255 characters.
                     </div>
                 </div>
 
                 <!-- Submit and Cancel Buttons -->
                 <div class="mb-3">
                     <button type="submit" class="btn btn-primary">Save</button>
-                    <a th:href="@{/affairs/bulletins}" class="btn btn-secondary">Cancel</a>
+                    <a th:href="@{/affairs/activities}" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>

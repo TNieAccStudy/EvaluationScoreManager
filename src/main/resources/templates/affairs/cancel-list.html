@@ -36,11 +36,14 @@
                             <span class="table-column" th:text="${c.studentAssistantId.firstName + ' ' + c.studentAssistantId.lastName}">Nguyen Van A</span>
                             <span class="table-column" th:text="${c.studentAssistantId.email}">nva@example.com</span>
                             <span class="table-column" th:text="${c.executedStatus}">PENDING</span>
-                            
+
                             <span class="table-column" th:text="${c.studentAffairsOfficerId != null ? c.studentAffairsOfficerId.lastName : 'not yet'}">Respondent name</span>
                             <span class="table-column">
-                                <button class="action-button edit" th:onclick="'editBulletin(' + ${c.id} + ')'">Edit</button>
-                                <button class="action-button delete" th:onclick="'deleteBulletin(' + ${c.id} + ')'">Delete</button>
+                                <a class="action-button edit" 
+                                   th:href="@{/affairs/cancels/{id}(id=${c.id})}">
+                                    Edit
+                                </a>
+                                <button class="action-button delete" th:onclick="'deleteItem(\'' + @{/api/cancels/} + '\',' + ${c.id} + ')'">Delete</button>
                             </span>
                         </div>
                     </div>

@@ -36,8 +36,10 @@
                             <span class="table-column" th:text="${u.email}">nva@example.com</span>
                             <span class="table-column" th:text="${u.phone}">0*********</span>
                             <span class="table-column">
-                                <button class="action-button edit" th:onclick="'editBulletin(' + ${u.id} + ')'">Edit</button>
-                                <button class="action-button delete" th:onclick="'deleteBulletin(' + ${u.id} + ')'">Delete</button>
+                                <a class="action-button edit" 
+                                   th:href="@{/affairs/accounts/{id}(id=${u.id})}">
+                                    Edit
+                                </a>
                             </span>
                         </div>
                     </div>

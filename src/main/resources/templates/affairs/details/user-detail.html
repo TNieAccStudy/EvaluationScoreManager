@@ -1,0 +1,161 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{affairs/base :: base(~{::title}, ~{::div.content}, ~{::#custom-links}, ~{::#custom-javascripts})}">
+    <header>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Bulletin list template</title>
+
+        <th:block id="custom-links">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        </th:block>
+
+    </header>
+    <body>
+        <div class="content">
+            <form th:action="@{/affairs/exec/users}" th:object="${userInfo}" method="post" class="needs-validation" novalidate>
+                <!-- Hidden fields -->
+                <input type="hidden" th:field="*{id}" />
+                <input type="hidden" th:field="*{password}" />
+                <input type="hidden" th:field="*{avatar}" />
+
+                <!-- User Type (for creating new user, optional) -->
+                <div class="mb-3" th:if="${userInfo.id == null}">
+                    <label for="userType" class="form-label">User Type</label>
+                    <select class="form-select" id="userType" name="userType" required 
+                            onchange="toggleStudentFields(this.value)">
+                        <option value="">Select user type</option>
+                        <option value="student">Student</option>
+                        <option value="studentAssistant">Student Assistant</option>
+                        <option value="studentAffairsOfficer">Student Affairs Officer</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        User type is required.
+                    </div>
+                </div>
+
+                <!-- First Name -->
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" th:field="*{firstName}" class="form-control" id="firstName" 
+                           required minlength="1" maxlength="255" placeholder="Enter first name">
+                    <div class="invalid-feedback">
+                        First name is required (1-255 characters).
+                    </div>
+                </div>
+
+                <!-- Last Name -->
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" th:field="*{lastName}" class="form-control" id="lastName" 
+                           required minlength="1" maxlength="255" placeholder="Enter last name">
+                    <div class="invalid-feedback">
+                        Last name is required (1-255 characters).
+                    </div>
+                </div>
+
+                <!-- Username (readonly) -->
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" th:field="*{username}" class="form-control" id="username" readonly />
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" th:field="*{email}" class="form-control" id="email" 
+                           required minlength="1" maxlength="124" placeholder="Enter email">
+                    <div class="invalid-feedback">
+                        Valid email is required (1-124 characters).
+                    </div>
+                </div>
+
+                <!-- Phone -->
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone</label>
+                    <input type="text" th:field="*{phone}" class="form-control" id="phone" 
+                           required minlength="1" maxlength="11" placeholder="Enter phone number">
+                    <div class="invalid-feedback">
+                        Phone number is required (1-11 characters).
+                    </div>
+                </div>
+
+                <!-- User Role (readonly) -->
+                <div class="mb-3">
+                    <label for="userRole" class="form-label">User Role</label>
+                    <input type="text" th:field="*{userRole}" class="form-control" id="userRole" readonly />
+                </div>
+
+                <!-- Student-specific fields -->
+                <div id="studentFields" th:if="${#strings.equals(userInfo.class.simpleName, 'Student')}">
+                    <!-- Achievement -->
+                    <div class="mb-3">
+                        <label for="achievement" class="form-label">Achievement</label>
+                        <select th:field="*{achievement}" 
+                                class="form-select" id="achievement">
+                            <option value="">Select achievement</option>
+                            <option th:each="achievement : ${achievements}" 
+                                    th:value="${achievement.name()}" 
+                                    th:text="${achievement.name()}"
+                                    th:selected="${achievement.name() == (userInfo.achievement != null ? userInfo.achievement : 'None')}"></option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Achievement is required for students.
+                        </div>
+                    </div>
+
+                    <!-- MSSV -->
+                    <div class="mb-3">
+                        <label for="mssv" class="form-label">MSSV</label>
+                        <input type="text" th:field="*{mssv}" 
+                               class="form-control" id="mssv" 
+                               minlength="1" maxlength="11" placeholder="Enter MSSV">
+                        <div class="invalid-feedback">
+                            MSSV is required (1-11 characters).
+                        </div>
+                    </div>
+
+                    <!-- Class ID -->
+                    <div class="mb-3">
+                        <label for="classId" class="form-label">Class</label>
+                        <select th:field="*{classId}" 
+                                class="form-select" id="classId" name="classId.id">
+                            <option value="">Select a class</option>
+                            <option th:each="classe : ${classes}" 
+                                    th:value="${classe.id}" 
+                                    th:text="${classe.name}"></option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Class is required for students.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit and Cancel Buttons -->
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a th:href="@{/affairs/accounts}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+    <th:block id="custom-javascripts">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Bootstrap form validation
+            (function () {
+                'use strict'
+                var forms = document.querySelectorAll('.needs-validation')
+                Array.prototype.slice.call(forms).forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+            })()
+        </script>
+    </th:block>
+</body>
+</html>
